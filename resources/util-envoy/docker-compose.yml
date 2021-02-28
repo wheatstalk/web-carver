@@ -1,0 +1,13 @@
+services:
+  envoy:
+    build:
+      context: .
+    ports:
+      - 8123:8080
+
+  workload:
+    image: jmalloc/echo-server
+    environment:
+      PORT: 8081
+    ports:
+      - 8124:8081

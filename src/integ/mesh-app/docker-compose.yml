@@ -1,0 +1,17 @@
+services:
+  consumer:
+    build:
+      context: .
+    environment:
+      FLASK_APP: consumer.py
+      BACKEND: backend
+    ports:
+      - 8123:80
+
+  backend:
+    build:
+      context: .
+    environment:
+      FLASK_APP: backend.py
+    ports:
+      - 8124:80

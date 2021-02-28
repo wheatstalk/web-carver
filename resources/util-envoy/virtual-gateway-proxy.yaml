@@ -1,0 +1,54 @@
+admin:
+  access_log_path: /tmp/admin_access.log
+  address:
+    socket_address:
+      protocol: TCP
+      address: 0.0.0.0
+      port_value: ${ENVOY_ADMIN_PORT}
+static_resources:
+  listeners:
+    - name: listener_0
+      address:
+        socket_address:
+          protocol: TCP
+          address: 0.0.0.0
+          port_value: ${ENVOY_UPSTREAM_PORT}
+      filter_chains:
+        - filters:
+            - name: envoy.filters.network.http_connection_manager
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+                stat_prefix: ingress_http
+                http_filters:
+                  - name: envoy.filters.http.router
+                route_config:
+                  name: local_route
+                  virtual_hosts:
+                    - name: local_service
+                      domains: ["*"]
+                      routes:
+                        - match:
+                            prefix: "/"
+                          route:
+                            cluster: appmesh_envoy
+                          request_headers_to_add:
+                            # Add an X-Forwarded-Host from the request's current host name.
+                            - header:
+                                key: "X-Forwarded-Host"
+                                value: "%REQ(Host)%"
+                              append: true
+  clusters:
+    - name: appmesh_envoy
+      connect_timeout: 1s
+      type: STATIC
+      load_assignment:
+        cluster_name: appmesh_envoy
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: 127.0.0.1
+                      port_value: ${ENVOY_DOWNSTREAM_PORT}
+      transport_socket:
+        name: envoy.transport_sockets.raw_buffer
