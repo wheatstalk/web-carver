@@ -26,7 +26,11 @@ const project = new AwsCdkConstructLibrary({
     'ts-node',
   ],
 
+  pullRequestTemplateContents: [''],
   dependabot: false,
+
+  releaseToNpm: true,
+  releaseEveryCommit: true,
 
   /* AwsCdkConstructLibraryOptions */
   // cdkAssert: true,                                                          /* Install the @aws-cdk/assert library? */
