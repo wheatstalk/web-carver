@@ -5,8 +5,8 @@
 Name|Description
 ----|-----------
 [ApplicationLoadBalancedWebCarverGateway](#wheatstalk-web-carver-applicationloadbalancedwebcarvergateway)|*No description*
-[Http2GatewayRouteExtension](#wheatstalk-web-carver-http2gatewayrouteextension)|Adds an HTTP2 route to the environment's gateway and allows-in traffic from the gateway.
-[HttpGatewayRouteExtension](#wheatstalk-web-carver-httpgatewayrouteextension)|Adds an HTTP route to the environment's gateway and allows in traffic from the gateway.
+[Http2GatewayRouteExtension](#wheatstalk-web-carver-http2gatewayrouteextension)|Adds an HTTP2 route to the environment's gateway and allows-in traffic from the gateway.
+[HttpGatewayRouteExtension](#wheatstalk-web-carver-httpgatewayrouteextension)|Adds an HTTP route to the environment's gateway and allows in traffic from the gateway.
 [LinkedServiceExtension](#wheatstalk-web-carver-linkedserviceextension)|Links another mesh service to this service so that it can be connected to.
 [WebCarverEnvironment](#wheatstalk-web-carver-webcarverenvironment)|*No description*
 [WebCarverListener](#wheatstalk-web-carver-webcarverlistener)|*No description*
@@ -77,7 +77,7 @@ Name | Type | Description
 
 ## class Http2GatewayRouteExtension  <a id="wheatstalk-web-carver-http2gatewayrouteextension"></a>
 
-Adds an HTTP2 route to the environment's gateway and allows-in traffic from the gateway.
+Adds an HTTP2 route to the environment's gateway and allows-in traffic from the gateway.
 
 __Implements__: [IWebCarverServiceExtension](#wheatstalk-web-carver-iwebcarverserviceextension)
 
@@ -115,7 +115,7 @@ extend(scope: Construct, webCarverService: WebCarverService): void
 
 ## class HttpGatewayRouteExtension  <a id="wheatstalk-web-carver-httpgatewayrouteextension"></a>
 
-Adds an HTTP route to the environment's gateway and allows in traffic from the gateway.
+Adds an HTTP route to the environment's gateway and allows in traffic from the gateway.
 
 __Implements__: [IWebCarverServiceExtension](#wheatstalk-web-carver-iwebcarverserviceextension)
 
@@ -249,7 +249,7 @@ new WebCarverListener()
 
 #### *static* http1(containerPort) <a id="wheatstalk-web-carver-webcarverlistener-http1"></a>
 
-Provides a listener that supports at most HTTP/1.1. This is probably a little more useful for software that doesn't support HTTP/2 at all, which can happen, but probably isn't happening to you.
+Provides a listener that supports at most HTTP/1.1. This is probably a little more useful for software that doesn't support HTTP/2 at all, which can happen, but probably isn't happening to you.
 
 ```ts
 static http1(containerPort: number): IWebCarverListener

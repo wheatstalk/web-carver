@@ -13,10 +13,10 @@
 .jsii
 .nyc_output
 .yarn-integrity
+/coverage
 /dist
 /lib
 /test-reports/
-\coverage
 build/Release
 cdk.out
 coverage
@@ -40,8 +40,8 @@ yarn-error.log*
 !/.github/workflows/yarn-upgrade.yml
 !/.mergify.yml
 !/.npmignore
-!/.projen\deps.json
-!/.projen\tasks.json
+!/.projen/deps.json
+!/.projen/tasks.json
 !/.projenrc.js
 !/.versionrc.json
 !/API.md
