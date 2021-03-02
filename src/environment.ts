@@ -90,7 +90,7 @@ export class Environment extends cdk.Construct implements IEnvironment {
     this.mesh = props.mesh ?? defaultMesh(this);
 
     // Use the user's vpc or provide our own.
-    this.vpc = props.vpc ?? defaultVpc(scope);
+    this.vpc = props.vpc ?? defaultVpc(this);
 
     // Provide our own cluster
     this.cluster = new ecs.Cluster(this, 'Cluster', {
@@ -122,6 +122,9 @@ export class Environment extends cdk.Construct implements IEnvironment {
       vpc: this.vpc,
     });
 
+    // Register the default router as the default gateway route. This way,
+    // the user can opt to register their services on the router or directly
+    // on the gateway.
     this.defaultGateway.addGatewayRoute('Router', {
       routeSpec: appmesh.GatewayRouteSpec.http2({
         routeTarget: this.defaultRouter.virtualService,

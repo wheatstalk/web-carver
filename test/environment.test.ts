@@ -119,7 +119,6 @@ describe('Webcarver Environment', () => {
         },
         {
           Key: 'Name',
-          Value: 'Default/Vpc/publicSubnet1',
         },
       ],
     }));
@@ -136,7 +135,6 @@ describe('Webcarver Environment', () => {
         },
         {
           Key: 'Name',
-          Value: 'Default/Vpc/publicSubnet2',
         },
       ],
     }));
