@@ -19,6 +19,12 @@ export interface AddEnvoyCommonProps {
   readonly containerPorts?: number[];
 
   /**
+   * ID of the user envoy should run as.
+   * @default 1337
+   */
+  readonly envoyUser?: number;
+
+  /**
    * Patch the proxy configuration.
    * @default true
    */
@@ -44,7 +50,7 @@ export class AddAppMeshEnvoyExtension implements ecs.ITaskDefinitionExtension {
   private readonly envoyContainerName: string;
   private readonly containerPorts: number[];
   private readonly proxyIgnoredGID: number;
-  private readonly proxyIgnoredUID: number;
+  private readonly envoyUser: number;
   private readonly proxyEgressPort: number;
   private readonly proxyIngressPort: number;
   private readonly shouldPatchProxyConfiguration: boolean;
@@ -56,7 +62,7 @@ export class AddAppMeshEnvoyExtension implements ecs.ITaskDefinitionExtension {
     this.endpointArn = props.endpointArn;
     this.proxyIngressPort = 15000;
     this.proxyEgressPort = 15001;
-    this.proxyIgnoredUID = 1337;
+    this.envoyUser = props.envoyUser ?? 1337;
     this.proxyIgnoredGID = 1338;
     this.containerPorts = props.containerPorts ?? [];
     this.shouldPatchProxyConfiguration = props.patchProxyConfiguration ?? true;
@@ -83,7 +89,7 @@ export class AddAppMeshEnvoyExtension implements ecs.ITaskDefinitionExtension {
         ENABLE_ENVOY_DOG_STATSD: '1',
       },
       // Run envoy as the UID proxying ignores to prevent recursion
-      user: this.proxyIgnoredUID.toString(),
+      user: this.envoyUser.toString(),
       logging: ecs.AwsLogDriver.awsLogs({ streamPrefix: 'envoy' }),
       healthCheck: {
         command: [
@@ -124,7 +130,7 @@ export class AddAppMeshEnvoyExtension implements ecs.ITaskDefinitionExtension {
         appPorts: appPorts,
         proxyEgressPort: this.proxyEgressPort,
         proxyIngressPort: this.proxyIngressPort,
-        ignoredUID: this.proxyIgnoredUID,
+        ignoredUID: this.envoyUser,
         ignoredGID: this.proxyIgnoredGID,
         egressIgnoredIPs: [
           '169.254.170.2', // ECS metadata endpoints

@@ -4,47 +4,52 @@
 
 Name|Description
 ----|-----------
-[ApplicationLoadBalancedWebCarverGateway](#wheatstalk-web-carver-applicationloadbalancedwebcarvergateway)|*No description*
-[Http2GatewayRouteExtension](#wheatstalk-web-carver-http2gatewayrouteextension)|Adds an HTTP2 route to the environment's gateway and allows-in traffic from the gateway.
-[HttpGatewayRouteExtension](#wheatstalk-web-carver-httpgatewayrouteextension)|Adds an HTTP route to the environment's gateway and allows in traffic from the gateway.
-[LinkedServiceExtension](#wheatstalk-web-carver-linkedserviceextension)|Links another mesh service to this service so that it can be connected to.
-[WebCarverEnvironment](#wheatstalk-web-carver-webcarverenvironment)|*No description*
-[WebCarverListener](#wheatstalk-web-carver-webcarverlistener)|*No description*
-[WebCarverService](#wheatstalk-web-carver-webcarverservice)|*No description*
-[WebCarverServiceExtension](#wheatstalk-web-carver-webcarverserviceextension)|*No description*
+[ApplicationLoadBalancedFargateGateway](#wheatstalk-web-carver-applicationloadbalancedfargategateway)|Creates a gateway with an Application Load Balancer and Fargate service.
+[Environment](#wheatstalk-web-carver-environment)|Creates a WebCarver environment.
+[HttpRouteHeaderMatch](#wheatstalk-web-carver-httprouteheadermatch)|Used to generate header matching methods.
+[Router](#wheatstalk-web-carver-router)|Creates a WebCarver Router.
+[Service](#wheatstalk-web-carver-service)|Creates a WebCarver service.
+[ServiceExtension](#wheatstalk-web-carver-serviceextension)|Used to create service extensions.
+[ServiceListener](#wheatstalk-web-carver-servicelistener)|Provides service listeners.
+[ServiceName](#wheatstalk-web-carver-servicename)|Provides ways to name your services and associated resources.
 
 
 **Structs**
 
 Name|Description
 ----|-----------
-[ApplicationLoadBalancedWebCarverGatewayProps](#wheatstalk-web-carver-applicationloadbalancedwebcarvergatewayprops)|*No description*
-[Http2GatewayRouteExtensionProps](#wheatstalk-web-carver-http2gatewayrouteextensionprops)|*No description*
-[HttpGatewayRouteExtensionProps](#wheatstalk-web-carver-httpgatewayrouteextensionprops)|*No description*
-[LinkedServiceExtensionProps](#wheatstalk-web-carver-linkedserviceextensionprops)|Props for `LinkedServiceExtension`.
-[WebCarverEnvironmentProps](#wheatstalk-web-carver-webcarverenvironmentprops)|*No description*
-[WebCarverListenerInfo](#wheatstalk-web-carver-webcarverlistenerinfo)|*No description*
-[WebCarverServiceProps](#wheatstalk-web-carver-webcarverserviceprops)|*No description*
+[ApplicationLoadBalancedFargateGatewayProps](#wheatstalk-web-carver-applicationloadbalancedfargategatewayprops)|Props for `ApplicationLoadBalancedFargateGateway`.
+[EnvironmentProps](#wheatstalk-web-carver-environmentprops)|Props for `Environment`.
+[Http2GatewayRouteExtensionOptions](#wheatstalk-web-carver-http2gatewayrouteextensionoptions)|Options for adding gateway routes.
+[HttpGatewayRouteExtensionOptions](#wheatstalk-web-carver-httpgatewayrouteextensionoptions)|*No description*
+[HttpRouteExtensionOptions](#wheatstalk-web-carver-httprouteextensionoptions)|Options for adding Http routes.
+[HttpRouteHeaderMatchRangeOptions](#wheatstalk-web-carver-httprouteheadermatchrangeoptions)|Options for a matching HTTP headers in a range.
+[LinkedServiceExtensionOptions](#wheatstalk-web-carver-linkedserviceextensionoptions)|Props for `LinkedServiceExtension`.
+[RouterProps](#wheatstalk-web-carver-routerprops)|Props for `Router`.
+[ServiceProps](#wheatstalk-web-carver-serviceprops)|Props for `Service`.
 
 
 **Interfaces**
 
 Name|Description
 ----|-----------
-[IWebCarverEnvironment](#wheatstalk-web-carver-iwebcarverenvironment)|*No description*
-[IWebCarverGateway](#wheatstalk-web-carver-iwebcarvergateway)|*No description*
-[IWebCarverListener](#wheatstalk-web-carver-iwebcarverlistener)|*No description*
-[IWebCarverService](#wheatstalk-web-carver-iwebcarverservice)|*No description*
-[IWebCarverServiceExtension](#wheatstalk-web-carver-iwebcarverserviceextension)|Extends the service with additional features.
+[IEnvironment](#wheatstalk-web-carver-ienvironment)|A WebCarver environment.
+[IGateway](#wheatstalk-web-carver-igateway)|A WebCarver gateway.
+[IHttpRouteHeaderMatch](#wheatstalk-web-carver-ihttprouteheadermatch)|A request header matcher.
+[IRouter](#wheatstalk-web-carver-irouter)|A WebCarver router.
+[IService](#wheatstalk-web-carver-iservice)|A WebCarver service.
+[IServiceExtension](#wheatstalk-web-carver-iserviceextension)|Extends the service with additional features.
+[IServiceListener](#wheatstalk-web-carver-iservicelistener)|A service listener.
+[IServiceName](#wheatstalk-web-carver-iservicename)|How to name the service.
 
 
 
-## class ApplicationLoadBalancedWebCarverGateway  <a id="wheatstalk-web-carver-applicationloadbalancedwebcarvergateway"></a>
+## class ApplicationLoadBalancedFargateGateway  <a id="wheatstalk-web-carver-applicationloadbalancedfargategateway"></a>
 
+Creates a gateway with an Application Load Balancer and Fargate service.
 
-
-__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable), [IWebCarverGateway](#wheatstalk-web-carver-iwebcarvergateway), [IConnectable](#aws-cdk-aws-ec2-iconnectable)
-__Extends__: [Construct](#aws-cdk-core-construct)
+__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable), [IResource](#aws-cdk-core-iresource), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable), [IConstruct](#aws-cdk-core-iconstruct), [IVirtualGateway](#aws-cdk-aws-appmesh-ivirtualgateway), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable), [IConstruct](#aws-cdk-core-iconstruct), [IResource](#aws-cdk-core-iresource), [IGateway](#wheatstalk-web-carver-igateway), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable), [IConstruct](#aws-cdk-core-iconstruct), [IResource](#aws-cdk-core-iresource), [IVirtualGateway](#aws-cdk-aws-appmesh-ivirtualgateway), [IConnectable](#aws-cdk-aws-ec2-iconnectable)
+__Extends__: [VirtualGateway](#aws-cdk-aws-appmesh-virtualgateway)
 
 ### Initializer
 
@@ -52,16 +57,17 @@ __Extends__: [Construct](#aws-cdk-core-construct)
 
 
 ```ts
-new ApplicationLoadBalancedWebCarverGateway(scope: Construct, id: string, props: ApplicationLoadBalancedWebCarverGatewayProps)
+new ApplicationLoadBalancedFargateGateway(scope: Construct, id: string, props: ApplicationLoadBalancedFargateGatewayProps)
 ```
 
 * **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
 * **id** (<code>string</code>)  *No description*
-* **props** (<code>[ApplicationLoadBalancedWebCarverGatewayProps](#wheatstalk-web-carver-applicationloadbalancedwebcarvergatewayprops)</code>)  *No description*
+* **props** (<code>[ApplicationLoadBalancedFargateGatewayProps](#wheatstalk-web-carver-applicationloadbalancedfargategatewayprops)</code>)  *No description*
   * **certificates** (<code>Array<[ICertificate](#aws-cdk-aws-certificatemanager-icertificate)></code>)  *No description* 
   * **cluster** (<code>[ICluster](#aws-cdk-aws-ecs-icluster)</code>)  *No description* 
   * **mesh** (<code>[IMesh](#aws-cdk-aws-appmesh-imesh)</code>)  *No description* 
   * **namespace** (<code>[INamespace](#aws-cdk-aws-servicediscovery-inamespace)</code>)  *No description* 
+  * **securityGroups** (<code>Array<[ISecurityGroup](#aws-cdk-aws-ec2-isecuritygroup)></code>)  *No description* __*Optional*__
 
 
 
@@ -71,129 +77,14 @@ new ApplicationLoadBalancedWebCarverGateway(scope: Construct, id: string, props:
 Name | Type | Description 
 -----|------|-------------
 **connections** | <code>[Connections](#aws-cdk-aws-ec2-connections)</code> | <span></span>
-**virtualGateway** | <code>[IVirtualGateway](#aws-cdk-aws-appmesh-ivirtualgateway)</code> | <span></span>
 
 
 
-## class Http2GatewayRouteExtension  <a id="wheatstalk-web-carver-http2gatewayrouteextension"></a>
+## class Environment  <a id="wheatstalk-web-carver-environment"></a>
 
-Adds an HTTP2 route to the environment's gateway and allows-in traffic from the gateway.
+Creates a WebCarver environment.
 
-__Implements__: [IWebCarverServiceExtension](#wheatstalk-web-carver-iwebcarverserviceextension)
-
-### Initializer
-
-
-
-
-```ts
-new Http2GatewayRouteExtension(props?: Http2GatewayRouteExtensionProps)
-```
-
-* **props** (<code>[Http2GatewayRouteExtensionProps](#wheatstalk-web-carver-http2gatewayrouteextensionprops)</code>)  *No description*
-  * **prefixPath** (<code>string</code>)  Specifies the path to match requests with. 
-
-
-### Methods
-
-
-#### extend(scope, webCarverService) <a id="wheatstalk-web-carver-http2gatewayrouteextension-extend"></a>
-
-
-
-```ts
-extend(scope: Construct, webCarverService: WebCarverService): void
-```
-
-* **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
-* **webCarverService** (<code>[WebCarverService](#wheatstalk-web-carver-webcarverservice)</code>)  *No description*
-
-
-
-
-
-
-## class HttpGatewayRouteExtension  <a id="wheatstalk-web-carver-httpgatewayrouteextension"></a>
-
-Adds an HTTP route to the environment's gateway and allows in traffic from the gateway.
-
-__Implements__: [IWebCarverServiceExtension](#wheatstalk-web-carver-iwebcarverserviceextension)
-
-### Initializer
-
-
-
-
-```ts
-new HttpGatewayRouteExtension(props?: HttpGatewayRouteExtensionProps)
-```
-
-* **props** (<code>[HttpGatewayRouteExtensionProps](#wheatstalk-web-carver-httpgatewayrouteextensionprops)</code>)  *No description*
-  * **prefixPath** (<code>string</code>)  Specifies the path to match requests with. 
-
-
-### Methods
-
-
-#### extend(scope, webCarverService) <a id="wheatstalk-web-carver-httpgatewayrouteextension-extend"></a>
-
-
-
-```ts
-extend(scope: Construct, webCarverService: WebCarverService): void
-```
-
-* **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
-* **webCarverService** (<code>[WebCarverService](#wheatstalk-web-carver-webcarverservice)</code>)  *No description*
-
-
-
-
-
-
-## class LinkedServiceExtension  <a id="wheatstalk-web-carver-linkedserviceextension"></a>
-
-Links another mesh service to this service so that it can be connected to.
-
-__Implements__: [IWebCarverServiceExtension](#wheatstalk-web-carver-iwebcarverserviceextension)
-
-### Initializer
-
-
-
-
-```ts
-new LinkedServiceExtension(props: LinkedServiceExtensionProps)
-```
-
-* **props** (<code>[LinkedServiceExtensionProps](#wheatstalk-web-carver-linkedserviceextensionprops)</code>)  *No description*
-  * **webCarverService** (<code>[WebCarverService](#wheatstalk-web-carver-webcarverservice)</code>)  *No description* 
-
-
-### Methods
-
-
-#### extend(_scope, service) <a id="wheatstalk-web-carver-linkedserviceextension-extend"></a>
-
-
-
-```ts
-extend(_scope: Construct, service: WebCarverService): void
-```
-
-* **_scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
-* **service** (<code>[WebCarverService](#wheatstalk-web-carver-webcarverservice)</code>)  *No description*
-
-
-
-
-
-
-## class WebCarverEnvironment  <a id="wheatstalk-web-carver-webcarverenvironment"></a>
-
-
-
-__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable), [IWebCarverEnvironment](#wheatstalk-web-carver-iwebcarverenvironment)
+__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable), [IEnvironment](#wheatstalk-web-carver-ienvironment)
 __Extends__: [Construct](#aws-cdk-core-construct)
 
 ### Initializer
@@ -202,17 +93,16 @@ __Extends__: [Construct](#aws-cdk-core-construct)
 
 
 ```ts
-new WebCarverEnvironment(scope: Construct, id: string, props?: WebCarverEnvironmentProps)
+new Environment(scope: Construct, id: string, props?: EnvironmentProps)
 ```
 
 * **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
 * **id** (<code>string</code>)  *No description*
-* **props** (<code>[WebCarverEnvironmentProps](#wheatstalk-web-carver-webcarverenvironmentprops)</code>)  *No description*
-  * **certificates** (<code>Array<[ICertificate](#aws-cdk-aws-certificatemanager-icertificate)></code>)  *No description* __*Optional*__
-  * **cloudMapNamespace** (<code>[INamespace](#aws-cdk-aws-servicediscovery-inamespace)</code>)  *No description* __*Optional*__
-  * **mesh** (<code>[IMesh](#aws-cdk-aws-appmesh-imesh)</code>)  *No description* __*Optional*__
-  * **namespace** (<code>[IPrivateDnsNamespace](#aws-cdk-aws-servicediscovery-iprivatednsnamespace) &#124; [IPublicDnsNamespace](#aws-cdk-aws-servicediscovery-ipublicdnsnamespace)</code>)  *No description* __*Optional*__
-  * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  *No description* __*Optional*__
+* **props** (<code>[EnvironmentProps](#wheatstalk-web-carver-environmentprops)</code>)  *No description*
+  * **certificates** (<code>Array<[ICertificate](#aws-cdk-aws-certificatemanager-icertificate)></code>)  Certificates to install on the gateway load balancer. __*Default*__: load balancer is http-only
+  * **mesh** (<code>[IMesh](#aws-cdk-aws-appmesh-imesh)</code>)  Provide an App Mesh. __*Default*__: we create one for you
+  * **namespace** (<code>[IPrivateDnsNamespace](#aws-cdk-aws-servicediscovery-iprivatednsnamespace) &#124; [IPublicDnsNamespace](#aws-cdk-aws-servicediscovery-ipublicdnsnamespace)</code>)  Provide a service discovery namespace. __*Default*__: we create one for you
+  * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  Provide a VPC. __*Default*__: we create one for you
 
 
 
@@ -221,16 +111,18 @@ new WebCarverEnvironment(scope: Construct, id: string, props?: WebCarverEnvironm
 
 Name | Type | Description 
 -----|------|-------------
-**cluster** | <code>[ICluster](#aws-cdk-aws-ecs-icluster)</code> | <span></span>
-**defaultGateway** | <code>[IWebCarverGateway](#wheatstalk-web-carver-iwebcarvergateway)</code> | <span></span>
-**mesh** | <code>[IMesh](#aws-cdk-aws-appmesh-imesh)</code> | <span></span>
-**namespace** | <code>[INamespace](#aws-cdk-aws-servicediscovery-inamespace)</code> | <span></span>
+**cluster** | <code>[ICluster](#aws-cdk-aws-ecs-icluster)</code> | The default ECS cluster.
+**defaultGateway** | <code>[IGateway](#wheatstalk-web-carver-igateway)</code> | The default gateway.
+**defaultRouter** | <code>[IRouter](#wheatstalk-web-carver-irouter)</code> | The default router connected to the default gateway.
+**mesh** | <code>[IMesh](#aws-cdk-aws-appmesh-imesh)</code> | The environment's service mesh.
+**namespace** | <code>[INamespace](#aws-cdk-aws-servicediscovery-inamespace)</code> | The default service discovery namespace.
+**vpc** | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | The default VPC.
 
 
 
-## class WebCarverListener  <a id="wheatstalk-web-carver-webcarverlistener"></a>
+## class HttpRouteHeaderMatch  <a id="wheatstalk-web-carver-httprouteheadermatch"></a>
 
-
+Used to generate header matching methods.
 
 
 ### Initializer
@@ -239,7 +131,7 @@ Name | Type | Description
 
 
 ```ts
-new WebCarverListener()
+new HttpRouteHeaderMatch()
 ```
 
 
@@ -247,39 +139,119 @@ new WebCarverListener()
 ### Methods
 
 
-#### *static* http1(containerPort) <a id="wheatstalk-web-carver-webcarverlistener-http1"></a>
+#### *static* exact(name, exactValue) <a id="wheatstalk-web-carver-httprouteheadermatch-exact"></a>
 
-Provides a listener that supports at most HTTP/1.1. This is probably a little more useful for software that doesn't support HTTP/2 at all, which can happen, but probably isn't happening to you.
-
-```ts
-static http1(containerPort: number): IWebCarverListener
-```
-
-* **containerPort** (<code>number</code>)  *No description*
-
-__Returns__:
-* <code>[IWebCarverListener](#wheatstalk-web-carver-iwebcarverlistener)</code>
-
-#### *static* http2(containerPort) <a id="wheatstalk-web-carver-webcarverlistener-http2"></a>
-
-Provides a listener that supports HTTP/2 and HTTP/1.1.
+The value sent by the client must match the specified value exactly.
 
 ```ts
-static http2(containerPort: number): IWebCarverListener
+static exact(name: string, exactValue: string): IHttpRouteHeaderMatch
 ```
 
-* **containerPort** (<code>number</code>)  *No description*
+* **name** (<code>string</code>)  *No description*
+* **exactValue** (<code>string</code>)  *No description*
 
 __Returns__:
-* <code>[IWebCarverListener](#wheatstalk-web-carver-iwebcarverlistener)</code>
+* <code>[IHttpRouteHeaderMatch](#wheatstalk-web-carver-ihttprouteheadermatch)</code>
+
+#### *static* prefix(name, prefix) <a id="wheatstalk-web-carver-httprouteheadermatch-prefix"></a>
+
+The value sent by the client must begin with the specified characters.
+
+```ts
+static prefix(name: string, prefix: string): IHttpRouteHeaderMatch
+```
+
+* **name** (<code>string</code>)  *No description*
+* **prefix** (<code>string</code>)  *No description*
+
+__Returns__:
+* <code>[IHttpRouteHeaderMatch](#wheatstalk-web-carver-ihttprouteheadermatch)</code>
+
+#### *static* range(name, range) <a id="wheatstalk-web-carver-httprouteheadermatch-range"></a>
+
+Match on a numeric range of values.
+
+```ts
+static range(name: string, range: HttpRouteHeaderMatchRangeOptions): IHttpRouteHeaderMatch
+```
+
+* **name** (<code>string</code>)  *No description*
+* **range** (<code>[HttpRouteHeaderMatchRangeOptions](#wheatstalk-web-carver-httprouteheadermatchrangeoptions)</code>)  *No description*
+  * **end** (<code>number</code>)  Match on values up to but not including this value. 
+  * **start** (<code>number</code>)  Match on values starting at and including this value. 
+
+__Returns__:
+* <code>[IHttpRouteHeaderMatch](#wheatstalk-web-carver-ihttprouteheadermatch)</code>
+
+#### *static* regex(name, regex) <a id="wheatstalk-web-carver-httprouteheadermatch-regex"></a>
+
+The value sent by the client must include the specified characters.
+
+```ts
+static regex(name: string, regex: string): IHttpRouteHeaderMatch
+```
+
+* **name** (<code>string</code>)  *No description*
+* **regex** (<code>string</code>)  *No description*
+
+__Returns__:
+* <code>[IHttpRouteHeaderMatch](#wheatstalk-web-carver-ihttprouteheadermatch)</code>
+
+#### *static* suffix(name, suffix) <a id="wheatstalk-web-carver-httprouteheadermatch-suffix"></a>
+
+The value sent by the client must end with the specified characters.
+
+```ts
+static suffix(name: string, suffix: string): IHttpRouteHeaderMatch
+```
+
+* **name** (<code>string</code>)  *No description*
+* **suffix** (<code>string</code>)  *No description*
+
+__Returns__:
+* <code>[IHttpRouteHeaderMatch](#wheatstalk-web-carver-ihttprouteheadermatch)</code>
 
 
 
-## class WebCarverService  <a id="wheatstalk-web-carver-webcarverservice"></a>
+## class Router  <a id="wheatstalk-web-carver-router"></a>
+
+Creates a WebCarver Router.
+
+__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable), [IResource](#aws-cdk-core-iresource), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable), [IConstruct](#aws-cdk-core-iconstruct), [IVirtualRouter](#aws-cdk-aws-appmesh-ivirtualrouter), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable), [IConstruct](#aws-cdk-core-iconstruct), [IResource](#aws-cdk-core-iresource), [IRouter](#wheatstalk-web-carver-irouter), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable), [IConstruct](#aws-cdk-core-iconstruct), [IResource](#aws-cdk-core-iresource), [IVirtualRouter](#aws-cdk-aws-appmesh-ivirtualrouter), [IConnectable](#aws-cdk-aws-ec2-iconnectable)
+__Extends__: [VirtualRouter](#aws-cdk-aws-appmesh-virtualrouter)
+
+### Initializer
 
 
 
-__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable), [IWebCarverService](#wheatstalk-web-carver-iwebcarverservice), [IConnectable](#aws-cdk-aws-ec2-iconnectable)
+
+```ts
+new Router(scope: Construct, id: string, props: RouterProps)
+```
+
+* **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
+* **id** (<code>string</code>)  *No description*
+* **props** (<code>[RouterProps](#wheatstalk-web-carver-routerprops)</code>)  *No description*
+  * **mesh** (<code>[IMesh](#aws-cdk-aws-appmesh-imesh)</code>)  The mesh to create the router in. 
+  * **vpc** (<code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code>)  The VPC to create the router's security group in. 
+
+
+
+### Properties
+
+
+Name | Type | Description 
+-----|------|-------------
+**connections** | <code>[Connections](#aws-cdk-aws-ec2-connections)</code> | <span></span>
+**virtualService** | <code>[IVirtualService](#aws-cdk-aws-appmesh-ivirtualservice)</code> | The virtual service for this router.
+
+
+
+## class Service  <a id="wheatstalk-web-carver-service"></a>
+
+Creates a WebCarver service.
+
+__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable), [IService](#wheatstalk-web-carver-iservice), [IConnectable](#aws-cdk-aws-ec2-iconnectable)
 __Extends__: [Construct](#aws-cdk-core-construct)
 
 ### Initializer
@@ -288,17 +260,18 @@ __Extends__: [Construct](#aws-cdk-core-construct)
 
 
 ```ts
-new WebCarverService(scope: Construct, id: string, props: WebCarverServiceProps)
+new Service(scope: Construct, id: string, props: ServiceProps)
 ```
 
 * **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
 * **id** (<code>string</code>)  *No description*
-* **props** (<code>[WebCarverServiceProps](#wheatstalk-web-carver-webcarverserviceprops)</code>)  *No description*
-  * **environment** (<code>[IWebCarverEnvironment](#wheatstalk-web-carver-iwebcarverenvironment)</code>)  The Web Carver environment in which to create the service. 
+* **props** (<code>[ServiceProps](#wheatstalk-web-carver-serviceprops)</code>)  *No description*
+  * **environment** (<code>[IEnvironment](#wheatstalk-web-carver-ienvironment)</code>)  The Web Carver environment in which to create the service. 
   * **image** (<code>[ContainerImage](#aws-cdk-aws-ecs-containerimage)</code>)  The image of the main container. 
-  * **extensions** (<code>Array<[IWebCarverServiceExtension](#wheatstalk-web-carver-iwebcarverserviceextension)></code>)  Add extensions to your service to add features. __*Optional*__
+  * **extensions** (<code>Array<[IServiceExtension](#wheatstalk-web-carver-iserviceextension)></code>)  Add extensions to your service to add features. __*Optional*__
   * **hostName** (<code>string</code>)  Suffix the service name with a host name. __*Optional*__
-  * **listeners** (<code>Array<[IWebCarverListener](#wheatstalk-web-carver-iwebcarverlistener)></code>)  Description of the main traffic port of the main container. __*Optional*__
+  * **listeners** (<code>Array<[IServiceListener](#wheatstalk-web-carver-iservicelistener)></code>)  Description of the main traffic port of the main container. __*Optional*__
+  * **name** (<code>[IServiceName](#wheatstalk-web-carver-iservicename)</code>)  Choose a service name. __*Default*__: one is chosen for you
   * **useRouter** (<code>boolean</code>)  Use a router to provide connectivity to the service. __*Default*__: false
 
 
@@ -309,14 +282,14 @@ new WebCarverService(scope: Construct, id: string, props: WebCarverServiceProps)
 Name | Type | Description 
 -----|------|-------------
 **connections** | <code>[Connections](#aws-cdk-aws-ec2-connections)</code> | <span></span>
-**environment** | <code>[IWebCarverEnvironment](#wheatstalk-web-carver-iwebcarverenvironment)</code> | <span></span>
+**environment** | <code>[IEnvironment](#wheatstalk-web-carver-ienvironment)</code> | <span></span>
 **virtualNode** | <code>[VirtualNode](#aws-cdk-aws-appmesh-virtualnode)</code> | <span></span>
-**virtualService** | <code>[VirtualService](#aws-cdk-aws-appmesh-virtualservice)</code> | <span></span>
+**virtualService** | <code>[IVirtualService](#aws-cdk-aws-appmesh-ivirtualservice)</code> | The virtual service representation of the WebCarver service.
 
 ### Methods
 
 
-#### addEnvVars(env) <a id="wheatstalk-web-carver-webcarverservice-addenvvars"></a>
+#### addEnvVars(env) <a id="wheatstalk-web-carver-service-addenvvars"></a>
 
 
 
@@ -331,9 +304,9 @@ addEnvVars(env: Map<string, string>): void
 
 
 
-## class WebCarverServiceExtension  <a id="wheatstalk-web-carver-webcarverserviceextension"></a>
+## class ServiceExtension  <a id="wheatstalk-web-carver-serviceextension"></a>
 
-
+Used to create service extensions.
 
 
 ### Initializer
@@ -342,7 +315,7 @@ addEnvVars(env: Map<string, string>): void
 
 
 ```ts
-new WebCarverServiceExtension()
+new ServiceExtension()
 ```
 
 
@@ -350,67 +323,166 @@ new WebCarverServiceExtension()
 ### Methods
 
 
-#### *static* envVars(env) <a id="wheatstalk-web-carver-webcarverserviceextension-envvars"></a>
+#### *static* envVars(env) <a id="wheatstalk-web-carver-serviceextension-envvars"></a>
 
-
+Add environment variables.
 
 ```ts
-static envVars(env: Map<string, string>): IWebCarverServiceExtension
+static envVars(env: Map<string, string>): IServiceExtension
 ```
 
 * **env** (<code>Map<string, string></code>)  *No description*
 
 __Returns__:
-* <code>[IWebCarverServiceExtension](#wheatstalk-web-carver-iwebcarverserviceextension)</code>
+* <code>[IServiceExtension](#wheatstalk-web-carver-iserviceextension)</code>
 
-#### *static* http2GatewayRoute(props?) <a id="wheatstalk-web-carver-webcarverserviceextension-http2gatewayroute"></a>
+#### *static* http2GatewayRoute(options?) <a id="wheatstalk-web-carver-serviceextension-http2gatewayroute"></a>
 
-
+Add an HTTP/2 gateway route.
 
 ```ts
-static http2GatewayRoute(props?: Http2GatewayRouteExtensionProps): IWebCarverServiceExtension
+static http2GatewayRoute(options?: Http2GatewayRouteExtensionOptions): IServiceExtension
 ```
 
-* **props** (<code>[Http2GatewayRouteExtensionProps](#wheatstalk-web-carver-http2gatewayrouteextensionprops)</code>)  *No description*
+* **options** (<code>[Http2GatewayRouteExtensionOptions](#wheatstalk-web-carver-http2gatewayrouteextensionoptions)</code>)  *No description*
   * **prefixPath** (<code>string</code>)  Specifies the path to match requests with. 
+  * **gateway** (<code>[IGateway](#wheatstalk-web-carver-igateway)</code>)  The gateway to add a route to. __*Default*__: the service's default gateway.
 
 __Returns__:
-* <code>[IWebCarverServiceExtension](#wheatstalk-web-carver-iwebcarverserviceextension)</code>
+* <code>[IServiceExtension](#wheatstalk-web-carver-iserviceextension)</code>
 
-#### *static* httpGatewayRoute(props?) <a id="wheatstalk-web-carver-webcarverserviceextension-httpgatewayroute"></a>
+#### *static* httpGatewayRoute(options?) <a id="wheatstalk-web-carver-serviceextension-httpgatewayroute"></a>
 
-
+Add an HTTP gateway route.
 
 ```ts
-static httpGatewayRoute(props?: HttpGatewayRouteExtensionProps): IWebCarverServiceExtension
+static httpGatewayRoute(options?: HttpGatewayRouteExtensionOptions): IServiceExtension
 ```
 
-* **props** (<code>[HttpGatewayRouteExtensionProps](#wheatstalk-web-carver-httpgatewayrouteextensionprops)</code>)  *No description*
+* **options** (<code>[HttpGatewayRouteExtensionOptions](#wheatstalk-web-carver-httpgatewayrouteextensionoptions)</code>)  *No description*
   * **prefixPath** (<code>string</code>)  Specifies the path to match requests with. 
+  * **gateway** (<code>[IGateway](#wheatstalk-web-carver-igateway)</code>)  The gateway to add a route to. __*Default*__: the service's default gateway.
 
 __Returns__:
-* <code>[IWebCarverServiceExtension](#wheatstalk-web-carver-iwebcarverserviceextension)</code>
+* <code>[IServiceExtension](#wheatstalk-web-carver-iserviceextension)</code>
 
-#### *static* linkedService(props) <a id="wheatstalk-web-carver-webcarverserviceextension-linkedservice"></a>
+#### *static* httpRoute(options) <a id="wheatstalk-web-carver-serviceextension-httproute"></a>
+
+Add an HTTP route.
+
+```ts
+static httpRoute(options: HttpRouteExtensionOptions): IServiceExtension
+```
+
+* **options** (<code>[HttpRouteExtensionOptions](#wheatstalk-web-carver-httprouteextensionoptions)</code>)  *No description*
+  * **headers** (<code>Array<[IHttpRouteHeaderMatch](#wheatstalk-web-carver-ihttprouteheadermatch)></code>)  Match requests with these headers. __*Default*__: not used to match requests
+  * **method** (<code>string</code>)  Match based on the request's HTTP method. __*Default*__: not used to match requests
+  * **prefixPath** (<code>string</code>)  Path prefix to match. __*Default*__: '/'
+
+__Returns__:
+* <code>[IServiceExtension](#wheatstalk-web-carver-iserviceextension)</code>
+
+#### *static* linkedService(options) <a id="wheatstalk-web-carver-serviceextension-linkedservice"></a>
+
+Link a WebCarver service.
+
+```ts
+static linkedService(options: LinkedServiceExtensionOptions): IServiceExtension
+```
+
+* **options** (<code>[LinkedServiceExtensionOptions](#wheatstalk-web-carver-linkedserviceextensionoptions)</code>)  *No description*
+  * **service** (<code>[Service](#wheatstalk-web-carver-service)</code>)  The Web Carver service to link to. 
+
+__Returns__:
+* <code>[IServiceExtension](#wheatstalk-web-carver-iserviceextension)</code>
+
+
+
+## class ServiceListener  <a id="wheatstalk-web-carver-servicelistener"></a>
+
+Provides service listeners.
+
+
+### Initializer
+
 
 
 
 ```ts
-static linkedService(props: LinkedServiceExtensionProps): IWebCarverServiceExtension
+new ServiceListener()
 ```
 
-* **props** (<code>[LinkedServiceExtensionProps](#wheatstalk-web-carver-linkedserviceextensionprops)</code>)  *No description*
-  * **webCarverService** (<code>[WebCarverService](#wheatstalk-web-carver-webcarverservice)</code>)  *No description* 
+
+
+### Methods
+
+
+#### *static* http1(containerPort) <a id="wheatstalk-web-carver-servicelistener-http1"></a>
+
+Provides a listener that supports at most HTTP/1.1. This is probably a little more useful for software that doesn't support HTTP/2 at all, which can happen, but probably isn't happening to you.
+
+```ts
+static http1(containerPort: number): IServiceListener
+```
+
+* **containerPort** (<code>number</code>)  *No description*
 
 __Returns__:
-* <code>[IWebCarverServiceExtension](#wheatstalk-web-carver-iwebcarverserviceextension)</code>
+* <code>[IServiceListener](#wheatstalk-web-carver-iservicelistener)</code>
+
+#### *static* http2(containerPort) <a id="wheatstalk-web-carver-servicelistener-http2"></a>
+
+Provides a listener that supports HTTP/2 and HTTP/1.1.
+
+```ts
+static http2(containerPort: number): IServiceListener
+```
+
+* **containerPort** (<code>number</code>)  *No description*
+
+__Returns__:
+* <code>[IServiceListener](#wheatstalk-web-carver-iservicelistener)</code>
 
 
 
-## struct ApplicationLoadBalancedWebCarverGatewayProps  <a id="wheatstalk-web-carver-applicationloadbalancedwebcarvergatewayprops"></a>
+## class ServiceName  <a id="wheatstalk-web-carver-servicename"></a>
+
+Provides ways to name your services and associated resources.
+
+
+### Initializer
 
 
 
+
+```ts
+new ServiceName()
+```
+
+
+
+### Methods
+
+
+#### *static* hostName(hostName) <a id="wheatstalk-web-carver-servicename-hostname"></a>
+
+Provide a host name within the mesh.
+
+```ts
+static hostName(hostName: string): IServiceName
+```
+
+* **hostName** (<code>string</code>)  *No description*
+
+__Returns__:
+* <code>[IServiceName](#wheatstalk-web-carver-iservicename)</code>
+
+
+
+## struct ApplicationLoadBalancedFargateGatewayProps  <a id="wheatstalk-web-carver-applicationloadbalancedfargategatewayprops"></a>
+
+
+Props for `ApplicationLoadBalancedFargateGateway`.
 
 
 
@@ -420,10 +492,41 @@ Name | Type | Description
 **cluster** | <code>[ICluster](#aws-cdk-aws-ecs-icluster)</code> | <span></span>
 **mesh** | <code>[IMesh](#aws-cdk-aws-appmesh-imesh)</code> | <span></span>
 **namespace** | <code>[INamespace](#aws-cdk-aws-servicediscovery-inamespace)</code> | <span></span>
+**securityGroups**? | <code>Array<[ISecurityGroup](#aws-cdk-aws-ec2-isecuritygroup)></code> | __*Optional*__
 
 
 
-## struct Http2GatewayRouteExtensionProps  <a id="wheatstalk-web-carver-http2gatewayrouteextensionprops"></a>
+## struct EnvironmentProps  <a id="wheatstalk-web-carver-environmentprops"></a>
+
+
+Props for `Environment`.
+
+
+
+Name | Type | Description 
+-----|------|-------------
+**certificates**? | <code>Array<[ICertificate](#aws-cdk-aws-certificatemanager-icertificate)></code> | Certificates to install on the gateway load balancer.<br/>__*Default*__: load balancer is http-only
+**mesh**? | <code>[IMesh](#aws-cdk-aws-appmesh-imesh)</code> | Provide an App Mesh.<br/>__*Default*__: we create one for you
+**namespace**? | <code>[IPrivateDnsNamespace](#aws-cdk-aws-servicediscovery-iprivatednsnamespace) &#124; [IPublicDnsNamespace](#aws-cdk-aws-servicediscovery-ipublicdnsnamespace)</code> | Provide a service discovery namespace.<br/>__*Default*__: we create one for you
+**vpc**? | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | Provide a VPC.<br/>__*Default*__: we create one for you
+
+
+
+## struct Http2GatewayRouteExtensionOptions  <a id="wheatstalk-web-carver-http2gatewayrouteextensionoptions"></a>
+
+
+Options for adding gateway routes.
+
+
+
+Name | Type | Description 
+-----|------|-------------
+**prefixPath**🔹 | <code>string</code> | Specifies the path to match requests with.
+**gateway**? | <code>[IGateway](#wheatstalk-web-carver-igateway)</code> | The gateway to add a route to.<br/>__*Default*__: the service's default gateway.
+
+
+
+## struct HttpGatewayRouteExtensionOptions  <a id="wheatstalk-web-carver-httpgatewayrouteextensionoptions"></a>
 
 
 
@@ -433,45 +536,66 @@ Name | Type | Description
 Name | Type | Description 
 -----|------|-------------
 **prefixPath**🔹 | <code>string</code> | Specifies the path to match requests with.
+**gateway**? | <code>[IGateway](#wheatstalk-web-carver-igateway)</code> | The gateway to add a route to.<br/>__*Default*__: the service's default gateway.
 
 
 
-## struct HttpGatewayRouteExtensionProps  <a id="wheatstalk-web-carver-httpgatewayrouteextensionprops"></a>
+## struct HttpRouteExtensionOptions  <a id="wheatstalk-web-carver-httprouteextensionoptions"></a>
 
 
-
+Options for adding Http routes.
 
 
 
 Name | Type | Description 
 -----|------|-------------
-**prefixPath**🔹 | <code>string</code> | Specifies the path to match requests with.
+**headers**? | <code>Array<[IHttpRouteHeaderMatch](#wheatstalk-web-carver-ihttprouteheadermatch)></code> | Match requests with these headers.<br/>__*Default*__: not used to match requests
+**method**? | <code>string</code> | Match based on the request's HTTP method.<br/>__*Default*__: not used to match requests
+**prefixPath**? | <code>string</code> | Path prefix to match.<br/>__*Default*__: '/'
 
 
 
-## interface IWebCarverEnvironment  <a id="wheatstalk-web-carver-iwebcarverenvironment"></a>
-
-__Implemented by__: [WebCarverEnvironment](#wheatstalk-web-carver-webcarverenvironment)
+## struct HttpRouteHeaderMatchRangeOptions  <a id="wheatstalk-web-carver-httprouteheadermatchrangeoptions"></a>
 
 
+Options for a matching HTTP headers in a range.
+
+
+
+Name | Type | Description 
+-----|------|-------------
+**end** | <code>number</code> | Match on values up to but not including this value.
+**start** | <code>number</code> | Match on values starting at and including this value.
+
+
+
+## interface IEnvironment  <a id="wheatstalk-web-carver-ienvironment"></a>
+
+__Implemented by__: [Environment](#wheatstalk-web-carver-environment)
+
+A WebCarver environment.
 
 ### Properties
 
 
 Name | Type | Description 
 -----|------|-------------
-**cluster** | <code>[ICluster](#aws-cdk-aws-ecs-icluster)</code> | <span></span>
-**defaultGateway** | <code>[IWebCarverGateway](#wheatstalk-web-carver-iwebcarvergateway)</code> | <span></span>
-**mesh** | <code>[IMesh](#aws-cdk-aws-appmesh-imesh)</code> | <span></span>
-**namespace** | <code>[INamespace](#aws-cdk-aws-servicediscovery-inamespace)</code> | <span></span>
+**cluster** | <code>[ICluster](#aws-cdk-aws-ecs-icluster)</code> | The default ECS cluster.
+**defaultGateway** | <code>[IGateway](#wheatstalk-web-carver-igateway)</code> | The default gateway.
+**defaultRouter** | <code>[IRouter](#wheatstalk-web-carver-irouter)</code> | The default router connected to the default gateway.
+**mesh** | <code>[IMesh](#aws-cdk-aws-appmesh-imesh)</code> | The environment's service mesh.
+**namespace** | <code>[INamespace](#aws-cdk-aws-servicediscovery-inamespace)</code> | The default service discovery namespace.
+**vpc** | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | The default VPC.
 
 
 
-## interface IWebCarverGateway  <a id="wheatstalk-web-carver-iwebcarvergateway"></a>
+## interface IGateway  <a id="wheatstalk-web-carver-igateway"></a>
 
-__Implemented by__: [ApplicationLoadBalancedWebCarverGateway](#wheatstalk-web-carver-applicationloadbalancedwebcarvergateway)
+__Implemented by__: [ApplicationLoadBalancedFargateGateway](#wheatstalk-web-carver-applicationloadbalancedfargategateway)
 
+A WebCarver gateway.
 
+It's basically a connectable IVirtualGateway.
 
 ### Properties
 
@@ -479,38 +603,46 @@ __Implemented by__: [ApplicationLoadBalancedWebCarverGateway](#wheatstalk-web-ca
 Name | Type | Description 
 -----|------|-------------
 **connections** | <code>[Connections](#aws-cdk-aws-ec2-connections)</code> | <span></span>
-**virtualGateway** | <code>[IVirtualGateway](#aws-cdk-aws-appmesh-ivirtualgateway)</code> | <span></span>
-
-
-
-## interface IWebCarverListener  <a id="wheatstalk-web-carver-iwebcarverlistener"></a>
-
-__Obtainable from__: [WebCarverListener](#wheatstalk-web-carver-webcarverlistener).[http1](#wheatstalk-web-carver-webcarverlistener#wheatstalk-web-carver-webcarverlistener-http1)(), [WebCarverListener](#wheatstalk-web-carver-webcarverlistener).[http2](#wheatstalk-web-carver-webcarverlistener#wheatstalk-web-carver-webcarverlistener-http2)()
-
+**env** | <code>[ResourceEnvironment](#aws-cdk-core-resourceenvironment)</code> | The environment this resource belongs to.
+**mesh**🔹 | <code>[IMesh](#aws-cdk-aws-appmesh-imesh)</code> | The Mesh which the VirtualGateway belongs to.
+**node** | <code>[ConstructNode](#aws-cdk-core-constructnode)</code> | The construct tree node for this construct.
+**stack** | <code>[Stack](#aws-cdk-core-stack)</code> | The stack in which this resource is defined.
+**virtualGatewayArn**🔹 | <code>string</code> | The Amazon Resource Name (ARN) for the VirtualGateway.
+**virtualGatewayName**🔹 | <code>string</code> | Name of the VirtualGateway.
 
 ### Methods
 
 
-#### bind(service) <a id="wheatstalk-web-carver-iwebcarverlistener-bind"></a>
+#### addGatewayRoute(id, route)🔹 <a id="wheatstalk-web-carver-igateway-addgatewayroute"></a>
 
-
+Utility method to add a new GatewayRoute to the VirtualGateway.
 
 ```ts
-bind(service: WebCarverService): WebCarverListenerInfo
+addGatewayRoute(id: string, route: GatewayRouteBaseProps): GatewayRoute
 ```
 
-* **service** (<code>[WebCarverService](#wheatstalk-web-carver-webcarverservice)</code>)  *No description*
+* **id** (<code>string</code>)  *No description*
+* **route** (<code>[GatewayRouteBaseProps](#aws-cdk-aws-appmesh-gatewayroutebaseprops)</code>)  *No description*
+  * **routeSpec** (<code>[GatewayRouteSpec](#aws-cdk-aws-appmesh-gatewayroutespec)</code>)  What protocol the route uses. 
+  * **gatewayRouteName** (<code>string</code>)  The name of the GatewayRoute. __*Default*__: an automatically generated name
 
 __Returns__:
-* <code>[WebCarverListenerInfo](#wheatstalk-web-carver-webcarverlistenerinfo)</code>
+* <code>[GatewayRoute](#aws-cdk-aws-appmesh-gatewayroute)</code>
 
 
 
-## interface IWebCarverService  <a id="wheatstalk-web-carver-iwebcarverservice"></a>
+## interface IHttpRouteHeaderMatch  <a id="wheatstalk-web-carver-ihttprouteheadermatch"></a>
 
-__Implemented by__: [WebCarverService](#wheatstalk-web-carver-webcarverservice)
+__Obtainable from__: [HttpRouteHeaderMatch](#wheatstalk-web-carver-httprouteheadermatch).[exact](#wheatstalk-web-carver-httprouteheadermatch#wheatstalk-web-carver-httprouteheadermatch-exact)(), [HttpRouteHeaderMatch](#wheatstalk-web-carver-httprouteheadermatch).[prefix](#wheatstalk-web-carver-httprouteheadermatch#wheatstalk-web-carver-httprouteheadermatch-prefix)(), [HttpRouteHeaderMatch](#wheatstalk-web-carver-httprouteheadermatch).[range](#wheatstalk-web-carver-httprouteheadermatch#wheatstalk-web-carver-httprouteheadermatch-range)(), [HttpRouteHeaderMatch](#wheatstalk-web-carver-httprouteheadermatch).[regex](#wheatstalk-web-carver-httprouteheadermatch#wheatstalk-web-carver-httprouteheadermatch-regex)(), [HttpRouteHeaderMatch](#wheatstalk-web-carver-httprouteheadermatch).[suffix](#wheatstalk-web-carver-httprouteheadermatch#wheatstalk-web-carver-httprouteheadermatch-suffix)()
+
+A request header matcher.
 
 
+## interface IRouter  <a id="wheatstalk-web-carver-irouter"></a>
+
+__Implemented by__: [Router](#wheatstalk-web-carver-router)
+
+A WebCarver router.
 
 ### Properties
 
@@ -518,35 +650,73 @@ __Implemented by__: [WebCarverService](#wheatstalk-web-carver-webcarverservice)
 Name | Type | Description 
 -----|------|-------------
 **connections** | <code>[Connections](#aws-cdk-aws-ec2-connections)</code> | <span></span>
+**env** | <code>[ResourceEnvironment](#aws-cdk-core-resourceenvironment)</code> | The environment this resource belongs to.
+**mesh**🔹 | <code>[IMesh](#aws-cdk-aws-appmesh-imesh)</code> | The Mesh which the VirtualRouter belongs to.
+**node** | <code>[ConstructNode](#aws-cdk-core-constructnode)</code> | The construct tree node for this construct.
+**stack** | <code>[Stack](#aws-cdk-core-stack)</code> | The stack in which this resource is defined.
+**virtualRouterArn**🔹 | <code>string</code> | The Amazon Resource Name (ARN) for the VirtualRouter.
+**virtualRouterName**🔹 | <code>string</code> | The name of the VirtualRouter.
+**virtualService** | <code>[IVirtualService](#aws-cdk-aws-appmesh-ivirtualservice)</code> | The virtual service for this router.
 
-
-
-## interface IWebCarverServiceExtension  <a id="wheatstalk-web-carver-iwebcarverserviceextension"></a>
-
-__Implemented by__: [Http2GatewayRouteExtension](#wheatstalk-web-carver-http2gatewayrouteextension), [HttpGatewayRouteExtension](#wheatstalk-web-carver-httpgatewayrouteextension), [LinkedServiceExtension](#wheatstalk-web-carver-linkedserviceextension)
-__Obtainable from__: [WebCarverServiceExtension](#wheatstalk-web-carver-webcarverserviceextension).[envVars](#wheatstalk-web-carver-webcarverserviceextension#wheatstalk-web-carver-webcarverserviceextension-envvars)(), [WebCarverServiceExtension](#wheatstalk-web-carver-webcarverserviceextension).[http2GatewayRoute](#wheatstalk-web-carver-webcarverserviceextension#wheatstalk-web-carver-webcarverserviceextension-http2gatewayroute)(), [WebCarverServiceExtension](#wheatstalk-web-carver-webcarverserviceextension).[httpGatewayRoute](#wheatstalk-web-carver-webcarverserviceextension#wheatstalk-web-carver-webcarverserviceextension-httpgatewayroute)(), [WebCarverServiceExtension](#wheatstalk-web-carver-webcarverserviceextension).[linkedService](#wheatstalk-web-carver-webcarverserviceextension#wheatstalk-web-carver-webcarverserviceextension-linkedservice)()
-
-Extends the service with additional features.
 ### Methods
 
 
-#### extend(scope, webCarverService) <a id="wheatstalk-web-carver-iwebcarverserviceextension-extend"></a>
+#### addRoute(id, props)🔹 <a id="wheatstalk-web-carver-irouter-addroute"></a>
 
-
+Add a single route to the router.
 
 ```ts
-extend(scope: Construct, webCarverService: WebCarverService): void
+addRoute(id: string, props: RouteBaseProps): Route
 ```
 
-* **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
-* **webCarverService** (<code>[WebCarverService](#wheatstalk-web-carver-webcarverservice)</code>)  *No description*
+* **id** (<code>string</code>)  *No description*
+* **props** (<code>[RouteBaseProps](#aws-cdk-aws-appmesh-routebaseprops)</code>)  *No description*
+  * **routeSpec** (<code>[RouteSpec](#aws-cdk-aws-appmesh-routespec)</code>)  Protocol specific spec. 
+  * **routeName** (<code>string</code>)  The name of the route. __*Default*__: An automatically generated name
+
+__Returns__:
+* <code>[Route](#aws-cdk-aws-appmesh-route)</code>
 
 
 
+## interface IService  <a id="wheatstalk-web-carver-iservice"></a>
+
+__Implemented by__: [Service](#wheatstalk-web-carver-service)
+
+A WebCarver service.
+
+### Properties
+
+
+Name | Type | Description 
+-----|------|-------------
+**connections** | <code>[Connections](#aws-cdk-aws-ec2-connections)</code> | <span></span>
+**virtualService** | <code>[IVirtualService](#aws-cdk-aws-appmesh-ivirtualservice)</code> | The virtual service representation of the WebCarver service.
 
 
 
-## struct LinkedServiceExtensionProps  <a id="wheatstalk-web-carver-linkedserviceextensionprops"></a>
+## interface IServiceExtension  <a id="wheatstalk-web-carver-iserviceextension"></a>
+
+__Obtainable from__: [ServiceExtension](#wheatstalk-web-carver-serviceextension).[envVars](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-envvars)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[http2GatewayRoute](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-http2gatewayroute)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[httpGatewayRoute](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-httpgatewayroute)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[httpRoute](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-httproute)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[linkedService](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-linkedservice)()
+
+Extends the service with additional features.
+
+
+## interface IServiceListener  <a id="wheatstalk-web-carver-iservicelistener"></a>
+
+__Obtainable from__: [ServiceListener](#wheatstalk-web-carver-servicelistener).[http1](#wheatstalk-web-carver-servicelistener#wheatstalk-web-carver-servicelistener-http1)(), [ServiceListener](#wheatstalk-web-carver-servicelistener).[http2](#wheatstalk-web-carver-servicelistener#wheatstalk-web-carver-servicelistener-http2)()
+
+A service listener.
+
+
+## interface IServiceName  <a id="wheatstalk-web-carver-iservicename"></a>
+
+__Obtainable from__: [ServiceName](#wheatstalk-web-carver-servicename).[hostName](#wheatstalk-web-carver-servicename#wheatstalk-web-carver-servicename-hostname)()
+
+How to name the service.
+
+
+## struct LinkedServiceExtensionOptions  <a id="wheatstalk-web-carver-linkedserviceextensionoptions"></a>
 
 
 Props for `LinkedServiceExtension`.
@@ -555,56 +725,39 @@ Props for `LinkedServiceExtension`.
 
 Name | Type | Description 
 -----|------|-------------
-**webCarverService** | <code>[WebCarverService](#wheatstalk-web-carver-webcarverservice)</code> | <span></span>
+**service** | <code>[Service](#wheatstalk-web-carver-service)</code> | The Web Carver service to link to.
 
 
 
-## struct WebCarverEnvironmentProps  <a id="wheatstalk-web-carver-webcarverenvironmentprops"></a>
+## struct RouterProps  <a id="wheatstalk-web-carver-routerprops"></a>
 
 
-
-
-
-
-Name | Type | Description 
------|------|-------------
-**certificates**? | <code>Array<[ICertificate](#aws-cdk-aws-certificatemanager-icertificate)></code> | __*Optional*__
-**cloudMapNamespace**? | <code>[INamespace](#aws-cdk-aws-servicediscovery-inamespace)</code> | __*Optional*__
-**mesh**? | <code>[IMesh](#aws-cdk-aws-appmesh-imesh)</code> | __*Optional*__
-**namespace**? | <code>[IPrivateDnsNamespace](#aws-cdk-aws-servicediscovery-iprivatednsnamespace) &#124; [IPublicDnsNamespace](#aws-cdk-aws-servicediscovery-ipublicdnsnamespace)</code> | __*Optional*__
-**vpc**? | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | __*Optional*__
-
-
-
-## struct WebCarverListenerInfo  <a id="wheatstalk-web-carver-webcarverlistenerinfo"></a>
-
-
-
+Props for `Router`.
 
 
 
 Name | Type | Description 
 -----|------|-------------
-**containerPort** | <code>number</code> | <span></span>
-**protocol** | <code>[Protocol](#aws-cdk-aws-ecs-protocol)</code> | <span></span>
-**virtualNodeListener**? | <code>[VirtualNodeListener](#aws-cdk-aws-appmesh-virtualnodelistener)</code> | __*Optional*__
+**mesh** | <code>[IMesh](#aws-cdk-aws-appmesh-imesh)</code> | The mesh to create the router in.
+**vpc** | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | The VPC to create the router's security group in.
 
 
 
-## struct WebCarverServiceProps  <a id="wheatstalk-web-carver-webcarverserviceprops"></a>
+## struct ServiceProps  <a id="wheatstalk-web-carver-serviceprops"></a>
 
 
-
+Props for `Service`.
 
 
 
 Name | Type | Description 
 -----|------|-------------
-**environment** | <code>[IWebCarverEnvironment](#wheatstalk-web-carver-iwebcarverenvironment)</code> | The Web Carver environment in which to create the service.
+**environment** | <code>[IEnvironment](#wheatstalk-web-carver-ienvironment)</code> | The Web Carver environment in which to create the service.
 **image** | <code>[ContainerImage](#aws-cdk-aws-ecs-containerimage)</code> | The image of the main container.
-**extensions**? | <code>Array<[IWebCarverServiceExtension](#wheatstalk-web-carver-iwebcarverserviceextension)></code> | Add extensions to your service to add features.<br/>__*Optional*__
+**extensions**? | <code>Array<[IServiceExtension](#wheatstalk-web-carver-iserviceextension)></code> | Add extensions to your service to add features.<br/>__*Optional*__
 **hostName**? | <code>string</code> | Suffix the service name with a host name.<br/>__*Optional*__
-**listeners**? | <code>Array<[IWebCarverListener](#wheatstalk-web-carver-iwebcarverlistener)></code> | Description of the main traffic port of the main container.<br/>__*Optional*__
+**listeners**? | <code>Array<[IServiceListener](#wheatstalk-web-carver-iservicelistener)></code> | Description of the main traffic port of the main container.<br/>__*Optional*__
+**name**? | <code>[IServiceName](#wheatstalk-web-carver-iservicename)</code> | Choose a service name.<br/>__*Default*__: one is chosen for you
 **useRouter**? | <code>boolean</code> | Use a router to provide connectivity to the service.<br/>__*Default*__: false
 
 

@@ -8,11 +8,16 @@ import { AddUtilityEnvoyExtension } from './add-utility-envoy-extension';
 /**
  * Props for `FargateVirtualGateway`
  */
-export interface FargateVirtualGatewayProps extends ecs.BaseServiceOptions {
+export interface FargateVirtualGatewayServiceProps extends ecs.BaseServiceOptions {
   /**
-   * The service mesh in which to create the virtual gateway.
+   * Provide a virtual gateway to use.
    */
-  readonly mesh: appmesh.IMesh;
+  readonly virtualGateway: appmesh.IVirtualGateway;
+
+  /**
+   * Provide a port for the virtual gateway to listen on.
+   */
+  readonly virtualGatewayPort?: number;
 
   /**
    * Envoy container image.
@@ -42,31 +47,30 @@ export interface FargateVirtualGatewayProps extends ecs.BaseServiceOptions {
    * Use VPC subnets.
    */
   readonly vpcSubnets?: ec2.SubnetSelection;
+
+  /**
+   * Security groups
+   */
+  readonly securityGroups?: ec2.ISecurityGroup[];
 }
 
 /**
  * Creates an AppMesh Virtual Gateway that can be used for ingress traffic
  */
-export class FargateVirtualGateway extends cdk.Construct {
-  /**
-   * Task definition of the Virtual Gateway
-   */
-  private readonly taskDefinition: ecs.FargateTaskDefinition;
-
+export class FargateVirtualGatewayService extends cdk.Construct {
   /**
    * ECS service of the Virtual Gateway
    */
   public readonly service: ecs.FargateService;
 
-  /**
-   * The AppMesh Virtual Gateway
-   */
-  public readonly virtualGateway: appmesh.VirtualGateway;
-
-  constructor(scope: cdk.Construct, id: string, props: FargateVirtualGatewayProps) {
+  constructor(scope: cdk.Construct, id: string, props: FargateVirtualGatewayServiceProps) {
     super(scope, id);
 
-    this.taskDefinition = new ecs.FargateTaskDefinition(this, 'GatewayTaskDefinition', {
+    const virtualGatewayPort = props.virtualGatewayPort ?? 8080;
+    const utilEnvoyPort = virtualGatewayPort + 8000;
+    const utilEnvoyAdminPort = 9902; // virtual gateway uses 9901
+
+    const taskDefinition = new ecs.FargateTaskDefinition(this, 'GatewayTaskDefinition', {
       cpu: props.cpu,
       memoryLimitMiB: props.memoryLimitMiB,
     });
@@ -76,11 +80,7 @@ export class FargateVirtualGateway extends cdk.Construct {
     // UtilEnvoy adds the X-Forwarded-Host header so that the mesh can route
     // requests by the original host header.
 
-    const utilEnvoyPort = 8080;
-    const utilEnvoyAdminPort = 9902; // virtual gateway uses 9901
-    const virtualGatewayEnvoyPort = 8081;
-
-    this.taskDefinition.addExtension(
+    taskDefinition.addExtension(
       new AddUtilityEnvoyExtension({
         containerName: 'UtilEnvoy',
         containerPorts: [utilEnvoyPort],
@@ -89,29 +89,29 @@ export class FargateVirtualGateway extends cdk.Construct {
         envoyConfigVars: {
           ENVOY_ADMIN_PORT: utilEnvoyAdminPort.toString(),
           ENVOY_UPSTREAM_PORT: utilEnvoyPort.toString(),
-          ENVOY_DOWNSTREAM_PORT: virtualGatewayEnvoyPort.toString(),
+          ENVOY_DOWNSTREAM_PORT: virtualGatewayPort.toString(),
         },
         // Give a unique SHM ID so that this envoy can coexist with AppMesh's
         // envoy on the same task.
         baseId: 1,
       }));
 
-    this.virtualGateway = new appmesh.VirtualGateway(this, 'VirtualGateway', {
-      mesh: props.mesh,
-      listeners: [appmesh.VirtualGatewayListener.http2({ port: virtualGatewayEnvoyPort })],
-    });
+    // Fargate does not support CAP_NET_BIND_SERVICE, so to bind low ports,
+    // we need to run envoy as root.
+    const envoyUser = virtualGatewayPort < 1024 ? 0 : undefined;
 
-    this.taskDefinition.addExtension(
+    taskDefinition.addExtension(
       new AddAppMeshEnvoyExtension({
         containerName: 'VirtualGatewayEnvoy',
-        endpointArn: this.virtualGateway.virtualGatewayArn,
         image: props.image,
-        containerPorts: [virtualGatewayEnvoyPort],
+        containerPorts: [virtualGatewayPort],
+        envoyUser: envoyUser,
+        endpointArn: props.virtualGateway.virtualGatewayArn,
         patchProxyConfiguration: false,
       }));
 
     this.service = new ecs.FargateService(this, 'GatewayService', {
-      taskDefinition: this.taskDefinition,
+      taskDefinition: taskDefinition,
       circuitBreaker: { rollback: true },
       ...props,
     });

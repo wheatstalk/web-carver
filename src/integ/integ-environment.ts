@@ -1,73 +1,76 @@
 import * as path from 'path';
-import * as ec2 from '@aws-cdk/aws-ec2';
 import * as ecs from '@aws-cdk/aws-ecs';
 import * as cdk from '@aws-cdk/core';
-import { WebCarverContext } from '../config';
-import { WebCarverEnvironment } from '../web-carver-environment';
-import { WebCarverListener, WebCarverService, WebCarverServiceExtension } from '../web-carver-service';
+import { Environment } from '../environment';
+import { PreferencesContext } from '../preferences';
+import { ServiceListener, Service, ServiceExtension, HttpRouteHeaderMatch, ServiceName } from '../service';
 
 export class IntegEnvironment extends cdk.Stack {
   constructor(scope: cdk.Construct) {
     super(scope, 'integ-environment');
 
-    WebCarverContext.set(this.node, {
+    PreferencesContext.set(this.node, {
       usePublicServiceNetworking: true,
       useFargateSpot: true,
     });
 
-    const environment = new WebCarverEnvironment(this, 'Environment');
-    // Let me in!!
-    environment.defaultGateway.connections.allowFromAnyIpv4(ec2.Port.allTraffic());
+    const environment = new Environment(this, 'Environment');
 
-    const echo = new WebCarverService(this, 'Echo', {
+    new Service(this, 'GatewayEcho', {
       environment,
-      hostName: 'echo',
+      name: ServiceName.hostName('gateway-echo'),
       image: ecs.ContainerImage.fromRegistry('jmalloc/echo-server'),
-      listeners: [WebCarverListener.http2(80)],
+      listeners: [ServiceListener.http2(80)],
       extensions: [
-        WebCarverServiceExtension.envVars({ PORT: '80' }),
-        WebCarverServiceExtension.http2GatewayRoute(),
+        ServiceExtension.envVars({ PORT: '80' }),
+        ServiceExtension.http2GatewayRoute({ prefixPath: '/gateway-echo' }),
       ],
     });
-    echo.connections.allowFromAnyIpv4(ec2.Port.allTraffic());
 
-    new WebCarverService(this, 'EchoV1', {
+    new Service(this, 'RoutedEcho', {
       environment,
-      hostName: 'echo-v1',
+      name: ServiceName.hostName('routed-echo'),
       image: ecs.ContainerImage.fromRegistry('jmalloc/echo-server'),
-      listeners: [WebCarverListener.http1(80)],
+      listeners: [ServiceListener.http1(80)],
       extensions: [
-        WebCarverServiceExtension.envVars({ PORT: '80' }),
-        WebCarverServiceExtension.http2GatewayRoute({
-          prefixPath: '/v1',
+        ServiceExtension.envVars({ PORT: '80' }),
+        // Handle requests on /echo
+        ServiceExtension.httpRoute({
+          prefixPath: '/echo',
+        }),
+        // Handle requests to routed-echo.myexample.com
+        ServiceExtension.httpRoute({
+          headers: [
+            HttpRouteHeaderMatch.exact('x-forwarded-host', 'routed-echo.myexample.com'),
+          ],
         }),
       ],
     });
 
-    const backend = new WebCarverService(this, 'Backend', {
+    const backend = new Service(this, 'Backend', {
       environment,
-      hostName: 'backend',
+      name: ServiceName.hostName('backend'),
       image: ecs.ContainerImage.fromAsset(path.join(__dirname, 'mesh-app')),
-      listeners: [WebCarverListener.http1(80)],
+      listeners: [ServiceListener.http1(80)],
       extensions: [
-        WebCarverServiceExtension.envVars({ FLASK_APP: 'backend.py' }),
-        WebCarverServiceExtension.http2GatewayRoute({
+        ServiceExtension.envVars({ FLASK_APP: 'backend.py' }),
+        ServiceExtension.httpRoute({
           prefixPath: '/backend',
         }),
       ],
     });
 
-    new WebCarverService(this, 'Consumer', {
+    new Service(this, 'Consumer', {
       environment,
-      hostName: 'consumer',
+      name: ServiceName.hostName('consumer'),
       image: ecs.ContainerImage.fromAsset(path.join(__dirname, 'mesh-app')),
-      listeners: [WebCarverListener.http1(80)],
+      listeners: [ServiceListener.http1(80)],
       extensions: [
-        WebCarverServiceExtension.envVars({ FLASK_APP: 'consumer.py' }),
-        WebCarverServiceExtension.http2GatewayRoute({
+        ServiceExtension.envVars({ FLASK_APP: 'consumer.py' }),
+        ServiceExtension.httpRoute({
           prefixPath: '/consumer',
         }),
-        WebCarverServiceExtension.linkedService({ webCarverService: backend }),
+        ServiceExtension.linkedService({ service: backend }),
       ],
     });
   }

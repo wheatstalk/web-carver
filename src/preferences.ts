@@ -1,9 +1,12 @@
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as cdk from '@aws-cdk/core';
 
-const WEB_CARVER_CONTEXT = 'wheatstalk:web-carver:priorities';
+const WEB_CARVER_CONTEXT = 'wheatstalk:web-carver:preferences';
 
-export interface WebCarverContextOptions {
+/**
+ * Global preferences.
+ */
+export interface Preferences {
   /**
    * Use cheap networking. When enabled, we don't spin up any NAT gateways when
    * we create a VPC and tasks are assigned public IP addresses. By default,
@@ -21,29 +24,48 @@ export interface WebCarverContextOptions {
   readonly useFargateSpot?: boolean;
 }
 
-export abstract class WebCarverContext {
-  static set(node: cdk.ConstructNode, context: WebCarverContextOptions) {
+/**
+ * Get or set preferences by context.
+ */
+export abstract class PreferencesContext {
+  /**
+   * Set the preferences.
+   */
+  static set(node: cdk.ConstructNode, context: Preferences) {
     node.setContext(WEB_CARVER_CONTEXT, context);
   }
 
-  static get(node: cdk.ConstructNode): WebCarverContextOptions {
+  /**
+   * Get preferences
+   */
+  static get(node: cdk.ConstructNode): Preferences {
     return node.tryGetContext(WEB_CARVER_CONTEXT) ?? {
       usePublicServiceNetworking: false,
       useFargateSpot: false,
     };
   }
 
+  /**
+   * Get preference for using public service networking.
+   */
   static usePublicServiceNetworking(node: cdk.ConstructNode): boolean {
-    return WebCarverContext.get(node).usePublicServiceNetworking ?? false;
+    return PreferencesContext.get(node).usePublicServiceNetworking ?? false;
   }
 
+  /**
+   * Get preference for using Fargate spot.
+   * @param node
+   */
   static useFargateSpot(node: cdk.ConstructNode): boolean {
-    return WebCarverContext.get(node).useFargateSpot ?? false;
+    return PreferencesContext.get(node).useFargateSpot ?? false;
   }
 }
 
+/**
+ * @internal
+ */
 export function defaultServiceNetworkConfig(node: cdk.ConstructNode): ServiceNetworkConfig {
-  if (WebCarverContext.usePublicServiceNetworking(node)) {
+  if (PreferencesContext.usePublicServiceNetworking(node)) {
     return {
       assignPublicIp: true,
     };
@@ -52,6 +74,9 @@ export function defaultServiceNetworkConfig(node: cdk.ConstructNode): ServiceNet
   }
 }
 
+/**
+ * @internal
+ */
 export interface ServiceNetworkConfig {
   readonly vpcSubnets?: ec2.SubnetSelection;
   readonly assignPublicIp?: boolean;
@@ -63,7 +88,7 @@ export interface ServiceNetworkConfig {
  * @internal
  */
 export function defaultCapacityProviderStrategy(node: cdk.ConstructNode) {
-  if (WebCarverContext.useFargateSpot(node)) {
+  if (PreferencesContext.useFargateSpot(node)) {
     return [
       {
         capacityProvider: 'FARGATE_SPOT',

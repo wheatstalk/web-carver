@@ -1,16 +1,16 @@
 import { expect as expectCDK, haveResourceLike } from '@aws-cdk/assert';
 import * as ecs from '@aws-cdk/aws-ecs';
 import * as cdk from '@aws-cdk/core';
-import { WebCarverEnvironment, WebCarverListener, WebCarverService, WebCarverServiceExtension } from '../src';
+import * as webcarver from '../src';
 
-describe('WebCarver Service', () => {
+describe('Service', () => {
   test('creating a service creates an appmesh node & service', () => {
     // GIVEN
     const stack = new cdk.Stack();
-    const environment = new WebCarverEnvironment(stack, 'WebCarver');
+    const environment = new webcarver.Environment(stack, 'WebCarver');
 
     // WHEN
-    new WebCarverService(stack, 'Http', {
+    new webcarver.Service(stack, 'Http', {
       environment,
       image: ecs.ContainerImage.fromRegistry('nginx'),
     });
@@ -24,10 +24,10 @@ describe('WebCarver Service', () => {
   test('creating a service adds the envoy sidecar with proxy config', () => {
     // GIVEN
     const stack = new cdk.Stack();
-    const environment = new WebCarverEnvironment(stack, 'WebCarver');
+    const environment = new webcarver.Environment(stack, 'WebCarver');
 
     // WHEN
-    new WebCarverService(stack, 'Http', {
+    new webcarver.Service(stack, 'Http', {
       environment,
       image: ecs.ContainerImage.fromRegistry('nginx'),
     });
@@ -54,14 +54,14 @@ describe('WebCarver Service', () => {
   test('creating a service with a listener creates a port mapping and virtual node listener', () => {
     // GIVEN
     const stack = new cdk.Stack();
-    const environment = new WebCarverEnvironment(stack, 'WebCarver');
+    const environment = new webcarver.Environment(stack, 'WebCarver');
 
     // WHEN
-    new WebCarverService(stack, 'Http', {
+    new webcarver.Service(stack, 'Http', {
       environment,
       image: ecs.ContainerImage.fromRegistry('nginx'),
       listeners: [
-        WebCarverListener.http2(80),
+        webcarver.ServiceListener.http2(80),
       ],
     });
 
@@ -88,16 +88,16 @@ describe('WebCarver Service', () => {
 
     // GIVEN
     const stack = new cdk.Stack();
-    const environment = new WebCarverEnvironment(stack, 'WebCarver');
+    const environment = new webcarver.Environment(stack, 'WebCarver');
 
     // WHEN / THEN
     expect(() => {
-      new WebCarverService(stack, 'Http', {
+      new webcarver.Service(stack, 'Http', {
         environment,
         image: ecs.ContainerImage.fromRegistry('nginx'),
         listeners: [
-          WebCarverListener.http2(80),
-          WebCarverListener.http2(8080),
+          webcarver.ServiceListener.http2(80),
+          webcarver.ServiceListener.http2(8080),
         ],
       });
     }).toThrow(/more than one.*AppMesh/i);
@@ -106,16 +106,16 @@ describe('WebCarver Service', () => {
   test('can add an http2 service', () => {
     // GIVEN
     const stack = new cdk.Stack();
-    const environment = new WebCarverEnvironment(stack, 'WebCarver');
+    const environment = new webcarver.Environment(stack, 'WebCarver');
 
     // WHEN
-    new WebCarverService(stack, 'EchoV2', {
+    new webcarver.Service(stack, 'EchoV2', {
       environment,
       image: ecs.ContainerImage.fromRegistry('nginx'),
-      listeners: [WebCarverListener.http2(80)],
+      listeners: [webcarver.ServiceListener.http2(80)],
       extensions: [
-        WebCarverServiceExtension.http2GatewayRoute({ prefixPath: '/first' }),
-        WebCarverServiceExtension.http2GatewayRoute({ prefixPath: '/second' }),
+        webcarver.ServiceExtension.http2GatewayRoute({ prefixPath: '/first' }),
+        webcarver.ServiceExtension.http2GatewayRoute({ prefixPath: '/second' }),
       ],
     });
 

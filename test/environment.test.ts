@@ -2,8 +2,8 @@ import { haveResourceLike } from '@aws-cdk/assert';
 import { expect as expectCDK } from '@aws-cdk/assert/lib/expect';
 import * as acm from '@aws-cdk/aws-certificatemanager';
 import * as cdk from '@aws-cdk/core';
-import { WebCarverEnvironment } from '../src';
-import { WebCarverContext } from '../src/config';
+import { Environment } from '../src';
+import { PreferencesContext } from '../src/preferences';
 
 describe('Webcarver Environment', () => {
   test('can create a packaged environment', () => {
@@ -11,7 +11,7 @@ describe('Webcarver Environment', () => {
     const stack = new cdk.Stack();
 
     // WHEN
-    new WebCarverEnvironment(stack, 'WebCarver');
+    new Environment(stack, 'WebCarver');
 
     // THEN
     expectCDK(stack).to(haveResourceLike('AWS::ECS::Cluster'));
@@ -32,7 +32,7 @@ describe('Webcarver Environment', () => {
     });
 
     // WHEN
-    new WebCarverEnvironment(stack, 'WebCarver', {
+    new Environment(stack, 'WebCarver', {
       certificates: [certificate],
     });
 
@@ -58,7 +58,7 @@ describe('Webcarver Environment', () => {
     const stack = new cdk.Stack();
 
     // WHEN
-    new WebCarverEnvironment(stack, 'WebCarver');
+    new Environment(stack, 'WebCarver');
 
     expectCDK(stack).to(haveResourceLike('AWS::EC2::VPC'));
     expectCDK(stack).to(haveResourceLike('AWS::EC2::Subnet', {
@@ -98,12 +98,12 @@ describe('Webcarver Environment', () => {
   test('public service networking creates an all-public with vpc', () => {
     // GIVEN
     const stack = new cdk.Stack();
-    WebCarverContext.set(stack.node, {
+    PreferencesContext.set(stack.node, {
       usePublicServiceNetworking: true,
     });
 
     // WHEN
-    new WebCarverEnvironment(stack, 'WebCarver');
+    new Environment(stack, 'WebCarver');
 
     expectCDK(stack).to(haveResourceLike('AWS::EC2::VPC'));
     expectCDK(stack).to(haveResourceLike('AWS::EC2::Subnet', {
@@ -148,7 +148,7 @@ describe('Webcarver Environment', () => {
     const stack = new cdk.Stack(app, 'MyStack');
 
     // WHEN
-    new WebCarverEnvironment(stack, 'WebCarver');
+    new Environment(stack, 'WebCarver');
 
     // THEN
     expectCDK(stack).to(haveResourceLike('AWS::ServiceDiscovery::PrivateDnsNamespace', {

@@ -5,49 +5,60 @@ import * as ecs from '@aws-cdk/aws-ecs';
 import * as elbv2 from '@aws-cdk/aws-elasticloadbalancingv2';
 import * as servicediscovery from '@aws-cdk/aws-servicediscovery';
 import * as cdk from '@aws-cdk/core';
-import { defaultCapacityProviderStrategy, defaultServiceNetworkConfig } from './config';
-import { FargateVirtualGateway } from './util';
+import { defaultCapacityProviderStrategy, defaultServiceNetworkConfig } from '../preferences';
+import { FargateVirtualGatewayService } from '../util-private';
+import { IGateway } from './api';
 
-export interface IWebCarverGateway extends ec2.IConnectable {
-  readonly virtualGateway: appmesh.IVirtualGateway;
-}
-
-export interface ApplicationLoadBalancedWebCarverGatewayProps {
+/**
+ * Props for `ApplicationLoadBalancedFargateGateway`
+ */
+export interface ApplicationLoadBalancedFargateGatewayProps {
   readonly cluster: ecs.ICluster;
   readonly mesh: appmesh.IMesh;
   readonly namespace: servicediscovery.INamespace;
   readonly certificates: acm.ICertificate[];
+  readonly securityGroups?: ec2.ISecurityGroup[];
 }
 
-export class ApplicationLoadBalancedWebCarverGateway extends cdk.Construct implements IWebCarverGateway {
-  public readonly virtualGateway: appmesh.IVirtualGateway;
+/**
+ * Creates a gateway with an Application Load Balancer and Fargate service.
+ */
+export class ApplicationLoadBalancedFargateGateway extends appmesh.VirtualGateway implements IGateway {
   public readonly connections: ec2.Connections;
 
-  constructor(scope: cdk.Construct, id: string, props: ApplicationLoadBalancedWebCarverGatewayProps) {
-    super(scope, id);
+  constructor(scope: cdk.Construct, id: string, props: ApplicationLoadBalancedFargateGatewayProps) {
+    // 8080 is the default, but we're going to be explicit to be more robust.
+    const virtualGatewayPort = 8080;
+
+    super(scope, id, {
+      mesh: props.mesh,
+      listeners: [appmesh.VirtualGatewayListener.http2({ port: virtualGatewayPort })],
+    });
+
+    const serviceNetworkConfig = defaultServiceNetworkConfig(this.node);
+
+    const { service } = new FargateVirtualGatewayService(this, 'Fargate', {
+      // Mesh props
+      virtualGateway: this,
+      virtualGatewayPort: virtualGatewayPort,
+
+      // Capacity props
+      cluster: props.cluster,
+      cloudMapOptions: { cloudMapNamespace: props.namespace },
+      healthCheckGracePeriod: cdk.Duration.minutes(30),
+      capacityProviderStrategies: defaultCapacityProviderStrategy(this.node),
+
+      // Networking configuration
+      vpcSubnets: serviceNetworkConfig.vpcSubnets,
+      assignPublicIp: serviceNetworkConfig.assignPublicIp,
+    });
+
+    this.connections = service.connections;
 
     const loadBalancer = new elbv2.ApplicationLoadBalancer(this, 'LoadBalancer', {
       vpc: props.cluster.vpc,
       internetFacing: true,
     });
-
-    const serviceNetworkConfig = defaultServiceNetworkConfig(this.node);
-    const fargateVirtualGateway = new FargateVirtualGateway(this, 'Fargate', {
-      mesh: props.mesh,
-      cluster: props.cluster,
-      cloudMapOptions: {
-        cloudMapNamespace: props.namespace,
-      },
-      healthCheckGracePeriod: cdk.Duration.minutes(30),
-
-      // Reasonable defaults from context for the following:
-      vpcSubnets: serviceNetworkConfig.vpcSubnets,
-      assignPublicIp: serviceNetworkConfig.assignPublicIp,
-      capacityProviderStrategies: defaultCapacityProviderStrategy(this.node),
-    });
-
-    this.virtualGateway = fargateVirtualGateway.virtualGateway;
-    this.connections = fargateVirtualGateway.service.connections;
 
     const listener = createListener(this, {
       certificates: props.certificates ?? [],
@@ -57,9 +68,9 @@ export class ApplicationLoadBalancedWebCarverGateway extends cdk.Construct imple
     listener.addTargets('Default', {
       protocol: elbv2.ApplicationProtocol.HTTP,
       targets: [
-        fargateVirtualGateway.service.loadBalancerTarget({
-          containerName: fargateVirtualGateway.service.taskDefinition.defaultContainer!.containerName,
-          containerPort: fargateVirtualGateway.service.taskDefinition.defaultContainer!.containerPort,
+        service.loadBalancerTarget({
+          containerName: service.taskDefinition.defaultContainer!.containerName,
+          containerPort: service.taskDefinition.defaultContainer!.containerPort,
         }),
       ],
       deregistrationDelay: cdk.Duration.seconds(10),

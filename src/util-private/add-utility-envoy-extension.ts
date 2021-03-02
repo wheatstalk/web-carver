@@ -84,7 +84,7 @@ export class AddUtilityEnvoyExtension implements ecs.ITaskDefinitionExtension {
     }
 
     const envoyAdminPort = this.envoyAdminPort;
-    const container = taskDefinition.addContainer(this.containerName, {
+    const envoy = taskDefinition.addContainer(this.containerName, {
       essential: true,
       image: ecs.ContainerImage.fromAsset(path.join(PACKAGE_ROOT, 'resources', 'util-envoy'), {
         buildArgs,
@@ -101,14 +101,14 @@ export class AddUtilityEnvoyExtension implements ecs.ITaskDefinitionExtension {
     });
 
     for (const listenerPort of this.containerPorts) {
-      container.addPortMappings({ containerPort: listenerPort });
+      envoy.addPortMappings({ containerPort: listenerPort });
     }
 
     if (this.envoyAdminPort) {
-      container.addPortMappings({ containerPort: this.envoyAdminPort });
+      envoy.addPortMappings({ containerPort: this.envoyAdminPort });
     }
 
-    container.addUlimits({
+    envoy.addUlimits({
       softLimit: 1024000,
       hardLimit: 1024000,
       name: ecs.UlimitName.NOFILE,
