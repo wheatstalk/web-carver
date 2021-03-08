@@ -19,6 +19,7 @@ Name|Description
 Name|Description
 ----|-----------
 [ApplicationLoadBalancedFargateGatewayProps](#wheatstalk-web-carver-applicationloadbalancedfargategatewayprops)|Props for `ApplicationLoadBalancedFargateGateway`.
+[ContainerExtensionOptions](#wheatstalk-web-carver-containerextensionoptions)|Container extension options.
 [EnvironmentProps](#wheatstalk-web-carver-environmentprops)|Props for `Environment`.
 [Http2GatewayRouteExtensionOptions](#wheatstalk-web-carver-http2gatewayrouteextensionoptions)|Options for adding gateway routes.
 [HttpGatewayRouteExtensionOptions](#wheatstalk-web-carver-httpgatewayrouteextensionoptions)|*No description*
@@ -267,12 +268,10 @@ new Service(scope: Construct, id: string, props: ServiceProps)
 * **id** (<code>string</code>)  *No description*
 * **props** (<code>[ServiceProps](#wheatstalk-web-carver-serviceprops)</code>)  *No description*
   * **environment** (<code>[IEnvironment](#wheatstalk-web-carver-ienvironment)</code>)  The Web Carver environment in which to create the service. 
-  * **image** (<code>[ContainerImage](#aws-cdk-aws-ecs-containerimage)</code>)  The image of the main container. 
   * **extensions** (<code>Array<[IServiceExtension](#wheatstalk-web-carver-iserviceextension)></code>)  Add extensions to your service to add features. __*Optional*__
   * **hostName** (<code>string</code>)  Suffix the service name with a host name. __*Optional*__
   * **listeners** (<code>Array<[IServiceListener](#wheatstalk-web-carver-iservicelistener)></code>)  Description of the main traffic port of the main container. __*Optional*__
   * **name** (<code>[IServiceName](#wheatstalk-web-carver-iservicename)</code>)  Choose a service name. __*Default*__: one is chosen for you
-  * **useRouter** (<code>boolean</code>)  Use a router to provide connectivity to the service. __*Default*__: false
 
 
 
@@ -283,6 +282,7 @@ Name | Type | Description
 -----|------|-------------
 **connections** | <code>[Connections](#aws-cdk-aws-ec2-connections)</code> | <span></span>
 **environment** | <code>[IEnvironment](#wheatstalk-web-carver-ienvironment)</code> | <span></span>
+**taskDefinition** | <code>[FargateTaskDefinition](#aws-cdk-aws-ecs-fargatetaskdefinition)</code> | <span></span>
 **virtualNode** | <code>[VirtualNode](#aws-cdk-aws-appmesh-virtualnode)</code> | <span></span>
 **virtualService** | <code>[IVirtualService](#aws-cdk-aws-appmesh-ivirtualservice)</code> | The virtual service representation of the WebCarver service.
 
@@ -322,6 +322,23 @@ new ServiceExtension()
 
 ### Methods
 
+
+#### *static* container(props) <a id="wheatstalk-web-carver-serviceextension-container"></a>
+
+
+
+```ts
+static container(props: ContainerExtensionOptions): IServiceExtension
+```
+
+* **props** (<code>[ContainerExtensionOptions](#wheatstalk-web-carver-containerextensionoptions)</code>)  *No description*
+  * **image** (<code>[ContainerImage](#aws-cdk-aws-ecs-containerimage)</code>)  *No description* 
+  * **environment** (<code>Map<string, string></code>)  *No description* __*Optional*__
+  * **name** (<code>string</code>)  Name of the container. __*Default*__: 'Main'
+  * **secret** (<code>Map<string, [Secret](#aws-cdk-aws-ecs-secret)></code>)  *No description* __*Optional*__
+
+__Returns__:
+* <code>[IServiceExtension](#wheatstalk-web-carver-iserviceextension)</code>
 
 #### *static* envVars(env) <a id="wheatstalk-web-carver-serviceextension-envvars"></a>
 
@@ -392,6 +409,7 @@ static linkedService(options: LinkedServiceExtensionOptions): IServiceExtension
 
 * **options** (<code>[LinkedServiceExtensionOptions](#wheatstalk-web-carver-linkedserviceextensionoptions)</code>)  *No description*
   * **service** (<code>[Service](#wheatstalk-web-carver-service)</code>)  The Web Carver service to link to. 
+  * **name** (<code>string</code>)  Name of the linked service for environment variable choice. __*Optional*__
 
 __Returns__:
 * <code>[IServiceExtension](#wheatstalk-web-carver-iserviceextension)</code>
@@ -493,6 +511,22 @@ Name | Type | Description
 **mesh** | <code>[IMesh](#aws-cdk-aws-appmesh-imesh)</code> | <span></span>
 **namespace** | <code>[INamespace](#aws-cdk-aws-servicediscovery-inamespace)</code> | <span></span>
 **securityGroups**? | <code>Array<[ISecurityGroup](#aws-cdk-aws-ec2-isecuritygroup)></code> | __*Optional*__
+
+
+
+## struct ContainerExtensionOptions  <a id="wheatstalk-web-carver-containerextensionoptions"></a>
+
+
+Container extension options.
+
+
+
+Name | Type | Description 
+-----|------|-------------
+**image** | <code>[ContainerImage](#aws-cdk-aws-ecs-containerimage)</code> | <span></span>
+**environment**? | <code>Map<string, string></code> | __*Optional*__
+**name**? | <code>string</code> | Name of the container.<br/>__*Default*__: 'Main'
+**secret**? | <code>Map<string, [Secret](#aws-cdk-aws-ecs-secret)></code> | __*Optional*__
 
 
 
@@ -697,7 +731,7 @@ Name | Type | Description
 
 ## interface IServiceExtension  <a id="wheatstalk-web-carver-iserviceextension"></a>
 
-__Obtainable from__: [ServiceExtension](#wheatstalk-web-carver-serviceextension).[envVars](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-envvars)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[http2GatewayRoute](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-http2gatewayroute)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[httpGatewayRoute](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-httpgatewayroute)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[httpRoute](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-httproute)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[linkedService](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-linkedservice)()
+__Obtainable from__: [ServiceExtension](#wheatstalk-web-carver-serviceextension).[container](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-container)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[envVars](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-envvars)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[http2GatewayRoute](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-http2gatewayroute)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[httpGatewayRoute](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-httpgatewayroute)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[httpRoute](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-httproute)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[linkedService](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-linkedservice)()
 
 Extends the service with additional features.
 
@@ -726,6 +760,7 @@ Props for `LinkedServiceExtension`.
 Name | Type | Description 
 -----|------|-------------
 **service** | <code>[Service](#wheatstalk-web-carver-service)</code> | The Web Carver service to link to.
+**name**? | <code>string</code> | Name of the linked service for environment variable choice.<br/>__*Optional*__
 
 
 
@@ -753,12 +788,10 @@ Props for `Service`.
 Name | Type | Description 
 -----|------|-------------
 **environment** | <code>[IEnvironment](#wheatstalk-web-carver-ienvironment)</code> | The Web Carver environment in which to create the service.
-**image** | <code>[ContainerImage](#aws-cdk-aws-ecs-containerimage)</code> | The image of the main container.
 **extensions**? | <code>Array<[IServiceExtension](#wheatstalk-web-carver-iserviceextension)></code> | Add extensions to your service to add features.<br/>__*Optional*__
 **hostName**? | <code>string</code> | Suffix the service name with a host name.<br/>__*Optional*__
 **listeners**? | <code>Array<[IServiceListener](#wheatstalk-web-carver-iservicelistener)></code> | Description of the main traffic port of the main container.<br/>__*Optional*__
 **name**? | <code>[IServiceName](#wheatstalk-web-carver-iservicename)</code> | Choose a service name.<br/>__*Default*__: one is chosen for you
-**useRouter**? | <code>boolean</code> | Use a router to provide connectivity to the service.<br/>__*Default*__: false
 
 
 

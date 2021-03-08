@@ -3,7 +3,7 @@ const { AwsCdkConstructLibrary } = require('projen');
 const project = new AwsCdkConstructLibrary({
   author: 'Josh Kellendonk',
   authorAddress: 'joshkellendonk@gmail.com',
-  cdkVersion: '1.91.0',
+  cdkVersion: '1.92.0',
   defaultReleaseBranch: 'main',
   jsiiFqn: 'projen.AwsCdkConstructLibrary',
   name: '@wheatstalk/web-carver',

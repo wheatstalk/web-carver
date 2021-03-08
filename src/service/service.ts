@@ -6,8 +6,9 @@ import * as cdk from '@aws-cdk/core';
 import { IEnvironment } from '../environment';
 import { defaultCapacityProviderStrategy, defaultServiceNetworkConfig } from '../preferences';
 import { AddAppMeshEnvoyExtension } from '../util-private';
-import { IServiceExtension } from './service-extension';
-import { IServiceListener } from './service-listener';
+import { Filter, PubSub } from './events';
+import { IServiceExtension } from './service-extension/api';
+import { IServiceListener, ServiceListenerConfig } from './service-listener';
 
 /**
  * A WebCarver service.
@@ -47,20 +48,16 @@ export interface ServiceProps {
   readonly extensions?: IServiceExtension[];
 
   /**
-   * The image of the main container.
-   */
-  readonly image: ecs.ContainerImage;
-
-  /**
    * Description of the main traffic port of the main container.
    */
   readonly listeners?: IServiceListener[];
+}
 
-  /**
-   * Use a router to provide connectivity to the service.
-   * @default false
-   */
-  readonly useRouter?: boolean;
+/** @internal */
+export interface WorkloadOptions {
+  readonly taskDefinition: ecs.FargateTaskDefinition;
+  readonly service: ecs.FargateService;
+  readonly serviceListenerConfig: ServiceListenerConfig[];
 }
 
 /**
@@ -68,16 +65,60 @@ export interface ServiceProps {
  */
 export class Service extends cdk.Construct implements IService {
   public readonly environment: IEnvironment;
+  public readonly taskDefinition: ecs.FargateTaskDefinition;
   public get virtualService(): appmesh.IVirtualService { return this._virtualService; }
   public readonly virtualNode: appmesh.VirtualNode;
   public readonly connections: ec2.Connections;
 
   private readonly _virtualService: appmesh.VirtualService;
   private readonly fargateService: ecs.FargateService;
-  private readonly envVars: Record<string, string> = {};
+
+  /**
+   * Filter the Fargate Task Definition props.
+   * @internal
+   */
+  public readonly _filterTaskDefinitionProps = new Filter<ecs.FargateTaskDefinitionProps>();
+
+  /**
+   * Filter the Fargate Service construct props.
+   * @internal
+   */
+  public readonly _filterServiceProps = new Filter<ecs.FargateServiceProps>();
+
+  /**
+   * The virtual node is available.
+   * @internal
+   */
+  public readonly _virtualNodeEvent = new PubSub<appmesh.VirtualNode>(true);
+
+  /**
+   * The virtual service is available.
+   * @internal
+   */
+  public readonly _virtualServiceEvent = new PubSub<appmesh.VirtualService>(true);
+
+  /**
+   * Workloads may add their containers to the task definition now.
+   * @internal
+   */
+  public readonly _workloadReadyEvent = new PubSub<WorkloadOptions>(true);
+
+  /**
+   * Fires whenever a set of environment variables is added.
+   * @internal
+   */
+  public readonly _workloadEnvVarsEvent = new PubSub<Record<string, string>>();
+
+  /**
+   * A container has been added to the service by extension.
+   * @internal
+   */
+  public readonly _containerDefinitionEvent = new PubSub<ecs.ContainerDefinition>(false);
 
   constructor(scope: cdk.Construct, id: string, props: ServiceProps) {
     super(scope, id);
+
+    this.environment = props.environment;
 
     // Use the user-provided name or create a host name for them.
     const name = props.name ?? ServiceName.hostName(cdk.Names.uniqueId(this));
@@ -85,55 +126,58 @@ export class Service extends cdk.Construct implements IService {
       namespace: props.environment.namespace,
     };
 
-    this.environment = props.environment;
+    const privateScopeIndecies: Record<string, number> = {};
 
-    const taskDefinition = new ecs.FargateTaskDefinition(this, 'TaskDefinition', {
+    props.extensions?.forEach((extension) => {
+      const extensionTypeName: string = extension._extensionTypeName;
+      const privateScopeIndex = privateScopeIndecies[extensionTypeName] = (privateScopeIndecies[extensionTypeName] ?? -1) + 1;
+
+      const privateScope = new cdk.Construct(this, `Extension${extensionTypeName}${privateScopeIndex}`);
+      extension._register(this, privateScope);
+    });
+
+    this.taskDefinition = new ecs.FargateTaskDefinition(this, 'TaskDefinition', this._filterTaskDefinitionProps.filter({
       cpu: 256,
       memoryLimitMiB: 512,
-    });
+    }));
 
-    const mainContainer = taskDefinition.addContainer('Main', {
-      image: props.image,
-      essential: true,
-      environment: this.envVars,
-    });
-
-    // Get listener info for all listeners
-    const listenerInfos = (props.listeners ?? []).map(l => l._bind(this));
-
-    for (const listenerInfo of listenerInfos) {
-      mainContainer.addPortMappings({ containerPort: listenerInfo.containerPort });
-    }
-
-    function getMaxHealthyPercent() {
-      // TODO: AWS recommends a desired count of 2 or 3 use 150, otherwise 125
-      //   but when I tried this, services weren't updating. So I've set it to
-      //   200. We probably need to treat `desiredCount === 1` differently.
-      return 200;
-    }
-
-    // Get configuration for networking.
+    // Get the default networking configuration for this node.
     const serviceNetworkConfig = defaultServiceNetworkConfig(this.node);
 
-    this.fargateService = new ecs.FargateService(this, 'FargateService', {
+    this.fargateService = new ecs.FargateService(this, 'FargateService', this._filterServiceProps.filter({
       serviceName: name._serviceName(this, nameContext),
-      circuitBreaker: { rollback: true },
+      taskDefinition: this.taskDefinition,
+
+      // Register with CloudMap
       cloudMapOptions: {
         cloudMapNamespace: props.environment.namespace,
         dnsRecordType: servicediscovery.DnsRecordType.A,
         name: name._cloudMapServiceName(this, nameContext),
       },
+
+      // Cluster configs
       cluster: props.environment.cluster,
+      circuitBreaker: { rollback: true },
       minHealthyPercent: 100,
       maxHealthyPercent: getMaxHealthyPercent(),
-      taskDefinition,
-      // Get some defaults from context.
+      capacityProviderStrategies: defaultCapacityProviderStrategy(this.node),
+
+      // Networking configuration
       assignPublicIp: serviceNetworkConfig.assignPublicIp,
       vpcSubnets: serviceNetworkConfig.vpcSubnets,
-      capacityProviderStrategies: defaultCapacityProviderStrategy(this.node),
+    }));
+
+    // Get listener info for all listeners
+    const serviceListenerConfigs = (props.listeners ?? []).map(l => l._bind(this));
+
+    // Publish the workload information
+    this._workloadReadyEvent.publish(this, {
+      service: this.fargateService,
+      taskDefinition: this.taskDefinition,
+      serviceListenerConfig: serviceListenerConfigs,
     });
 
-    const virtualNodeListeners = listenerInfos
+    const virtualNodeListeners = serviceListenerConfigs
       .filter(listenerInfo => Boolean(listenerInfo.virtualNodeListener))
       .map(listenerInfo => listenerInfo.virtualNodeListener!);
 
@@ -142,7 +186,7 @@ export class Service extends cdk.Construct implements IService {
     }
 
     this.connections = new ec2.Connections({
-      defaultPort: findDefaultSecurityGroupPort(taskDefinition),
+      defaultPort: findDefaultSecurityGroupPort(this.taskDefinition),
       securityGroups: this.fargateService.connections.securityGroups,
     });
 
@@ -154,7 +198,9 @@ export class Service extends cdk.Construct implements IService {
       listeners: virtualNodeListeners,
     });
 
-    taskDefinition.addExtension(
+    this._virtualNodeEvent.publish(this, this.virtualNode);
+
+    this.taskDefinition.addExtension(
       new AddAppMeshEnvoyExtension({
         containerName: 'Envoy',
         endpointArn: this.virtualNode.virtualNodeArn,
@@ -162,48 +208,17 @@ export class Service extends cdk.Construct implements IService {
       }));
 
     const virtualServiceName = name._virtualServiceName(this, nameContext);
-    const useRouter = props.useRouter;
 
-    if (useRouter) {
-      const virtualRouter = new appmesh.VirtualRouter(this, 'VirtualRouter', {
-        mesh: props.environment.mesh,
-        listeners: virtualNodeListeners,
-      });
-
-      virtualRouter.addRoute('h2', {
-        routeSpec: appmesh.RouteSpec.http2({
-          weightedTargets: [{ virtualNode: this.virtualNode }],
-        }),
-      });
-
-      virtualRouter.addRoute('http', {
-        routeSpec: appmesh.RouteSpec.http({
-          weightedTargets: [{ virtualNode: this.virtualNode }],
-        }),
-      });
-
-      this._virtualService = new appmesh.VirtualService(this, 'VirtualService', {
-        virtualServiceName: virtualServiceName,
-        virtualServiceProvider: appmesh.VirtualServiceProvider.virtualRouter(virtualRouter),
-      });
-    } else {
-      this._virtualService = new appmesh.VirtualService(this, 'VirtualService', {
-        virtualServiceName: virtualServiceName,
-        virtualServiceProvider: appmesh.VirtualServiceProvider.virtualNode(this.virtualNode),
-      });
-    }
-
-    (props.extensions ?? []).forEach((extension, index) => {
-      const privateScope = new cdk.Construct(this, `Extension${index}`);
-      extension._extend(privateScope, this);
+    this._virtualService = new appmesh.VirtualService(this, 'VirtualService', {
+      virtualServiceName: virtualServiceName,
+      virtualServiceProvider: appmesh.VirtualServiceProvider.virtualNode(this.virtualNode),
     });
+
+    this._virtualServiceEvent.publish(this, this._virtualService);
   }
 
   public addEnvVars(env: Record<string, string>) {
-    Object.assign(this.envVars, {
-      ...this.envVars,
-      ...env,
-    });
+    this._workloadEnvVarsEvent.publish(this, env);
   }
 }
 
@@ -267,4 +282,11 @@ export abstract class ServiceName {
       _cloudMapServiceName: () => hostName,
     };
   }
+}
+
+function getMaxHealthyPercent() {
+  // TODO: AWS recommends a desired count of 2 or 3 use 150, otherwise 125
+  //   but when I tried this, services weren't updating. So I've set it to
+  //   200. We probably need to treat `desiredCount === 1` differently.
+  return 200;
 }

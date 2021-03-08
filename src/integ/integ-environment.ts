@@ -19,10 +19,12 @@ export class IntegEnvironment extends cdk.Stack {
     new Service(this, 'GatewayEcho', {
       environment,
       name: ServiceName.hostName('gateway-echo'),
-      image: ecs.ContainerImage.fromRegistry('jmalloc/echo-server'),
       listeners: [ServiceListener.http2(80)],
       extensions: [
-        ServiceExtension.envVars({ PORT: '80' }),
+        ServiceExtension.container({
+          image: ecs.ContainerImage.fromRegistry('jmalloc/echo-server'),
+          environment: { PORT: '80' },
+        }),
         ServiceExtension.http2GatewayRoute({ prefixPath: '/gateway-echo' }),
       ],
     });
@@ -30,14 +32,14 @@ export class IntegEnvironment extends cdk.Stack {
     new Service(this, 'RoutedEcho', {
       environment,
       name: ServiceName.hostName('routed-echo'),
-      image: ecs.ContainerImage.fromRegistry('jmalloc/echo-server'),
       listeners: [ServiceListener.http1(80)],
       extensions: [
-        ServiceExtension.envVars({ PORT: '80' }),
-        // Handle requests on /echo
-        ServiceExtension.httpRoute({
-          prefixPath: '/echo',
+        ServiceExtension.container({
+          image: ecs.ContainerImage.fromRegistry('jmalloc/echo-server'),
+          environment: { PORT: '80' },
         }),
+        // Handle requests on /echo
+        ServiceExtension.httpRoute({ prefixPath: '/echo' }),
         // Handle requests to routed-echo.myexample.com
         ServiceExtension.httpRoute({
           headers: [
@@ -50,10 +52,12 @@ export class IntegEnvironment extends cdk.Stack {
     const backend = new Service(this, 'Backend', {
       environment,
       name: ServiceName.hostName('backend'),
-      image: ecs.ContainerImage.fromAsset(path.join(__dirname, 'mesh-app')),
       listeners: [ServiceListener.http1(80)],
       extensions: [
-        ServiceExtension.envVars({ FLASK_APP: 'backend.py' }),
+        ServiceExtension.container({
+          image: ecs.ContainerImage.fromAsset(path.join(__dirname, 'mesh-app')),
+          environment: { FLASK_APP: 'backend.py' },
+        }),
         ServiceExtension.httpRoute({
           prefixPath: '/backend',
         }),
@@ -63,13 +67,13 @@ export class IntegEnvironment extends cdk.Stack {
     new Service(this, 'Consumer', {
       environment,
       name: ServiceName.hostName('consumer'),
-      image: ecs.ContainerImage.fromAsset(path.join(__dirname, 'mesh-app')),
       listeners: [ServiceListener.http1(80)],
       extensions: [
-        ServiceExtension.envVars({ FLASK_APP: 'consumer.py' }),
-        ServiceExtension.httpRoute({
-          prefixPath: '/consumer',
+        ServiceExtension.container({
+          image: ecs.ContainerImage.fromAsset(path.join(__dirname, 'mesh-app')),
+          environment: { FLASK_APP: 'consumer.py' },
         }),
+        ServiceExtension.httpRoute({ prefixPath: '/consumer' }),
         ServiceExtension.linkedService({ service: backend }),
       ],
     });

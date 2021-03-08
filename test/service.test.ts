@@ -2,6 +2,7 @@ import { expect as expectCDK, haveResourceLike } from '@aws-cdk/assert';
 import * as ecs from '@aws-cdk/aws-ecs';
 import * as cdk from '@aws-cdk/core';
 import * as webcarver from '../src';
+import { ServiceExtension } from '../src/service/service-extension/service-extension';
 
 describe('Service', () => {
   test('creating a service creates an appmesh node & service', () => {
@@ -12,7 +13,11 @@ describe('Service', () => {
     // WHEN
     new webcarver.Service(stack, 'Http', {
       environment,
-      image: ecs.ContainerImage.fromRegistry('nginx'),
+      extensions: [
+        ServiceExtension.container({
+          image: ecs.ContainerImage.fromRegistry('nginx'),
+        }),
+      ],
     });
 
     // THEN
@@ -29,7 +34,11 @@ describe('Service', () => {
     // WHEN
     new webcarver.Service(stack, 'Http', {
       environment,
-      image: ecs.ContainerImage.fromRegistry('nginx'),
+      extensions: [
+        ServiceExtension.container({
+          image: ecs.ContainerImage.fromRegistry('nginx'),
+        }),
+      ],
     });
 
     // THEN
@@ -59,9 +68,13 @@ describe('Service', () => {
     // WHEN
     new webcarver.Service(stack, 'Http', {
       environment,
-      image: ecs.ContainerImage.fromRegistry('nginx'),
       listeners: [
         webcarver.ServiceListener.http2(80),
+      ],
+      extensions: [
+        ServiceExtension.container({
+          image: ecs.ContainerImage.fromRegistry('nginx'),
+        }),
       ],
     });
 
@@ -94,10 +107,14 @@ describe('Service', () => {
     expect(() => {
       new webcarver.Service(stack, 'Http', {
         environment,
-        image: ecs.ContainerImage.fromRegistry('nginx'),
         listeners: [
           webcarver.ServiceListener.http2(80),
           webcarver.ServiceListener.http2(8080),
+        ],
+        extensions: [
+          ServiceExtension.container({
+            image: ecs.ContainerImage.fromRegistry('nginx'),
+          }),
         ],
       });
     }).toThrow(/more than one.*AppMesh/i);
@@ -111,11 +128,13 @@ describe('Service', () => {
     // WHEN
     new webcarver.Service(stack, 'EchoV2', {
       environment,
-      image: ecs.ContainerImage.fromRegistry('nginx'),
       listeners: [webcarver.ServiceListener.http2(80)],
       extensions: [
-        webcarver.ServiceExtension.http2GatewayRoute({ prefixPath: '/first' }),
-        webcarver.ServiceExtension.http2GatewayRoute({ prefixPath: '/second' }),
+        ServiceExtension.container({
+          image: ecs.ContainerImage.fromRegistry('nginx'),
+        }),
+        ServiceExtension.http2GatewayRoute({ prefixPath: '/first' }),
+        ServiceExtension.http2GatewayRoute({ prefixPath: '/second' }),
       ],
     });
 
