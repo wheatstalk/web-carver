@@ -6,7 +6,9 @@ Name|Description
 ----|-----------
 [ApplicationLoadBalancedFargateGateway](#wheatstalk-web-carver-applicationloadbalancedfargategateway)|Creates a gateway with an Application Load Balancer and Fargate service.
 [Environment](#wheatstalk-web-carver-environment)|Creates a WebCarver environment.
+[EnvironmentManifest](#wheatstalk-web-carver-environmentmanifest)|Creates a manifest file for the environment as JSON, stored in an SSM Parameter so that the environment can be imported in another CDK app.
 [HttpRouteHeaderMatch](#wheatstalk-web-carver-httprouteheadermatch)|Used to generate header matching methods.
+[PreferencesContext](#wheatstalk-web-carver-preferencescontext)|Get or set preferences by context.
 [Router](#wheatstalk-web-carver-router)|Creates a WebCarver Router.
 [Service](#wheatstalk-web-carver-service)|Creates a WebCarver service.
 [ServiceExtension](#wheatstalk-web-carver-serviceextension)|Used to create service extensions.
@@ -20,12 +22,14 @@ Name|Description
 ----|-----------
 [ApplicationLoadBalancedFargateGatewayProps](#wheatstalk-web-carver-applicationloadbalancedfargategatewayprops)|Props for `ApplicationLoadBalancedFargateGateway`.
 [ContainerExtensionOptions](#wheatstalk-web-carver-containerextensionoptions)|Container extension options.
+[EnvironmentManifestProps](#wheatstalk-web-carver-environmentmanifestprops)|Props for `EnvironmentManifest`.
 [EnvironmentProps](#wheatstalk-web-carver-environmentprops)|Props for `Environment`.
 [Http2GatewayRouteExtensionOptions](#wheatstalk-web-carver-http2gatewayrouteextensionoptions)|Options for adding gateway routes.
 [HttpGatewayRouteExtensionOptions](#wheatstalk-web-carver-httpgatewayrouteextensionoptions)|*No description*
 [HttpRouteExtensionOptions](#wheatstalk-web-carver-httprouteextensionoptions)|Options for adding Http routes.
 [HttpRouteHeaderMatchRangeOptions](#wheatstalk-web-carver-httprouteheadermatchrangeoptions)|Options for a matching HTTP headers in a range.
 [LinkedServiceExtensionOptions](#wheatstalk-web-carver-linkedserviceextensionoptions)|Props for `LinkedServiceExtension`.
+[Preferences](#wheatstalk-web-carver-preferences)|Global preferences.
 [RouterProps](#wheatstalk-web-carver-routerprops)|Props for `Router`.
 [ServiceProps](#wheatstalk-web-carver-serviceprops)|Props for `Service`.
 
@@ -121,6 +125,49 @@ Name | Type | Description
 
 
 
+## class EnvironmentManifest  <a id="wheatstalk-web-carver-environmentmanifest"></a>
+
+Creates a manifest file for the environment as JSON, stored in an SSM Parameter so that the environment can be imported in another CDK app.
+
+__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable)
+__Extends__: [Construct](#aws-cdk-core-construct)
+
+### Initializer
+
+
+
+
+```ts
+new EnvironmentManifest(scope: Construct, id: string, props: EnvironmentManifestProps)
+```
+
+* **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
+* **id** (<code>string</code>)  *No description*
+* **props** (<code>[EnvironmentManifestProps](#wheatstalk-web-carver-environmentmanifestprops)</code>)  *No description*
+  * **environment** (<code>[IEnvironment](#wheatstalk-web-carver-ienvironment)</code>)  The WebCarver environment to create the manifest for. 
+  * **parameterName** (<code>string</code>)  Create the manifest with the given name. 
+
+
+### Methods
+
+
+#### *static* environmentFromStringParameter(scope, id, parameterName) <a id="wheatstalk-web-carver-environmentmanifest-environmentfromstringparameter"></a>
+
+Loads a WebCarver environment from a manifest stored in SSM.
+
+```ts
+static environmentFromStringParameter(scope: Construct, id: string, parameterName: string): IEnvironment
+```
+
+* **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
+* **id** (<code>string</code>)  *No description*
+* **parameterName** (<code>string</code>)  SSM parameter name.
+
+__Returns__:
+* <code>[IEnvironment](#wheatstalk-web-carver-ienvironment)</code>
+
+
+
 ## class HttpRouteHeaderMatch  <a id="wheatstalk-web-carver-httprouteheadermatch"></a>
 
 Used to generate header matching methods.
@@ -211,6 +258,82 @@ static suffix(name: string, suffix: string): IHttpRouteHeaderMatch
 
 __Returns__:
 * <code>[IHttpRouteHeaderMatch](#wheatstalk-web-carver-ihttprouteheadermatch)</code>
+
+
+
+## class PreferencesContext  <a id="wheatstalk-web-carver-preferencescontext"></a>
+
+Get or set preferences by context.
+
+
+### Initializer
+
+
+
+
+```ts
+new PreferencesContext()
+```
+
+
+
+### Methods
+
+
+#### *static* get(node) <a id="wheatstalk-web-carver-preferencescontext-get"></a>
+
+Get preferences.
+
+```ts
+static get(node: ConstructNode): Preferences
+```
+
+* **node** (<code>[ConstructNode](#aws-cdk-core-constructnode)</code>)  *No description*
+
+__Returns__:
+* <code>[Preferences](#wheatstalk-web-carver-preferences)</code>
+
+#### *static* set(node, context) <a id="wheatstalk-web-carver-preferencescontext-set"></a>
+
+Set the preferences.
+
+```ts
+static set(node: ConstructNode, context: Preferences): void
+```
+
+* **node** (<code>[ConstructNode](#aws-cdk-core-constructnode)</code>)  *No description*
+* **context** (<code>[Preferences](#wheatstalk-web-carver-preferences)</code>)  *No description*
+  * **useFargateSpot** (<code>boolean</code>)  Use spot capacity for fargate tasks. __*Default*__: false
+  * **usePublicServiceNetworking** (<code>boolean</code>)  Use cheap networking. __*Default*__: false
+
+
+
+
+#### *static* useFargateSpot(node) <a id="wheatstalk-web-carver-preferencescontext-usefargatespot"></a>
+
+Get preference for using Fargate spot.
+
+```ts
+static useFargateSpot(node: ConstructNode): boolean
+```
+
+* **node** (<code>[ConstructNode](#aws-cdk-core-constructnode)</code>)  *No description*
+
+__Returns__:
+* <code>boolean</code>
+
+#### *static* usePublicServiceNetworking(node) <a id="wheatstalk-web-carver-preferencescontext-usepublicservicenetworking"></a>
+
+Get preference for using public service networking.
+
+```ts
+static usePublicServiceNetworking(node: ConstructNode): boolean
+```
+
+* **node** (<code>[ConstructNode](#aws-cdk-core-constructnode)</code>)  *No description*
+
+__Returns__:
+* <code>boolean</code>
 
 
 
@@ -530,6 +653,20 @@ Name | Type | Description
 
 
 
+## struct EnvironmentManifestProps  <a id="wheatstalk-web-carver-environmentmanifestprops"></a>
+
+
+Props for `EnvironmentManifest`.
+
+
+
+Name | Type | Description 
+-----|------|-------------
+**environment** | <code>[IEnvironment](#wheatstalk-web-carver-ienvironment)</code> | The WebCarver environment to create the manifest for.
+**parameterName** | <code>string</code> | Create the manifest with the given name.
+
+
+
 ## struct EnvironmentProps  <a id="wheatstalk-web-carver-environmentprops"></a>
 
 
@@ -606,6 +743,7 @@ Name | Type | Description
 ## interface IEnvironment  <a id="wheatstalk-web-carver-ienvironment"></a>
 
 __Implemented by__: [Environment](#wheatstalk-web-carver-environment)
+__Obtainable from__: [EnvironmentManifest](#wheatstalk-web-carver-environmentmanifest).[environmentFromStringParameter](#wheatstalk-web-carver-environmentmanifest#wheatstalk-web-carver-environmentmanifest-environmentfromstringparameter)()
 
 A WebCarver environment.
 
@@ -761,6 +899,21 @@ Name | Type | Description
 -----|------|-------------
 **service** | <code>[Service](#wheatstalk-web-carver-service)</code> | The Web Carver service to link to.
 **name**? | <code>string</code> | Name of the linked service for environment variable choice.<br/>__*Optional*__
+
+
+
+## struct Preferences  <a id="wheatstalk-web-carver-preferences"></a>
+
+__Obtainable from__: [PreferencesContext](#wheatstalk-web-carver-preferencescontext).[get](#wheatstalk-web-carver-preferencescontext#wheatstalk-web-carver-preferencescontext-get)()
+
+Global preferences.
+
+
+
+Name | Type | Description 
+-----|------|-------------
+**useFargateSpot**? | <code>boolean</code> | Use spot capacity for fargate tasks.<br/>__*Default*__: false
+**usePublicServiceNetworking**? | <code>boolean</code> | Use cheap networking.<br/>__*Default*__: false
 
 
 

@@ -1,6 +1,6 @@
-const { AwsCdkConstructLibrary } = require('projen');
+const pj = require('projen');
 
-const project = new AwsCdkConstructLibrary({
+const project = new pj.AwsCdkConstructLibrary({
   author: 'Josh Kellendonk',
   authorAddress: 'joshkellendonk@gmail.com',
   cdkVersion: '1.92.0',
@@ -17,11 +17,18 @@ const project = new AwsCdkConstructLibrary({
     '@aws-cdk/aws-ec2',
     '@aws-cdk/aws-elasticloadbalancingv2',
     '@aws-cdk/aws-iam',
+    '@aws-cdk/aws-ssm',
     '@aws-cdk/aws-servicediscovery',
     '@aws-cdk/aws-certificatemanager',
+    '@aws-cdk/cloud-assembly-schema',
+  ],
+
+  bundledDeps: [
+    'semver@^7.3',
   ],
 
   devDeps: [
+    '@types/semver@^7.3',
     'aws-cdk',
     'ts-node',
   ],
@@ -132,6 +139,27 @@ const project = new AwsCdkConstructLibrary({
   // parent: undefined,                                                        /* The parent project, if this project is part of a bigger project. */
   // projectType: ProjectType.UNKNOWN,                                         /* Which type of project this is (library/app). */
   // readme: undefined,                                                        /* The README setup. */
+
+  jestOptions: {
+    jestConfig: {
+      testMatch: [
+        '**/__tests__/**/*.ts?(x)',
+        '**/?(*.)+(spec|test|integ).ts?(x)',
+      ],
+    },
+  },
+});
+
+project.gitignore.exclude('cdk.context.json');
+
+project.tasks.addTask('test:unit', {
+  category: pj.tasks.TaskCategory.TEST,
+  exec: 'jest --updateSnapshot --passWithNoTests --all --testPathIgnorePatterns /integ',
+});
+
+project.tasks.addTask('test:integ', {
+  category: pj.tasks.TaskCategory.TEST,
+  exec: 'jest --updateSnapshot --passWithNoTests --all test/**/integ.*.ts',
 });
 
 const yarnUp = project.github.addWorkflow('yarn-upgrade');

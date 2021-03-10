@@ -1,8 +1,9 @@
 export * from './environment';
+export * from './environment-manifest';
 export * from './service';
-export * from './environment';
 export * from './router';
 export * from './gateway';
+export * from './preferences';
 
 import * as path from 'path';
 

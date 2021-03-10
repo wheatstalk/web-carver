@@ -135,6 +135,8 @@ export class Environment extends cdk.Construct implements IEnvironment {
     // so the gateway's security group must be added to the router's
     // connections.
     this.defaultRouter.connections.addSecurityGroup(...this.defaultGateway.connections.securityGroups);
+
+    cdk.Tags.of(this).add('WebCarver-Environment', this.namespace.namespaceName);
   }
 }
 

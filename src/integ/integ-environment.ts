@@ -1,84 +1,56 @@
-import * as path from 'path';
 import * as ecs from '@aws-cdk/aws-ecs';
 import * as cdk from '@aws-cdk/core';
-import { Environment } from '../environment';
-import { PreferencesContext } from '../preferences';
-import { ServiceListener, Service, ServiceExtension, HttpRouteHeaderMatch, ServiceName } from '../service';
+import * as webcarver from '..';
+import { SSM_PARAM_NAME, STACK_NAME_BASE } from './integ-environment-constants';
 
 export class IntegEnvironment extends cdk.Stack {
   constructor(scope: cdk.Construct) {
-    super(scope, 'integ-environment');
+    super(scope, STACK_NAME_BASE);
 
-    PreferencesContext.set(this.node, {
+    webcarver.PreferencesContext.set(this.node, {
       usePublicServiceNetworking: true,
       useFargateSpot: true,
     });
 
-    const environment = new Environment(this, 'Environment');
+    const environment = new webcarver.Environment(this, 'Environment');
 
-    new Service(this, 'GatewayEcho', {
+    // Create a manifest file that the environment can be loaded from.
+    new webcarver.EnvironmentManifest(this, 'EnvironmentManifest', {
+      parameterName: SSM_PARAM_NAME,
       environment,
-      name: ServiceName.hostName('gateway-echo'),
-      listeners: [ServiceListener.http2(80)],
+    });
+
+    new webcarver.Service(this, 'GatewayEcho', {
+      environment,
+      name: webcarver.ServiceName.hostName('gateway-echo'),
+      listeners: [webcarver.ServiceListener.http2(80)],
       extensions: [
-        ServiceExtension.container({
+        webcarver.ServiceExtension.container({
           image: ecs.ContainerImage.fromRegistry('jmalloc/echo-server'),
           environment: { PORT: '80' },
         }),
-        ServiceExtension.http2GatewayRoute({ prefixPath: '/gateway-echo' }),
+        webcarver.ServiceExtension.http2GatewayRoute({ prefixPath: '/gateway-echo' }),
       ],
     });
 
-    new Service(this, 'RoutedEcho', {
+    new webcarver.Service(this, 'RoutedEcho', {
       environment,
-      name: ServiceName.hostName('routed-echo'),
-      listeners: [ServiceListener.http1(80)],
+      name: webcarver.ServiceName.hostName('routed-echo'),
+      listeners: [webcarver.ServiceListener.http1(80)],
       extensions: [
-        ServiceExtension.container({
+        webcarver.ServiceExtension.container({
           image: ecs.ContainerImage.fromRegistry('jmalloc/echo-server'),
           environment: { PORT: '80' },
         }),
         // Handle requests on /echo
-        ServiceExtension.httpRoute({ prefixPath: '/echo' }),
+        webcarver.ServiceExtension.httpRoute({ prefixPath: '/echo' }),
         // Handle requests to routed-echo.myexample.com
-        ServiceExtension.httpRoute({
+        webcarver.ServiceExtension.httpRoute({
           headers: [
-            HttpRouteHeaderMatch.exact('x-forwarded-host', 'routed-echo.myexample.com'),
+            webcarver.HttpRouteHeaderMatch.exact('x-forwarded-host', 'routed-echo.myexample.com'),
           ],
         }),
       ],
     });
-
-    const backend = new Service(this, 'Backend', {
-      environment,
-      name: ServiceName.hostName('backend'),
-      listeners: [ServiceListener.http1(80)],
-      extensions: [
-        ServiceExtension.container({
-          image: ecs.ContainerImage.fromAsset(path.join(__dirname, 'mesh-app')),
-          environment: { FLASK_APP: 'backend.py' },
-        }),
-        ServiceExtension.httpRoute({
-          prefixPath: '/backend',
-        }),
-      ],
-    });
-
-    new Service(this, 'Consumer', {
-      environment,
-      name: ServiceName.hostName('consumer'),
-      listeners: [ServiceListener.http1(80)],
-      extensions: [
-        ServiceExtension.container({
-          image: ecs.ContainerImage.fromAsset(path.join(__dirname, 'mesh-app')),
-          environment: { FLASK_APP: 'consumer.py' },
-        }),
-        ServiceExtension.httpRoute({ prefixPath: '/consumer' }),
-        ServiceExtension.linkedService({ service: backend }),
-      ],
-    });
   }
 }
-
-const app = new cdk.App();
-new IntegEnvironment(app);

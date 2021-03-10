@@ -198,6 +198,24 @@
           "exec": "jsii-docgen"
         }
       ]
+    },
+    "test:unit": {
+      "name": "test:unit",
+      "category": "10.test",
+      "steps": [
+        {
+          "exec": "jest --updateSnapshot --passWithNoTests --all --testPathIgnorePatterns /integ"
+        }
+      ]
+    },
+    "test:integ": {
+      "name": "test:integ",
+      "category": "10.test",
+      "steps": [
+        {
+          "exec": "jest --updateSnapshot --passWithNoTests --all test/**/integ.*.ts"
+        }
+      ]
     }
   },
   "env": {

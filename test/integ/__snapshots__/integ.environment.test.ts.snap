@@ -1,0 +1,3249 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`integ-environment 1`] = `
+Object {
+  "Outputs": Object {
+    "EnvironmentGatewayLoadBalancerUrl4A7A830E": Object {
+      "Value": Object {
+        "Fn::Sub": Array [
+          "http://\${DnsName}/",
+          Object {
+            "DnsName": Object {
+              "Fn::GetAtt": Array [
+                "EnvironmentGatewayLoadBalancerE02DB2D9",
+                "DNSName",
+              ],
+            },
+          },
+        ],
+      },
+    },
+    "EnvironmentManifestDependency16B112BF": Object {
+      "Export": Object {
+        "Name": "integenvironment2EnvironmentManifestA5A81B7E",
+      },
+      "Value": "integ-environment2",
+    },
+    "EnvironmentManifestManifestParameterName36C8800D": Object {
+      "Value": Object {
+        "Ref": "EnvironmentManifest626E80AB",
+      },
+    },
+  },
+  "Resources": Object {
+    "EnvironmentClusterE81C7902": Object {
+      "Properties": Object {
+        "CapacityProviders": Array [
+          "FARGATE",
+          "FARGATE_SPOT",
+        ],
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+      },
+      "Type": "AWS::ECS::Cluster",
+    },
+    "EnvironmentGateway3306D38F": Object {
+      "Properties": Object {
+        "MeshName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentMeshE4273EA5",
+            "MeshName",
+          ],
+        },
+        "Spec": Object {
+          "Listeners": Array [
+            Object {
+              "PortMapping": Object {
+                "Port": 8080,
+                "Protocol": "http2",
+              },
+            },
+          ],
+        },
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+        "VirtualGatewayName": "integenvironment2EnvironmentGateway9BA507E3",
+      },
+      "Type": "AWS::AppMesh::VirtualGateway",
+    },
+    "EnvironmentGatewayFargateGatewayService3FEEAA5C": Object {
+      "DependsOn": Array [
+        "EnvironmentGatewayLoadBalancerHTTPDefaultGroupB580F6F8",
+        "EnvironmentGatewayLoadBalancerHTTPDC34402A",
+      ],
+      "Properties": Object {
+        "CapacityProviderStrategy": Array [
+          Object {
+            "CapacityProvider": "FARGATE_SPOT",
+            "Weight": 1000,
+          },
+          Object {
+            "CapacityProvider": "FARGATE",
+            "Weight": 1,
+          },
+        ],
+        "Cluster": Object {
+          "Ref": "EnvironmentClusterE81C7902",
+        },
+        "DeploymentConfiguration": Object {
+          "DeploymentCircuitBreaker": Object {
+            "Enable": true,
+            "Rollback": true,
+          },
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 50,
+        },
+        "EnableECSManagedTags": false,
+        "HealthCheckGracePeriodSeconds": 1800,
+        "LoadBalancers": Array [
+          Object {
+            "ContainerName": "UtilEnvoy",
+            "ContainerPort": 16080,
+            "TargetGroupArn": Object {
+              "Ref": "EnvironmentGatewayLoadBalancerHTTPDefaultGroupB580F6F8",
+            },
+          },
+        ],
+        "NetworkConfiguration": Object {
+          "AwsvpcConfiguration": Object {
+            "AssignPublicIp": "ENABLED",
+            "SecurityGroups": Array [
+              Object {
+                "Fn::GetAtt": Array [
+                  "EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29",
+                  "GroupId",
+                ],
+              },
+            ],
+            "Subnets": Array [
+              Object {
+                "Ref": "EnvironmentVpcpublicSubnet1Subnet1C4BD5BB",
+              },
+              Object {
+                "Ref": "EnvironmentVpcpublicSubnet2Subnet62C9A92D",
+              },
+            ],
+          },
+        },
+        "ServiceRegistries": Array [
+          Object {
+            "RegistryArn": Object {
+              "Fn::GetAtt": Array [
+                "EnvironmentGatewayFargateGatewayServiceCloudmapService327C7FB3",
+                "Arn",
+              ],
+            },
+          },
+        ],
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+        "TaskDefinition": Object {
+          "Ref": "EnvironmentGatewayFargateGatewayTaskDefinition017A318F",
+        },
+      },
+      "Type": "AWS::ECS::Service",
+    },
+    "EnvironmentGatewayFargateGatewayServiceCloudmapService327C7FB3": Object {
+      "Properties": Object {
+        "DnsConfig": Object {
+          "DnsRecords": Array [
+            Object {
+              "TTL": 60,
+              "Type": "A",
+            },
+          ],
+          "NamespaceId": Object {
+            "Fn::GetAtt": Array [
+              "Namespace9B63B8C8",
+              "Id",
+            ],
+          },
+          "RoutingPolicy": "MULTIVALUE",
+        },
+        "HealthCheckCustomConfig": Object {
+          "FailureThreshold": 1,
+        },
+        "NamespaceId": Object {
+          "Fn::GetAtt": Array [
+            "Namespace9B63B8C8",
+            "Id",
+          ],
+        },
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+      },
+      "Type": "AWS::ServiceDiscovery::Service",
+    },
+    "EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29": Object {
+      "Properties": Object {
+        "GroupDescription": "integ-environment2/Environment/Gateway/Fargate/GatewayService/SecurityGroup",
+        "SecurityGroupEgress": Array [
+          Object {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "EnvironmentVpc6FD2605E",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "EnvironmentGatewayFargateGatewayServiceSecurityGroupfromintegenvironment2EnvironmentGatewayLoadBalancerSecurityGroup26C615151608002DE6F7C": Object {
+      "Properties": Object {
+        "Description": "Load balancer to target",
+        "FromPort": 16080,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentGatewayLoadBalancerSecurityGroup3B0420D5",
+            "GroupId",
+          ],
+        },
+        "ToPort": 16080,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "EnvironmentGatewayFargateGatewayTaskDefinition017A318F": Object {
+      "Properties": Object {
+        "ContainerDefinitions": Array [
+          Object {
+            "Command": Array [
+              "envoy",
+              "-c",
+              "/etc/envoy/envoy.yaml",
+              "--base-id",
+              "1",
+            ],
+            "Essential": true,
+            "HealthCheck": Object {
+              "Command": Array [
+                "CMD",
+                "bash",
+                "-c",
+                "curl -s http://127.0.0.1:9902/ready | grep -q LIVE",
+              ],
+              "Interval": 5,
+              "Retries": 3,
+              "StartPeriod": 10,
+              "Timeout": 2,
+            },
+            "Image": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  Object {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ".dkr.ecr.",
+                  Object {
+                    "Ref": "AWS::Region",
+                  },
+                  ".",
+                  Object {
+                    "Ref": "AWS::URLSuffix",
+                  },
+                  "/aws-cdk/assets:f87547d97b1f213bdd68e3f68a3c48238706459584acf146c62a392a25b78971",
+                ],
+              ],
+            },
+            "LogConfiguration": Object {
+              "LogDriver": "awslogs",
+              "Options": Object {
+                "awslogs-group": Object {
+                  "Ref": "EnvironmentGatewayFargateGatewayTaskDefinitionUtilEnvoyLogGroup64D74142",
+                },
+                "awslogs-region": Object {
+                  "Ref": "AWS::Region",
+                },
+                "awslogs-stream-prefix": "util-envoy",
+              },
+            },
+            "Name": "UtilEnvoy",
+            "PortMappings": Array [
+              Object {
+                "ContainerPort": 16080,
+                "Protocol": "tcp",
+              },
+              Object {
+                "ContainerPort": 9902,
+                "Protocol": "tcp",
+              },
+            ],
+            "Ulimits": Array [
+              Object {
+                "HardLimit": 1024000,
+                "Name": "nofile",
+                "SoftLimit": 1024000,
+              },
+            ],
+          },
+          Object {
+            "Environment": Array [
+              Object {
+                "Name": "APPMESH_VIRTUAL_NODE_NAME",
+                "Value": Object {
+                  "Ref": "EnvironmentGateway3306D38F",
+                },
+              },
+              Object {
+                "Name": "AWS_REGION",
+                "Value": Object {
+                  "Ref": "AWS::Region",
+                },
+              },
+              Object {
+                "Name": "ENABLE_ENVOY_STATS_TAGS",
+                "Value": "1",
+              },
+              Object {
+                "Name": "ENABLE_ENVOY_DOG_STATSD",
+                "Value": "1",
+              },
+            ],
+            "Essential": true,
+            "HealthCheck": Object {
+              "Command": Array [
+                "CMD",
+                "sh",
+                "-c",
+                "curl -s http://127.0.0.1:9901/ready | grep -q LIVE",
+              ],
+              "Interval": 5,
+              "Retries": 3,
+              "StartPeriod": 10,
+              "Timeout": 2,
+            },
+            "Image": "public.ecr.aws/appmesh/aws-appmesh-envoy:v1.16.1.0-prod",
+            "LogConfiguration": Object {
+              "LogDriver": "awslogs",
+              "Options": Object {
+                "awslogs-group": Object {
+                  "Ref": "EnvironmentGatewayFargateGatewayTaskDefinitionVirtualGatewayEnvoyLogGroup2686B758",
+                },
+                "awslogs-region": Object {
+                  "Ref": "AWS::Region",
+                },
+                "awslogs-stream-prefix": "envoy",
+              },
+            },
+            "Name": "VirtualGatewayEnvoy",
+            "PortMappings": Array [
+              Object {
+                "ContainerPort": 8080,
+                "Protocol": "tcp",
+              },
+            ],
+            "Ulimits": Array [
+              Object {
+                "HardLimit": 1024000,
+                "Name": "nofile",
+                "SoftLimit": 1024000,
+              },
+            ],
+            "User": "1337",
+          },
+        ],
+        "Cpu": "256",
+        "ExecutionRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentGatewayFargateGatewayTaskDefinitionExecutionRoleC9ACD49A",
+            "Arn",
+          ],
+        },
+        "Family": "integenvironment2EnvironmentGatewayFargateGatewayTaskDefinitionB5EBEC65",
+        "Memory": "512",
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": Array [
+          "FARGATE",
+        ],
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+        "TaskRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentGatewayFargateGatewayTaskDefinitionTaskRole506E99A6",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::ECS::TaskDefinition",
+    },
+    "EnvironmentGatewayFargateGatewayTaskDefinitionExecutionRoleC9ACD49A": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "EnvironmentGatewayFargateGatewayTaskDefinitionExecutionRoleDefaultPolicyE4E96474": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":ecr:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":repository/aws-cdk/assets",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "ecr:GetAuthorizationToken",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "EnvironmentGatewayFargateGatewayTaskDefinitionUtilEnvoyLogGroup64D74142",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "EnvironmentGatewayFargateGatewayTaskDefinitionVirtualGatewayEnvoyLogGroup2686B758",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "EnvironmentGatewayFargateGatewayTaskDefinitionExecutionRoleDefaultPolicyE4E96474",
+        "Roles": Array [
+          Object {
+            "Ref": "EnvironmentGatewayFargateGatewayTaskDefinitionExecutionRoleC9ACD49A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "EnvironmentGatewayFargateGatewayTaskDefinitionTaskRole506E99A6": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "EnvironmentGatewayFargateGatewayTaskDefinitionTaskRoleDefaultPolicy571B7B26": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "appmesh:StreamAggregatedResources",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "EnvironmentGateway3306D38F",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "EnvironmentGatewayFargateGatewayTaskDefinitionTaskRoleDefaultPolicy571B7B26",
+        "Roles": Array [
+          Object {
+            "Ref": "EnvironmentGatewayFargateGatewayTaskDefinitionTaskRole506E99A6",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "EnvironmentGatewayFargateGatewayTaskDefinitionUtilEnvoyLogGroup64D74142": Object {
+      "DeletionPolicy": "Retain",
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "EnvironmentGatewayFargateGatewayTaskDefinitionVirtualGatewayEnvoyLogGroup2686B758": Object {
+      "DeletionPolicy": "Retain",
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "EnvironmentGatewayLoadBalancerE02DB2D9": Object {
+      "DependsOn": Array [
+        "EnvironmentVpcpublicSubnet1DefaultRouteDC050BCB",
+        "EnvironmentVpcpublicSubnet2DefaultRoute45B5F053",
+      ],
+      "Properties": Object {
+        "LoadBalancerAttributes": Array [
+          Object {
+            "Key": "deletion_protection.enabled",
+            "Value": "false",
+          },
+        ],
+        "Scheme": "internet-facing",
+        "SecurityGroups": Array [
+          Object {
+            "Fn::GetAtt": Array [
+              "EnvironmentGatewayLoadBalancerSecurityGroup3B0420D5",
+              "GroupId",
+            ],
+          },
+        ],
+        "Subnets": Array [
+          Object {
+            "Ref": "EnvironmentVpcpublicSubnet1Subnet1C4BD5BB",
+          },
+          Object {
+            "Ref": "EnvironmentVpcpublicSubnet2Subnet62C9A92D",
+          },
+        ],
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+        "Type": "application",
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+    },
+    "EnvironmentGatewayLoadBalancerHTTPDC34402A": Object {
+      "Properties": Object {
+        "DefaultActions": Array [
+          Object {
+            "TargetGroupArn": Object {
+              "Ref": "EnvironmentGatewayLoadBalancerHTTPDefaultGroupB580F6F8",
+            },
+            "Type": "forward",
+          },
+        ],
+        "LoadBalancerArn": Object {
+          "Ref": "EnvironmentGatewayLoadBalancerE02DB2D9",
+        },
+        "Port": 80,
+        "Protocol": "HTTP",
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+    },
+    "EnvironmentGatewayLoadBalancerHTTPDefaultGroupB580F6F8": Object {
+      "Properties": Object {
+        "Matcher": Object {
+          "HttpCode": "200,404",
+        },
+        "Port": 80,
+        "Protocol": "HTTP",
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+        "TargetGroupAttributes": Array [
+          Object {
+            "Key": "deregistration_delay.timeout_seconds",
+            "Value": "10",
+          },
+        ],
+        "TargetType": "ip",
+        "VpcId": Object {
+          "Ref": "EnvironmentVpc6FD2605E",
+        },
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+    },
+    "EnvironmentGatewayLoadBalancerSecurityGroup3B0420D5": Object {
+      "Properties": Object {
+        "GroupDescription": "Automatically created Security Group for ELB integenvironment2EnvironmentGatewayLoadBalancer973950F0",
+        "SecurityGroupIngress": Array [
+          Object {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow from anyone on port 80",
+            "FromPort": 80,
+            "IpProtocol": "tcp",
+            "ToPort": 80,
+          },
+        ],
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "EnvironmentVpc6FD2605E",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "EnvironmentGatewayLoadBalancerSecurityGrouptointegenvironment2EnvironmentGatewayFargateGatewayServiceSecurityGroup2152FE4D160808E70ED5E": Object {
+      "Properties": Object {
+        "Description": "Load balancer to target",
+        "DestinationSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29",
+            "GroupId",
+          ],
+        },
+        "FromPort": 16080,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentGatewayLoadBalancerSecurityGroup3B0420D5",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 16080,
+      },
+      "Type": "AWS::EC2::SecurityGroupEgress",
+    },
+    "EnvironmentGatewayRouter76FF8AA2": Object {
+      "Properties": Object {
+        "GatewayRouteName": "integenvironment2EnvironmentGatewayRouter0A675850",
+        "MeshName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentMeshE4273EA5",
+            "MeshName",
+          ],
+        },
+        "Spec": Object {
+          "Http2Route": Object {
+            "Action": Object {
+              "Target": Object {
+                "VirtualService": Object {
+                  "VirtualServiceName": Object {
+                    "Fn::GetAtt": Array [
+                      "EnvironmentRouterService4B5D623E",
+                      "VirtualServiceName",
+                    ],
+                  },
+                },
+              },
+            },
+            "Match": Object {
+              "Prefix": "/",
+            },
+          },
+        },
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+        "VirtualGatewayName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentGateway3306D38F",
+            "VirtualGatewayName",
+          ],
+        },
+      },
+      "Type": "AWS::AppMesh::GatewayRoute",
+    },
+    "EnvironmentManifest626E80AB": Object {
+      "Properties": Object {
+        "Name": "/integ-environment2",
+        "Type": "String",
+        "Value": Object {
+          "Fn::Sub": Array [
+            "{
+  \\"version\\": \\"1.0.0\\",
+  \\"crossStackDependencyExportName\\": \\"integenvironment2EnvironmentManifestA5A81B7E\\",
+  \\"vpcId\\": \\"\${Ref0}\\",
+  \\"namespaceAttributes\\": {
+    \\"namespaceType\\": \\"DNS_PRIVATE\\",
+    \\"namespaceArn\\": \\"\${Ref1}\\",
+    \\"namespaceId\\": \\"\${Ref2}\\",
+    \\"namespaceName\\": \\"\${Ref3}\\"
+  },
+  \\"meshArn\\": \\"\${Ref4}\\",
+  \\"clusterAttributes\\": {
+    \\"clusterName\\": \\"\${Ref5}\\",
+    \\"clusterArn\\": \\"\${Ref6}\\",
+    \\"hasEc2Capacity\\": false,
+    \\"securityGroupIds\\": []
+  },
+  \\"defaultGatewayAttributes\\": {
+    \\"securityGroupIds\\": [
+      \\"\${Ref7}\\"
+    ],
+    \\"virtualGatewayArn\\": \\"\${Ref8}\\"
+  },
+  \\"defaultRouterAttributes\\": {
+    \\"securityGroupIds\\": [
+      \\"\${Ref9}\\"
+    ],
+    \\"virtualRouterArn\\": \\"\${Ref10}\\",
+    \\"virtualServiceArn\\": \\"\${Ref11}\\"
+  }
+}",
+            Object {
+              "Ref0": Object {
+                "Ref": "EnvironmentVpc6FD2605E",
+              },
+              "Ref1": Object {
+                "Fn::GetAtt": Array [
+                  "Namespace9B63B8C8",
+                  "Arn",
+                ],
+              },
+              "Ref10": Object {
+                "Ref": "EnvironmentRouter36ACE08F",
+              },
+              "Ref11": Object {
+                "Ref": "EnvironmentRouterService4B5D623E",
+              },
+              "Ref2": Object {
+                "Fn::GetAtt": Array [
+                  "Namespace9B63B8C8",
+                  "Id",
+                ],
+              },
+              "Ref3": "integ-environment2",
+              "Ref4": Object {
+                "Ref": "EnvironmentMeshE4273EA5",
+              },
+              "Ref5": Object {
+                "Ref": "EnvironmentClusterE81C7902",
+              },
+              "Ref6": Object {
+                "Fn::GetAtt": Array [
+                  "EnvironmentClusterE81C7902",
+                  "Arn",
+                ],
+              },
+              "Ref7": Object {
+                "Fn::GetAtt": Array [
+                  "EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29",
+                  "GroupId",
+                ],
+              },
+              "Ref8": Object {
+                "Ref": "EnvironmentGateway3306D38F",
+              },
+              "Ref9": Object {
+                "Fn::GetAtt": Array [
+                  "EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29",
+                  "GroupId",
+                ],
+              },
+            },
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "EnvironmentMeshE4273EA5": Object {
+      "Properties": Object {
+        "MeshName": "integenvironment2EnvironmentMesh8BE0F7B0",
+        "Spec": Object {
+          "EgressFilter": Object {
+            "Type": "ALLOW_ALL",
+          },
+        },
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+      },
+      "Type": "AWS::AppMesh::Mesh",
+    },
+    "EnvironmentRouter36ACE08F": Object {
+      "Properties": Object {
+        "MeshName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentMeshE4273EA5",
+            "MeshName",
+          ],
+        },
+        "Spec": Object {
+          "Listeners": Array [
+            Object {
+              "PortMapping": Object {
+                "Port": 8080,
+                "Protocol": "http2",
+              },
+            },
+          ],
+        },
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+        "VirtualRouterName": "integenvironment2EnvironmentRouterBA457CD2",
+      },
+      "Type": "AWS::AppMesh::VirtualRouter",
+    },
+    "EnvironmentRouterService4B5D623E": Object {
+      "Properties": Object {
+        "MeshName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentMeshE4273EA5",
+            "MeshName",
+          ],
+        },
+        "Spec": Object {
+          "Provider": Object {
+            "VirtualRouter": Object {
+              "VirtualRouterName": Object {
+                "Fn::GetAtt": Array [
+                  "EnvironmentRouter36ACE08F",
+                  "VirtualRouterName",
+                ],
+              },
+            },
+          },
+        },
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+        "VirtualServiceName": "integenvironment2EnvironmentRouterServiceA45ECAF8",
+      },
+      "Type": "AWS::AppMesh::VirtualService",
+    },
+    "EnvironmentVpc6FD2605E": Object {
+      "Properties": Object {
+        "CidrBlock": "10.0.0.0/16",
+        "EnableDnsHostnames": true,
+        "EnableDnsSupport": true,
+        "InstanceTenancy": "default",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "integ-environment2/Environment/Vpc",
+          },
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::VPC",
+    },
+    "EnvironmentVpcIGW6A2A4B85": Object {
+      "Properties": Object {
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "integ-environment2/Environment/Vpc",
+          },
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::InternetGateway",
+    },
+    "EnvironmentVpcVPCGWCACA0D28": Object {
+      "Properties": Object {
+        "InternetGatewayId": Object {
+          "Ref": "EnvironmentVpcIGW6A2A4B85",
+        },
+        "VpcId": Object {
+          "Ref": "EnvironmentVpc6FD2605E",
+        },
+      },
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+    },
+    "EnvironmentVpcpublicSubnet1DefaultRouteDC050BCB": Object {
+      "DependsOn": Array [
+        "EnvironmentVpcVPCGWCACA0D28",
+      ],
+      "Properties": Object {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": Object {
+          "Ref": "EnvironmentVpcIGW6A2A4B85",
+        },
+        "RouteTableId": Object {
+          "Ref": "EnvironmentVpcpublicSubnet1RouteTable70651203",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
+    "EnvironmentVpcpublicSubnet1RouteTable70651203": Object {
+      "Properties": Object {
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "integ-environment2/Environment/Vpc/publicSubnet1",
+          },
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "EnvironmentVpc6FD2605E",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "EnvironmentVpcpublicSubnet1RouteTableAssociationA2BD24B5": Object {
+      "Properties": Object {
+        "RouteTableId": Object {
+          "Ref": "EnvironmentVpcpublicSubnet1RouteTable70651203",
+        },
+        "SubnetId": Object {
+          "Ref": "EnvironmentVpcpublicSubnet1Subnet1C4BD5BB",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "EnvironmentVpcpublicSubnet1Subnet1C4BD5BB": Object {
+      "Properties": Object {
+        "AvailabilityZone": Object {
+          "Fn::Select": Array [
+            0,
+            Object {
+              "Fn::GetAZs": "",
+            },
+          ],
+        },
+        "CidrBlock": "10.0.0.0/22",
+        "MapPublicIpOnLaunch": true,
+        "Tags": Array [
+          Object {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "public",
+          },
+          Object {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public",
+          },
+          Object {
+            "Key": "Name",
+            "Value": "integ-environment2/Environment/Vpc/publicSubnet1",
+          },
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "EnvironmentVpc6FD2605E",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "EnvironmentVpcpublicSubnet2DefaultRoute45B5F053": Object {
+      "DependsOn": Array [
+        "EnvironmentVpcVPCGWCACA0D28",
+      ],
+      "Properties": Object {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": Object {
+          "Ref": "EnvironmentVpcIGW6A2A4B85",
+        },
+        "RouteTableId": Object {
+          "Ref": "EnvironmentVpcpublicSubnet2RouteTable373295C7",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
+    "EnvironmentVpcpublicSubnet2RouteTable373295C7": Object {
+      "Properties": Object {
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "integ-environment2/Environment/Vpc/publicSubnet2",
+          },
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "EnvironmentVpc6FD2605E",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "EnvironmentVpcpublicSubnet2RouteTableAssociation60B285D0": Object {
+      "Properties": Object {
+        "RouteTableId": Object {
+          "Ref": "EnvironmentVpcpublicSubnet2RouteTable373295C7",
+        },
+        "SubnetId": Object {
+          "Ref": "EnvironmentVpcpublicSubnet2Subnet62C9A92D",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "EnvironmentVpcpublicSubnet2Subnet62C9A92D": Object {
+      "Properties": Object {
+        "AvailabilityZone": Object {
+          "Fn::Select": Array [
+            1,
+            Object {
+              "Fn::GetAZs": "",
+            },
+          ],
+        },
+        "CidrBlock": "10.0.4.0/22",
+        "MapPublicIpOnLaunch": true,
+        "Tags": Array [
+          Object {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "public",
+          },
+          Object {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public",
+          },
+          Object {
+            "Key": "Name",
+            "Value": "integ-environment2/Environment/Vpc/publicSubnet2",
+          },
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "EnvironmentVpc6FD2605E",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "GatewayEchoExtensionHttp2GatewayRouteExtension0Http2GatewayRouteDB5CA9FF": Object {
+      "Properties": Object {
+        "GatewayRouteName": "integenvironment2GatewayEchoExtensionHttp2GatewayRouteExtension0Http2GatewayRoute50CB6288",
+        "MeshName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentMeshE4273EA5",
+            "MeshName",
+          ],
+        },
+        "Spec": Object {
+          "Http2Route": Object {
+            "Action": Object {
+              "Target": Object {
+                "VirtualService": Object {
+                  "VirtualServiceName": Object {
+                    "Fn::GetAtt": Array [
+                      "GatewayEchoVirtualService12F51BDF",
+                      "VirtualServiceName",
+                    ],
+                  },
+                },
+              },
+            },
+            "Match": Object {
+              "Prefix": "/gateway-echo",
+            },
+          },
+        },
+        "VirtualGatewayName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentGateway3306D38F",
+            "VirtualGatewayName",
+          ],
+        },
+      },
+      "Type": "AWS::AppMesh::GatewayRoute",
+    },
+    "GatewayEchoFargateService6B6EACB2": Object {
+      "Properties": Object {
+        "CapacityProviderStrategy": Array [
+          Object {
+            "CapacityProvider": "FARGATE_SPOT",
+            "Weight": 1000,
+          },
+          Object {
+            "CapacityProvider": "FARGATE",
+            "Weight": 1,
+          },
+        ],
+        "Cluster": Object {
+          "Ref": "EnvironmentClusterE81C7902",
+        },
+        "DeploymentConfiguration": Object {
+          "DeploymentCircuitBreaker": Object {
+            "Enable": true,
+            "Rollback": true,
+          },
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 100,
+        },
+        "EnableECSManagedTags": false,
+        "NetworkConfiguration": Object {
+          "AwsvpcConfiguration": Object {
+            "AssignPublicIp": "ENABLED",
+            "SecurityGroups": Array [
+              Object {
+                "Fn::GetAtt": Array [
+                  "GatewayEchoFargateServiceSecurityGroupD1F95AFB",
+                  "GroupId",
+                ],
+              },
+            ],
+            "Subnets": Array [
+              Object {
+                "Ref": "EnvironmentVpcpublicSubnet1Subnet1C4BD5BB",
+              },
+              Object {
+                "Ref": "EnvironmentVpcpublicSubnet2Subnet62C9A92D",
+              },
+            ],
+          },
+        },
+        "ServiceName": "gateway-echo-integ-environment2-integenvironment2GatewayEchoD4302EA3",
+        "ServiceRegistries": Array [
+          Object {
+            "RegistryArn": Object {
+              "Fn::GetAtt": Array [
+                "GatewayEchoFargateServiceCloudmapServiceED75EC7C",
+                "Arn",
+              ],
+            },
+          },
+        ],
+        "TaskDefinition": Object {
+          "Ref": "GatewayEchoTaskDefinitionFFE72461",
+        },
+      },
+      "Type": "AWS::ECS::Service",
+    },
+    "GatewayEchoFargateServiceCloudmapServiceED75EC7C": Object {
+      "Properties": Object {
+        "DnsConfig": Object {
+          "DnsRecords": Array [
+            Object {
+              "TTL": 60,
+              "Type": "A",
+            },
+          ],
+          "NamespaceId": Object {
+            "Fn::GetAtt": Array [
+              "Namespace9B63B8C8",
+              "Id",
+            ],
+          },
+          "RoutingPolicy": "MULTIVALUE",
+        },
+        "HealthCheckCustomConfig": Object {
+          "FailureThreshold": 1,
+        },
+        "Name": "gateway-echo",
+        "NamespaceId": Object {
+          "Fn::GetAtt": Array [
+            "Namespace9B63B8C8",
+            "Id",
+          ],
+        },
+      },
+      "Type": "AWS::ServiceDiscovery::Service",
+    },
+    "GatewayEchoFargateServiceSecurityGroupD1F95AFB": Object {
+      "Properties": Object {
+        "GroupDescription": "integ-environment2/GatewayEcho/FargateService/SecurityGroup",
+        "SecurityGroupEgress": Array [
+          Object {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "EnvironmentVpc6FD2605E",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "GatewayEchoFargateServiceSecurityGroupfromintegenvironment2EnvironmentGatewayFargateGatewayServiceSecurityGroup2152FE4D805BD6C796": Object {
+      "Properties": Object {
+        "Description": "from integenvironment2EnvironmentGatewayFargateGatewayServiceSecurityGroup2152FE4D:80",
+        "FromPort": 80,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "GatewayEchoFargateServiceSecurityGroupD1F95AFB",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29",
+            "GroupId",
+          ],
+        },
+        "ToPort": 80,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "GatewayEchoTaskDefinitionEnvoyLogGroupE67D781A": Object {
+      "DeletionPolicy": "Retain",
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "GatewayEchoTaskDefinitionExecutionRoleD72734E0": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "GatewayEchoTaskDefinitionExecutionRoleDefaultPolicyADD50FA7": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "GatewayEchoTaskDefinitionEnvoyLogGroupE67D781A",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "GatewayEchoTaskDefinitionExecutionRoleDefaultPolicyADD50FA7",
+        "Roles": Array [
+          Object {
+            "Ref": "GatewayEchoTaskDefinitionExecutionRoleD72734E0",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "GatewayEchoTaskDefinitionFFE72461": Object {
+      "Properties": Object {
+        "ContainerDefinitions": Array [
+          Object {
+            "Environment": Array [
+              Object {
+                "Name": "PORT",
+                "Value": "80",
+              },
+            ],
+            "Essential": true,
+            "Image": "jmalloc/echo-server",
+            "Memory": 512,
+            "Name": "Main",
+            "PortMappings": Array [
+              Object {
+                "ContainerPort": 80,
+                "Protocol": "tcp",
+              },
+            ],
+            "Secrets": Array [],
+          },
+          Object {
+            "Environment": Array [
+              Object {
+                "Name": "APPMESH_VIRTUAL_NODE_NAME",
+                "Value": Object {
+                  "Ref": "GatewayEchoVirtualNodeC6ED7E1B",
+                },
+              },
+              Object {
+                "Name": "AWS_REGION",
+                "Value": Object {
+                  "Ref": "AWS::Region",
+                },
+              },
+              Object {
+                "Name": "ENABLE_ENVOY_STATS_TAGS",
+                "Value": "1",
+              },
+              Object {
+                "Name": "ENABLE_ENVOY_DOG_STATSD",
+                "Value": "1",
+              },
+            ],
+            "Essential": true,
+            "HealthCheck": Object {
+              "Command": Array [
+                "CMD",
+                "sh",
+                "-c",
+                "curl -s http://127.0.0.1:9901/ready | grep -q LIVE",
+              ],
+              "Interval": 5,
+              "Retries": 3,
+              "StartPeriod": 10,
+              "Timeout": 2,
+            },
+            "Image": "public.ecr.aws/appmesh/aws-appmesh-envoy:v1.16.1.0-prod",
+            "LogConfiguration": Object {
+              "LogDriver": "awslogs",
+              "Options": Object {
+                "awslogs-group": Object {
+                  "Ref": "GatewayEchoTaskDefinitionEnvoyLogGroupE67D781A",
+                },
+                "awslogs-region": Object {
+                  "Ref": "AWS::Region",
+                },
+                "awslogs-stream-prefix": "envoy",
+              },
+            },
+            "Name": "Envoy",
+            "Ulimits": Array [
+              Object {
+                "HardLimit": 1024000,
+                "Name": "nofile",
+                "SoftLimit": 1024000,
+              },
+            ],
+            "User": "1337",
+          },
+        ],
+        "Cpu": "256",
+        "ExecutionRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "GatewayEchoTaskDefinitionExecutionRoleD72734E0",
+            "Arn",
+          ],
+        },
+        "Family": "integenvironment2GatewayEchoTaskDefinition4B1310A4",
+        "Memory": "512",
+        "NetworkMode": "awsvpc",
+        "ProxyConfiguration": Object {
+          "ContainerName": "Envoy",
+          "ProxyConfigurationProperties": Array [
+            Object {
+              "Name": "AppPorts",
+              "Value": "80",
+            },
+            Object {
+              "Name": "ProxyEgressPort",
+              "Value": "15001",
+            },
+            Object {
+              "Name": "ProxyIngressPort",
+              "Value": "15000",
+            },
+            Object {
+              "Name": "IgnoredUID",
+              "Value": "1337",
+            },
+            Object {
+              "Name": "IgnoredGID",
+              "Value": "1338",
+            },
+            Object {
+              "Name": "EgressIgnoredIPs",
+              "Value": "169.254.170.2,169.254.169.254",
+            },
+          ],
+          "Type": "APPMESH",
+        },
+        "RequiresCompatibilities": Array [
+          "FARGATE",
+        ],
+        "TaskRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "GatewayEchoTaskDefinitionTaskRole9B0BA07A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::ECS::TaskDefinition",
+    },
+    "GatewayEchoTaskDefinitionTaskRole9B0BA07A": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "GatewayEchoTaskDefinitionTaskRoleDefaultPolicyFB471A3E": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "appmesh:StreamAggregatedResources",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "GatewayEchoVirtualNodeC6ED7E1B",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "GatewayEchoTaskDefinitionTaskRoleDefaultPolicyFB471A3E",
+        "Roles": Array [
+          Object {
+            "Ref": "GatewayEchoTaskDefinitionTaskRole9B0BA07A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "GatewayEchoVirtualNodeC6ED7E1B": Object {
+      "Properties": Object {
+        "MeshName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentMeshE4273EA5",
+            "MeshName",
+          ],
+        },
+        "Spec": Object {
+          "Listeners": Array [
+            Object {
+              "PortMapping": Object {
+                "Port": 80,
+                "Protocol": "http2",
+              },
+            },
+          ],
+          "ServiceDiscovery": Object {
+            "AWSCloudMap": Object {
+              "NamespaceName": "integ-environment2",
+              "ServiceName": Object {
+                "Fn::GetAtt": Array [
+                  "GatewayEchoFargateServiceCloudmapServiceED75EC7C",
+                  "Name",
+                ],
+              },
+            },
+          },
+        },
+        "VirtualNodeName": "integenvironment2GatewayEchoVirtualNode239EC8A5",
+      },
+      "Type": "AWS::AppMesh::VirtualNode",
+    },
+    "GatewayEchoVirtualService12F51BDF": Object {
+      "Properties": Object {
+        "MeshName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentMeshE4273EA5",
+            "MeshName",
+          ],
+        },
+        "Spec": Object {
+          "Provider": Object {
+            "VirtualNode": Object {
+              "VirtualNodeName": Object {
+                "Fn::GetAtt": Array [
+                  "GatewayEchoVirtualNodeC6ED7E1B",
+                  "VirtualNodeName",
+                ],
+              },
+            },
+          },
+        },
+        "VirtualServiceName": "gateway-echo.integ-environment2",
+      },
+      "Type": "AWS::AppMesh::VirtualService",
+    },
+    "Namespace9B63B8C8": Object {
+      "Properties": Object {
+        "Name": "integ-environment2",
+        "Vpc": Object {
+          "Ref": "EnvironmentVpc6FD2605E",
+        },
+      },
+      "Type": "AWS::ServiceDiscovery::PrivateDnsNamespace",
+    },
+    "RoutedEchoExtensionHttpRouteExtension0HTTP25CF6BD8E": Object {
+      "Properties": Object {
+        "MeshName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentMeshE4273EA5",
+            "MeshName",
+          ],
+        },
+        "RouteName": "integenvironment2RoutedEchoExtensionHttpRouteExtension0HTTP2FE48BD7B",
+        "Spec": Object {
+          "Http2Route": Object {
+            "Action": Object {
+              "WeightedTargets": Array [
+                Object {
+                  "VirtualNode": Object {
+                    "Fn::GetAtt": Array [
+                      "RoutedEchoVirtualNode313DD99A",
+                      "VirtualNodeName",
+                    ],
+                  },
+                  "Weight": 1,
+                },
+              ],
+            },
+            "Match": Object {
+              "Prefix": "/echo",
+            },
+          },
+        },
+        "VirtualRouterName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentRouter36ACE08F",
+            "VirtualRouterName",
+          ],
+        },
+      },
+      "Type": "AWS::AppMesh::Route",
+    },
+    "RoutedEchoExtensionHttpRouteExtension0HTTPF7F04FA2": Object {
+      "Properties": Object {
+        "MeshName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentMeshE4273EA5",
+            "MeshName",
+          ],
+        },
+        "RouteName": "integenvironment2RoutedEchoExtensionHttpRouteExtension0HTTP1B89C586",
+        "Spec": Object {
+          "HttpRoute": Object {
+            "Action": Object {
+              "WeightedTargets": Array [
+                Object {
+                  "VirtualNode": Object {
+                    "Fn::GetAtt": Array [
+                      "RoutedEchoVirtualNode313DD99A",
+                      "VirtualNodeName",
+                    ],
+                  },
+                  "Weight": 1,
+                },
+              ],
+            },
+            "Match": Object {
+              "Prefix": "/echo",
+            },
+          },
+        },
+        "VirtualRouterName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentRouter36ACE08F",
+            "VirtualRouterName",
+          ],
+        },
+      },
+      "Type": "AWS::AppMesh::Route",
+    },
+    "RoutedEchoExtensionHttpRouteExtension1HTTP25D847A99": Object {
+      "Properties": Object {
+        "MeshName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentMeshE4273EA5",
+            "MeshName",
+          ],
+        },
+        "RouteName": "integenvironment2RoutedEchoExtensionHttpRouteExtension1HTTP20842363F",
+        "Spec": Object {
+          "Http2Route": Object {
+            "Action": Object {
+              "WeightedTargets": Array [
+                Object {
+                  "VirtualNode": Object {
+                    "Fn::GetAtt": Array [
+                      "RoutedEchoVirtualNode313DD99A",
+                      "VirtualNodeName",
+                    ],
+                  },
+                  "Weight": 1,
+                },
+              ],
+            },
+            "Match": Object {
+              "Headers": Array [
+                Object {
+                  "Match": Object {
+                    "Exact": "routed-echo.myexample.com",
+                  },
+                  "Name": "x-forwarded-host",
+                },
+              ],
+              "Prefix": "/",
+            },
+          },
+        },
+        "VirtualRouterName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentRouter36ACE08F",
+            "VirtualRouterName",
+          ],
+        },
+      },
+      "Type": "AWS::AppMesh::Route",
+    },
+    "RoutedEchoExtensionHttpRouteExtension1HTTPD5C9E565": Object {
+      "Properties": Object {
+        "MeshName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentMeshE4273EA5",
+            "MeshName",
+          ],
+        },
+        "RouteName": "integenvironment2RoutedEchoExtensionHttpRouteExtension1HTTP19AFAF17",
+        "Spec": Object {
+          "HttpRoute": Object {
+            "Action": Object {
+              "WeightedTargets": Array [
+                Object {
+                  "VirtualNode": Object {
+                    "Fn::GetAtt": Array [
+                      "RoutedEchoVirtualNode313DD99A",
+                      "VirtualNodeName",
+                    ],
+                  },
+                  "Weight": 1,
+                },
+              ],
+            },
+            "Match": Object {
+              "Headers": Array [
+                Object {
+                  "Match": Object {
+                    "Exact": "routed-echo.myexample.com",
+                  },
+                  "Name": "x-forwarded-host",
+                },
+              ],
+              "Prefix": "/",
+            },
+          },
+        },
+        "VirtualRouterName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentRouter36ACE08F",
+            "VirtualRouterName",
+          ],
+        },
+      },
+      "Type": "AWS::AppMesh::Route",
+    },
+    "RoutedEchoFargateService662BB566": Object {
+      "Properties": Object {
+        "CapacityProviderStrategy": Array [
+          Object {
+            "CapacityProvider": "FARGATE_SPOT",
+            "Weight": 1000,
+          },
+          Object {
+            "CapacityProvider": "FARGATE",
+            "Weight": 1,
+          },
+        ],
+        "Cluster": Object {
+          "Ref": "EnvironmentClusterE81C7902",
+        },
+        "DeploymentConfiguration": Object {
+          "DeploymentCircuitBreaker": Object {
+            "Enable": true,
+            "Rollback": true,
+          },
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 100,
+        },
+        "EnableECSManagedTags": false,
+        "NetworkConfiguration": Object {
+          "AwsvpcConfiguration": Object {
+            "AssignPublicIp": "ENABLED",
+            "SecurityGroups": Array [
+              Object {
+                "Fn::GetAtt": Array [
+                  "RoutedEchoFargateServiceSecurityGroup0BD9028A",
+                  "GroupId",
+                ],
+              },
+            ],
+            "Subnets": Array [
+              Object {
+                "Ref": "EnvironmentVpcpublicSubnet1Subnet1C4BD5BB",
+              },
+              Object {
+                "Ref": "EnvironmentVpcpublicSubnet2Subnet62C9A92D",
+              },
+            ],
+          },
+        },
+        "ServiceName": "routed-echo-integ-environment2-integenvironment2RoutedEcho2AFDA6D2",
+        "ServiceRegistries": Array [
+          Object {
+            "RegistryArn": Object {
+              "Fn::GetAtt": Array [
+                "RoutedEchoFargateServiceCloudmapService80D4E03D",
+                "Arn",
+              ],
+            },
+          },
+        ],
+        "TaskDefinition": Object {
+          "Ref": "RoutedEchoTaskDefinition4453D73F",
+        },
+      },
+      "Type": "AWS::ECS::Service",
+    },
+    "RoutedEchoFargateServiceCloudmapService80D4E03D": Object {
+      "Properties": Object {
+        "DnsConfig": Object {
+          "DnsRecords": Array [
+            Object {
+              "TTL": 60,
+              "Type": "A",
+            },
+          ],
+          "NamespaceId": Object {
+            "Fn::GetAtt": Array [
+              "Namespace9B63B8C8",
+              "Id",
+            ],
+          },
+          "RoutingPolicy": "MULTIVALUE",
+        },
+        "HealthCheckCustomConfig": Object {
+          "FailureThreshold": 1,
+        },
+        "Name": "routed-echo",
+        "NamespaceId": Object {
+          "Fn::GetAtt": Array [
+            "Namespace9B63B8C8",
+            "Id",
+          ],
+        },
+      },
+      "Type": "AWS::ServiceDiscovery::Service",
+    },
+    "RoutedEchoFargateServiceSecurityGroup0BD9028A": Object {
+      "Properties": Object {
+        "GroupDescription": "integ-environment2/RoutedEcho/FargateService/SecurityGroup",
+        "SecurityGroupEgress": Array [
+          Object {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "EnvironmentVpc6FD2605E",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "RoutedEchoFargateServiceSecurityGroupfromintegenvironment2EnvironmentGatewayFargateGatewayServiceSecurityGroup2152FE4D8050DEE87B": Object {
+      "Properties": Object {
+        "Description": "from integenvironment2EnvironmentGatewayFargateGatewayServiceSecurityGroup2152FE4D:80",
+        "FromPort": 80,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "RoutedEchoFargateServiceSecurityGroup0BD9028A",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29",
+            "GroupId",
+          ],
+        },
+        "ToPort": 80,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "RoutedEchoTaskDefinition4453D73F": Object {
+      "Properties": Object {
+        "ContainerDefinitions": Array [
+          Object {
+            "Environment": Array [
+              Object {
+                "Name": "PORT",
+                "Value": "80",
+              },
+            ],
+            "Essential": true,
+            "Image": "jmalloc/echo-server",
+            "Memory": 512,
+            "Name": "Main",
+            "PortMappings": Array [
+              Object {
+                "ContainerPort": 80,
+                "Protocol": "tcp",
+              },
+            ],
+            "Secrets": Array [],
+          },
+          Object {
+            "Environment": Array [
+              Object {
+                "Name": "APPMESH_VIRTUAL_NODE_NAME",
+                "Value": Object {
+                  "Ref": "RoutedEchoVirtualNode313DD99A",
+                },
+              },
+              Object {
+                "Name": "AWS_REGION",
+                "Value": Object {
+                  "Ref": "AWS::Region",
+                },
+              },
+              Object {
+                "Name": "ENABLE_ENVOY_STATS_TAGS",
+                "Value": "1",
+              },
+              Object {
+                "Name": "ENABLE_ENVOY_DOG_STATSD",
+                "Value": "1",
+              },
+            ],
+            "Essential": true,
+            "HealthCheck": Object {
+              "Command": Array [
+                "CMD",
+                "sh",
+                "-c",
+                "curl -s http://127.0.0.1:9901/ready | grep -q LIVE",
+              ],
+              "Interval": 5,
+              "Retries": 3,
+              "StartPeriod": 10,
+              "Timeout": 2,
+            },
+            "Image": "public.ecr.aws/appmesh/aws-appmesh-envoy:v1.16.1.0-prod",
+            "LogConfiguration": Object {
+              "LogDriver": "awslogs",
+              "Options": Object {
+                "awslogs-group": Object {
+                  "Ref": "RoutedEchoTaskDefinitionEnvoyLogGroup6A6AD269",
+                },
+                "awslogs-region": Object {
+                  "Ref": "AWS::Region",
+                },
+                "awslogs-stream-prefix": "envoy",
+              },
+            },
+            "Name": "Envoy",
+            "Ulimits": Array [
+              Object {
+                "HardLimit": 1024000,
+                "Name": "nofile",
+                "SoftLimit": 1024000,
+              },
+            ],
+            "User": "1337",
+          },
+        ],
+        "Cpu": "256",
+        "ExecutionRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "RoutedEchoTaskDefinitionExecutionRoleDF80768A",
+            "Arn",
+          ],
+        },
+        "Family": "integenvironment2RoutedEchoTaskDefinition3FE135E9",
+        "Memory": "512",
+        "NetworkMode": "awsvpc",
+        "ProxyConfiguration": Object {
+          "ContainerName": "Envoy",
+          "ProxyConfigurationProperties": Array [
+            Object {
+              "Name": "AppPorts",
+              "Value": "80",
+            },
+            Object {
+              "Name": "ProxyEgressPort",
+              "Value": "15001",
+            },
+            Object {
+              "Name": "ProxyIngressPort",
+              "Value": "15000",
+            },
+            Object {
+              "Name": "IgnoredUID",
+              "Value": "1337",
+            },
+            Object {
+              "Name": "IgnoredGID",
+              "Value": "1338",
+            },
+            Object {
+              "Name": "EgressIgnoredIPs",
+              "Value": "169.254.170.2,169.254.169.254",
+            },
+          ],
+          "Type": "APPMESH",
+        },
+        "RequiresCompatibilities": Array [
+          "FARGATE",
+        ],
+        "TaskRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "RoutedEchoTaskDefinitionTaskRole64288D3E",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::ECS::TaskDefinition",
+    },
+    "RoutedEchoTaskDefinitionEnvoyLogGroup6A6AD269": Object {
+      "DeletionPolicy": "Retain",
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "RoutedEchoTaskDefinitionExecutionRoleDF80768A": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "RoutedEchoTaskDefinitionExecutionRoleDefaultPolicyE1497B05": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "RoutedEchoTaskDefinitionEnvoyLogGroup6A6AD269",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "RoutedEchoTaskDefinitionExecutionRoleDefaultPolicyE1497B05",
+        "Roles": Array [
+          Object {
+            "Ref": "RoutedEchoTaskDefinitionExecutionRoleDF80768A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "RoutedEchoTaskDefinitionTaskRole64288D3E": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "RoutedEchoTaskDefinitionTaskRoleDefaultPolicy357A2EF5": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "appmesh:StreamAggregatedResources",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "RoutedEchoVirtualNode313DD99A",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "RoutedEchoTaskDefinitionTaskRoleDefaultPolicy357A2EF5",
+        "Roles": Array [
+          Object {
+            "Ref": "RoutedEchoTaskDefinitionTaskRole64288D3E",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "RoutedEchoVirtualNode313DD99A": Object {
+      "Properties": Object {
+        "MeshName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentMeshE4273EA5",
+            "MeshName",
+          ],
+        },
+        "Spec": Object {
+          "Listeners": Array [
+            Object {
+              "PortMapping": Object {
+                "Port": 80,
+                "Protocol": "http",
+              },
+            },
+          ],
+          "ServiceDiscovery": Object {
+            "AWSCloudMap": Object {
+              "NamespaceName": "integ-environment2",
+              "ServiceName": Object {
+                "Fn::GetAtt": Array [
+                  "RoutedEchoFargateServiceCloudmapService80D4E03D",
+                  "Name",
+                ],
+              },
+            },
+          },
+        },
+        "VirtualNodeName": "integenvironment2RoutedEchoVirtualNode26F01980",
+      },
+      "Type": "AWS::AppMesh::VirtualNode",
+    },
+    "RoutedEchoVirtualService45C53F8F": Object {
+      "Properties": Object {
+        "MeshName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentMeshE4273EA5",
+            "MeshName",
+          ],
+        },
+        "Spec": Object {
+          "Provider": Object {
+            "VirtualNode": Object {
+              "VirtualNodeName": Object {
+                "Fn::GetAtt": Array [
+                  "RoutedEchoVirtualNode313DD99A",
+                  "VirtualNodeName",
+                ],
+              },
+            },
+          },
+        },
+        "VirtualServiceName": "routed-echo.integ-environment2",
+      },
+      "Type": "AWS::AppMesh::VirtualService",
+    },
+  },
+}
+`;
+
+exports[`integ-environment-child 1`] = `
+Object {
+  "Resources": Object {
+    "BackendExtensionHttpRouteExtension0HTTP202B61901": Object {
+      "Properties": Object {
+        "MeshName": "fake-mesh",
+        "RouteName": "integenvironment2childBackendExtensionHttpRouteExtension0HTTP2ED5FD7BD",
+        "Spec": Object {
+          "Http2Route": Object {
+            "Action": Object {
+              "WeightedTargets": Array [
+                Object {
+                  "VirtualNode": Object {
+                    "Fn::GetAtt": Array [
+                      "BackendVirtualNodeAC542DA7",
+                      "VirtualNodeName",
+                    ],
+                  },
+                  "Weight": 1,
+                },
+              ],
+            },
+            "Match": Object {
+              "Prefix": "/backend",
+            },
+          },
+        },
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Depends-On-fake",
+            "Value": Object {
+              "Fn::ImportValue": "fake",
+            },
+          },
+        ],
+        "VirtualRouterName": "fake-router",
+      },
+      "Type": "AWS::AppMesh::Route",
+    },
+    "BackendExtensionHttpRouteExtension0HTTP54763D08": Object {
+      "Properties": Object {
+        "MeshName": "fake-mesh",
+        "RouteName": "integenvironment2childBackendExtensionHttpRouteExtension0HTTP9D463326",
+        "Spec": Object {
+          "HttpRoute": Object {
+            "Action": Object {
+              "WeightedTargets": Array [
+                Object {
+                  "VirtualNode": Object {
+                    "Fn::GetAtt": Array [
+                      "BackendVirtualNodeAC542DA7",
+                      "VirtualNodeName",
+                    ],
+                  },
+                  "Weight": 1,
+                },
+              ],
+            },
+            "Match": Object {
+              "Prefix": "/backend",
+            },
+          },
+        },
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Depends-On-fake",
+            "Value": Object {
+              "Fn::ImportValue": "fake",
+            },
+          },
+        ],
+        "VirtualRouterName": "fake-router",
+      },
+      "Type": "AWS::AppMesh::Route",
+    },
+    "BackendFargateService0DC540E3": Object {
+      "Properties": Object {
+        "CapacityProviderStrategy": Array [
+          Object {
+            "CapacityProvider": "FARGATE_SPOT",
+            "Weight": 1000,
+          },
+          Object {
+            "CapacityProvider": "FARGATE",
+            "Weight": 1,
+          },
+        ],
+        "Cluster": "fake",
+        "DeploymentConfiguration": Object {
+          "DeploymentCircuitBreaker": Object {
+            "Enable": true,
+            "Rollback": true,
+          },
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 100,
+        },
+        "EnableECSManagedTags": false,
+        "NetworkConfiguration": Object {
+          "AwsvpcConfiguration": Object {
+            "AssignPublicIp": "ENABLED",
+            "SecurityGroups": Array [
+              Object {
+                "Fn::GetAtt": Array [
+                  "BackendFargateServiceSecurityGroup739708B1",
+                  "GroupId",
+                ],
+              },
+            ],
+            "Subnets": Array [
+              "s-12345",
+              "s-67890",
+            ],
+          },
+        },
+        "ServiceName": "backend-fake-integenvironment2childBackendF65FE668",
+        "ServiceRegistries": Array [
+          Object {
+            "RegistryArn": Object {
+              "Fn::GetAtt": Array [
+                "BackendFargateServiceCloudmapServiceF2F0735F",
+                "Arn",
+              ],
+            },
+          },
+        ],
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Depends-On-fake",
+            "Value": Object {
+              "Fn::ImportValue": "fake",
+            },
+          },
+        ],
+        "TaskDefinition": Object {
+          "Ref": "BackendTaskDefinition35F63C58",
+        },
+      },
+      "Type": "AWS::ECS::Service",
+    },
+    "BackendFargateServiceCloudmapServiceF2F0735F": Object {
+      "Properties": Object {
+        "DnsConfig": Object {
+          "DnsRecords": Array [
+            Object {
+              "TTL": 60,
+              "Type": "A",
+            },
+          ],
+          "NamespaceId": "fake-id",
+          "RoutingPolicy": "MULTIVALUE",
+        },
+        "HealthCheckCustomConfig": Object {
+          "FailureThreshold": 1,
+        },
+        "Name": "backend",
+        "NamespaceId": "fake-id",
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Depends-On-fake",
+            "Value": Object {
+              "Fn::ImportValue": "fake",
+            },
+          },
+        ],
+      },
+      "Type": "AWS::ServiceDiscovery::Service",
+    },
+    "BackendFargateServiceSecurityGroup739708B1": Object {
+      "Properties": Object {
+        "GroupDescription": "integ-environment2-child/Backend/FargateService/SecurityGroup",
+        "SecurityGroupEgress": Array [
+          Object {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Depends-On-fake",
+            "Value": Object {
+              "Fn::ImportValue": "fake",
+            },
+          },
+        ],
+        "VpcId": "vpc-12345",
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "BackendFargateServiceSecurityGroupfromintegenvironment2childConsumerFargateServiceSecurityGroupFA852E6180D47317BA": Object {
+      "Properties": Object {
+        "Description": "from integenvironment2childConsumerFargateServiceSecurityGroupFA852E61:80",
+        "FromPort": 80,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "BackendFargateServiceSecurityGroup739708B1",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "ConsumerFargateServiceSecurityGroupC5BA9DFC",
+            "GroupId",
+          ],
+        },
+        "ToPort": 80,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "BackendTaskDefinition35F63C58": Object {
+      "Properties": Object {
+        "ContainerDefinitions": Array [
+          Object {
+            "Environment": Array [
+              Object {
+                "Name": "FLASK_APP",
+                "Value": "backend.py",
+              },
+            ],
+            "Essential": true,
+            "Image": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  "1234.dkr.ecr.us-fake-1.",
+                  Object {
+                    "Ref": "AWS::URLSuffix",
+                  },
+                  "/aws-cdk/assets:0a3fc08f6d5f727501d286bba755d4403007d3a8e33379cbee63fb7d389443e6",
+                ],
+              ],
+            },
+            "Memory": 512,
+            "Name": "Main",
+            "PortMappings": Array [
+              Object {
+                "ContainerPort": 80,
+                "Protocol": "tcp",
+              },
+            ],
+            "Secrets": Array [],
+          },
+          Object {
+            "Environment": Array [
+              Object {
+                "Name": "APPMESH_VIRTUAL_NODE_NAME",
+                "Value": Object {
+                  "Ref": "BackendVirtualNodeAC542DA7",
+                },
+              },
+              Object {
+                "Name": "AWS_REGION",
+                "Value": "us-fake-1",
+              },
+              Object {
+                "Name": "ENABLE_ENVOY_STATS_TAGS",
+                "Value": "1",
+              },
+              Object {
+                "Name": "ENABLE_ENVOY_DOG_STATSD",
+                "Value": "1",
+              },
+            ],
+            "Essential": true,
+            "HealthCheck": Object {
+              "Command": Array [
+                "CMD",
+                "sh",
+                "-c",
+                "curl -s http://127.0.0.1:9901/ready | grep -q LIVE",
+              ],
+              "Interval": 5,
+              "Retries": 3,
+              "StartPeriod": 10,
+              "Timeout": 2,
+            },
+            "Image": "public.ecr.aws/appmesh/aws-appmesh-envoy:v1.16.1.0-prod",
+            "LogConfiguration": Object {
+              "LogDriver": "awslogs",
+              "Options": Object {
+                "awslogs-group": Object {
+                  "Ref": "BackendTaskDefinitionEnvoyLogGroupA7C8AEB9",
+                },
+                "awslogs-region": "us-fake-1",
+                "awslogs-stream-prefix": "envoy",
+              },
+            },
+            "Name": "Envoy",
+            "Ulimits": Array [
+              Object {
+                "HardLimit": 1024000,
+                "Name": "nofile",
+                "SoftLimit": 1024000,
+              },
+            ],
+            "User": "1337",
+          },
+        ],
+        "Cpu": "256",
+        "ExecutionRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "BackendTaskDefinitionExecutionRole575612B9",
+            "Arn",
+          ],
+        },
+        "Family": "integenvironment2childBackendTaskDefinition7C963566",
+        "Memory": "512",
+        "NetworkMode": "awsvpc",
+        "ProxyConfiguration": Object {
+          "ContainerName": "Envoy",
+          "ProxyConfigurationProperties": Array [
+            Object {
+              "Name": "AppPorts",
+              "Value": "80",
+            },
+            Object {
+              "Name": "ProxyEgressPort",
+              "Value": "15001",
+            },
+            Object {
+              "Name": "ProxyIngressPort",
+              "Value": "15000",
+            },
+            Object {
+              "Name": "IgnoredUID",
+              "Value": "1337",
+            },
+            Object {
+              "Name": "IgnoredGID",
+              "Value": "1338",
+            },
+            Object {
+              "Name": "EgressIgnoredIPs",
+              "Value": "169.254.170.2,169.254.169.254",
+            },
+          ],
+          "Type": "APPMESH",
+        },
+        "RequiresCompatibilities": Array [
+          "FARGATE",
+        ],
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Depends-On-fake",
+            "Value": Object {
+              "Fn::ImportValue": "fake",
+            },
+          },
+        ],
+        "TaskRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "BackendTaskDefinitionTaskRole8FE3AE24",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::ECS::TaskDefinition",
+    },
+    "BackendTaskDefinitionEnvoyLogGroupA7C8AEB9": Object {
+      "DeletionPolicy": "Retain",
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "BackendTaskDefinitionExecutionRole575612B9": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Depends-On-fake",
+            "Value": Object {
+              "Fn::ImportValue": "fake",
+            },
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "BackendTaskDefinitionExecutionRoleDefaultPolicy8156752E": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":ecr:us-fake-1:1234:repository/aws-cdk/assets",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "ecr:GetAuthorizationToken",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "BackendTaskDefinitionEnvoyLogGroupA7C8AEB9",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "BackendTaskDefinitionExecutionRoleDefaultPolicy8156752E",
+        "Roles": Array [
+          Object {
+            "Ref": "BackendTaskDefinitionExecutionRole575612B9",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "BackendTaskDefinitionTaskRole8FE3AE24": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Depends-On-fake",
+            "Value": Object {
+              "Fn::ImportValue": "fake",
+            },
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "BackendTaskDefinitionTaskRoleDefaultPolicyAA0DC2CB": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "appmesh:StreamAggregatedResources",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "BackendVirtualNodeAC542DA7",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "BackendTaskDefinitionTaskRoleDefaultPolicyAA0DC2CB",
+        "Roles": Array [
+          Object {
+            "Ref": "BackendTaskDefinitionTaskRole8FE3AE24",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "BackendVirtualNodeAC542DA7": Object {
+      "Properties": Object {
+        "MeshName": "fake-mesh",
+        "Spec": Object {
+          "Listeners": Array [
+            Object {
+              "PortMapping": Object {
+                "Port": 80,
+                "Protocol": "http",
+              },
+            },
+          ],
+          "ServiceDiscovery": Object {
+            "AWSCloudMap": Object {
+              "NamespaceName": "fake",
+              "ServiceName": Object {
+                "Fn::GetAtt": Array [
+                  "BackendFargateServiceCloudmapServiceF2F0735F",
+                  "Name",
+                ],
+              },
+            },
+          },
+        },
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Depends-On-fake",
+            "Value": Object {
+              "Fn::ImportValue": "fake",
+            },
+          },
+        ],
+        "VirtualNodeName": "integenvironment2childBackendVirtualNodeF6CABCBC",
+      },
+      "Type": "AWS::AppMesh::VirtualNode",
+    },
+    "BackendVirtualService610FBB07": Object {
+      "Properties": Object {
+        "MeshName": "fake-mesh",
+        "Spec": Object {
+          "Provider": Object {
+            "VirtualNode": Object {
+              "VirtualNodeName": Object {
+                "Fn::GetAtt": Array [
+                  "BackendVirtualNodeAC542DA7",
+                  "VirtualNodeName",
+                ],
+              },
+            },
+          },
+        },
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Depends-On-fake",
+            "Value": Object {
+              "Fn::ImportValue": "fake",
+            },
+          },
+        ],
+        "VirtualServiceName": "backend.fake",
+      },
+      "Type": "AWS::AppMesh::VirtualService",
+    },
+    "ConsumerExtensionHttpRouteExtension0HTTP2AA576335": Object {
+      "Properties": Object {
+        "MeshName": "fake-mesh",
+        "RouteName": "integenvironment2childConsumerExtensionHttpRouteExtension0HTTP2D2AB2253",
+        "Spec": Object {
+          "Http2Route": Object {
+            "Action": Object {
+              "WeightedTargets": Array [
+                Object {
+                  "VirtualNode": Object {
+                    "Fn::GetAtt": Array [
+                      "ConsumerVirtualNode65A441BD",
+                      "VirtualNodeName",
+                    ],
+                  },
+                  "Weight": 1,
+                },
+              ],
+            },
+            "Match": Object {
+              "Prefix": "/consumer",
+            },
+          },
+        },
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Depends-On-fake",
+            "Value": Object {
+              "Fn::ImportValue": "fake",
+            },
+          },
+        ],
+        "VirtualRouterName": "fake-router",
+      },
+      "Type": "AWS::AppMesh::Route",
+    },
+    "ConsumerExtensionHttpRouteExtension0HTTPCAC08ACC": Object {
+      "Properties": Object {
+        "MeshName": "fake-mesh",
+        "RouteName": "integenvironment2childConsumerExtensionHttpRouteExtension0HTTP4E6E888F",
+        "Spec": Object {
+          "HttpRoute": Object {
+            "Action": Object {
+              "WeightedTargets": Array [
+                Object {
+                  "VirtualNode": Object {
+                    "Fn::GetAtt": Array [
+                      "ConsumerVirtualNode65A441BD",
+                      "VirtualNodeName",
+                    ],
+                  },
+                  "Weight": 1,
+                },
+              ],
+            },
+            "Match": Object {
+              "Prefix": "/consumer",
+            },
+          },
+        },
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Depends-On-fake",
+            "Value": Object {
+              "Fn::ImportValue": "fake",
+            },
+          },
+        ],
+        "VirtualRouterName": "fake-router",
+      },
+      "Type": "AWS::AppMesh::Route",
+    },
+    "ConsumerFargateServiceCloudmapServiceDCD8B5B9": Object {
+      "Properties": Object {
+        "DnsConfig": Object {
+          "DnsRecords": Array [
+            Object {
+              "TTL": 60,
+              "Type": "A",
+            },
+          ],
+          "NamespaceId": "fake-id",
+          "RoutingPolicy": "MULTIVALUE",
+        },
+        "HealthCheckCustomConfig": Object {
+          "FailureThreshold": 1,
+        },
+        "Name": "consumer",
+        "NamespaceId": "fake-id",
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Depends-On-fake",
+            "Value": Object {
+              "Fn::ImportValue": "fake",
+            },
+          },
+        ],
+      },
+      "Type": "AWS::ServiceDiscovery::Service",
+    },
+    "ConsumerFargateServiceFF8698B9": Object {
+      "Properties": Object {
+        "CapacityProviderStrategy": Array [
+          Object {
+            "CapacityProvider": "FARGATE_SPOT",
+            "Weight": 1000,
+          },
+          Object {
+            "CapacityProvider": "FARGATE",
+            "Weight": 1,
+          },
+        ],
+        "Cluster": "fake",
+        "DeploymentConfiguration": Object {
+          "DeploymentCircuitBreaker": Object {
+            "Enable": true,
+            "Rollback": true,
+          },
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 100,
+        },
+        "EnableECSManagedTags": false,
+        "NetworkConfiguration": Object {
+          "AwsvpcConfiguration": Object {
+            "AssignPublicIp": "ENABLED",
+            "SecurityGroups": Array [
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConsumerFargateServiceSecurityGroupC5BA9DFC",
+                  "GroupId",
+                ],
+              },
+            ],
+            "Subnets": Array [
+              "s-12345",
+              "s-67890",
+            ],
+          },
+        },
+        "ServiceName": "consumer-fake-integenvironment2childConsumer2696F6B1",
+        "ServiceRegistries": Array [
+          Object {
+            "RegistryArn": Object {
+              "Fn::GetAtt": Array [
+                "ConsumerFargateServiceCloudmapServiceDCD8B5B9",
+                "Arn",
+              ],
+            },
+          },
+        ],
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Depends-On-fake",
+            "Value": Object {
+              "Fn::ImportValue": "fake",
+            },
+          },
+        ],
+        "TaskDefinition": Object {
+          "Ref": "ConsumerTaskDefinition15934FC1",
+        },
+      },
+      "Type": "AWS::ECS::Service",
+    },
+    "ConsumerFargateServiceSecurityGroupC5BA9DFC": Object {
+      "Properties": Object {
+        "GroupDescription": "integ-environment2-child/Consumer/FargateService/SecurityGroup",
+        "SecurityGroupEgress": Array [
+          Object {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Depends-On-fake",
+            "Value": Object {
+              "Fn::ImportValue": "fake",
+            },
+          },
+        ],
+        "VpcId": "vpc-12345",
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "ConsumerTaskDefinition15934FC1": Object {
+      "Properties": Object {
+        "ContainerDefinitions": Array [
+          Object {
+            "Environment": Array [
+              Object {
+                "Name": "FLASK_APP",
+                "Value": "consumer.py",
+              },
+              Object {
+                "Name": "BACKEND",
+                "Value": Object {
+                  "Fn::GetAtt": Array [
+                    "BackendVirtualService610FBB07",
+                    "VirtualServiceName",
+                  ],
+                },
+              },
+            ],
+            "Essential": true,
+            "Image": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  "1234.dkr.ecr.us-fake-1.",
+                  Object {
+                    "Ref": "AWS::URLSuffix",
+                  },
+                  "/aws-cdk/assets:0a3fc08f6d5f727501d286bba755d4403007d3a8e33379cbee63fb7d389443e6",
+                ],
+              ],
+            },
+            "Memory": 512,
+            "Name": "Main",
+            "PortMappings": Array [
+              Object {
+                "ContainerPort": 80,
+                "Protocol": "tcp",
+              },
+            ],
+            "Secrets": Array [],
+          },
+          Object {
+            "Environment": Array [
+              Object {
+                "Name": "APPMESH_VIRTUAL_NODE_NAME",
+                "Value": Object {
+                  "Ref": "ConsumerVirtualNode65A441BD",
+                },
+              },
+              Object {
+                "Name": "AWS_REGION",
+                "Value": "us-fake-1",
+              },
+              Object {
+                "Name": "ENABLE_ENVOY_STATS_TAGS",
+                "Value": "1",
+              },
+              Object {
+                "Name": "ENABLE_ENVOY_DOG_STATSD",
+                "Value": "1",
+              },
+            ],
+            "Essential": true,
+            "HealthCheck": Object {
+              "Command": Array [
+                "CMD",
+                "sh",
+                "-c",
+                "curl -s http://127.0.0.1:9901/ready | grep -q LIVE",
+              ],
+              "Interval": 5,
+              "Retries": 3,
+              "StartPeriod": 10,
+              "Timeout": 2,
+            },
+            "Image": "public.ecr.aws/appmesh/aws-appmesh-envoy:v1.16.1.0-prod",
+            "LogConfiguration": Object {
+              "LogDriver": "awslogs",
+              "Options": Object {
+                "awslogs-group": Object {
+                  "Ref": "ConsumerTaskDefinitionEnvoyLogGroup34F0EC38",
+                },
+                "awslogs-region": "us-fake-1",
+                "awslogs-stream-prefix": "envoy",
+              },
+            },
+            "Name": "Envoy",
+            "Ulimits": Array [
+              Object {
+                "HardLimit": 1024000,
+                "Name": "nofile",
+                "SoftLimit": 1024000,
+              },
+            ],
+            "User": "1337",
+          },
+        ],
+        "Cpu": "256",
+        "ExecutionRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "ConsumerTaskDefinitionExecutionRole454258BE",
+            "Arn",
+          ],
+        },
+        "Family": "integenvironment2childConsumerTaskDefinitionB611E4AC",
+        "Memory": "512",
+        "NetworkMode": "awsvpc",
+        "ProxyConfiguration": Object {
+          "ContainerName": "Envoy",
+          "ProxyConfigurationProperties": Array [
+            Object {
+              "Name": "AppPorts",
+              "Value": "80",
+            },
+            Object {
+              "Name": "ProxyEgressPort",
+              "Value": "15001",
+            },
+            Object {
+              "Name": "ProxyIngressPort",
+              "Value": "15000",
+            },
+            Object {
+              "Name": "IgnoredUID",
+              "Value": "1337",
+            },
+            Object {
+              "Name": "IgnoredGID",
+              "Value": "1338",
+            },
+            Object {
+              "Name": "EgressIgnoredIPs",
+              "Value": "169.254.170.2,169.254.169.254",
+            },
+          ],
+          "Type": "APPMESH",
+        },
+        "RequiresCompatibilities": Array [
+          "FARGATE",
+        ],
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Depends-On-fake",
+            "Value": Object {
+              "Fn::ImportValue": "fake",
+            },
+          },
+        ],
+        "TaskRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "ConsumerTaskDefinitionTaskRole86B62A6F",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::ECS::TaskDefinition",
+    },
+    "ConsumerTaskDefinitionEnvoyLogGroup34F0EC38": Object {
+      "DeletionPolicy": "Retain",
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConsumerTaskDefinitionExecutionRole454258BE": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Depends-On-fake",
+            "Value": Object {
+              "Fn::ImportValue": "fake",
+            },
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConsumerTaskDefinitionExecutionRoleDefaultPolicyE23C85D6": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":ecr:us-fake-1:1234:repository/aws-cdk/assets",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "ecr:GetAuthorizationToken",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConsumerTaskDefinitionEnvoyLogGroup34F0EC38",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConsumerTaskDefinitionExecutionRoleDefaultPolicyE23C85D6",
+        "Roles": Array [
+          Object {
+            "Ref": "ConsumerTaskDefinitionExecutionRole454258BE",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConsumerTaskDefinitionTaskRole86B62A6F": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Depends-On-fake",
+            "Value": Object {
+              "Fn::ImportValue": "fake",
+            },
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConsumerTaskDefinitionTaskRoleDefaultPolicyB36F5DE8": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "appmesh:StreamAggregatedResources",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "ConsumerVirtualNode65A441BD",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConsumerTaskDefinitionTaskRoleDefaultPolicyB36F5DE8",
+        "Roles": Array [
+          Object {
+            "Ref": "ConsumerTaskDefinitionTaskRole86B62A6F",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConsumerVirtualNode65A441BD": Object {
+      "Properties": Object {
+        "MeshName": "fake-mesh",
+        "Spec": Object {
+          "Backends": Array [
+            Object {
+              "VirtualService": Object {
+                "VirtualServiceName": Object {
+                  "Fn::GetAtt": Array [
+                    "BackendVirtualService610FBB07",
+                    "VirtualServiceName",
+                  ],
+                },
+              },
+            },
+          ],
+          "Listeners": Array [
+            Object {
+              "PortMapping": Object {
+                "Port": 80,
+                "Protocol": "http",
+              },
+            },
+          ],
+          "ServiceDiscovery": Object {
+            "AWSCloudMap": Object {
+              "NamespaceName": "fake",
+              "ServiceName": Object {
+                "Fn::GetAtt": Array [
+                  "ConsumerFargateServiceCloudmapServiceDCD8B5B9",
+                  "Name",
+                ],
+              },
+            },
+          },
+        },
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Depends-On-fake",
+            "Value": Object {
+              "Fn::ImportValue": "fake",
+            },
+          },
+        ],
+        "VirtualNodeName": "integenvironment2childConsumerVirtualNode7AC8D396",
+      },
+      "Type": "AWS::AppMesh::VirtualNode",
+    },
+    "ConsumerVirtualServiceE98BC70C": Object {
+      "Properties": Object {
+        "MeshName": "fake-mesh",
+        "Spec": Object {
+          "Provider": Object {
+            "VirtualNode": Object {
+              "VirtualNodeName": Object {
+                "Fn::GetAtt": Array [
+                  "ConsumerVirtualNode65A441BD",
+                  "VirtualNodeName",
+                ],
+              },
+            },
+          },
+        },
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Depends-On-fake",
+            "Value": Object {
+              "Fn::ImportValue": "fake",
+            },
+          },
+        ],
+        "VirtualServiceName": "consumer.fake",
+      },
+      "Type": "AWS::AppMesh::VirtualService",
+    },
+  },
+}
+`;

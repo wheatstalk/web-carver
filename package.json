@@ -21,7 +21,9 @@
     "package": "npx projen package",
     "eslint": "npx projen eslint",
     "compat": "npx projen compat",
-    "docgen": "npx projen docgen"
+    "docgen": "npx projen docgen",
+    "test:unit": "npx projen test:unit",
+    "test:integ": "npx projen test:integ"
   },
   "author": {
     "name": "Josh Kellendonk",
@@ -32,6 +34,7 @@
     "@aws-cdk/assert": "^1.92.0",
     "@types/jest": "^26.0.20",
     "@types/node": "^10.17.0",
+    "@types/semver": "^7.3",
     "@typescript-eslint/eslint-plugin": "^4.3.0",
     "@typescript-eslint/parser": "^4.3.0",
     "aws-cdk": "^1.90.1",
@@ -61,6 +64,8 @@
     "@aws-cdk/aws-elasticloadbalancingv2": "^1.92.0",
     "@aws-cdk/aws-iam": "^1.92.0",
     "@aws-cdk/aws-servicediscovery": "^1.92.0",
+    "@aws-cdk/aws-ssm": "^1.92.0",
+    "@aws-cdk/cloud-assembly-schema": "^1.92.0",
     "@aws-cdk/core": "^1.92.0",
     "constructs": "^3.2.27"
   },
@@ -73,9 +78,14 @@
     "@aws-cdk/aws-elasticloadbalancingv2": "^1.92.0",
     "@aws-cdk/aws-iam": "^1.92.0",
     "@aws-cdk/aws-servicediscovery": "^1.92.0",
-    "@aws-cdk/core": "^1.92.0"
+    "@aws-cdk/aws-ssm": "^1.92.0",
+    "@aws-cdk/cloud-assembly-schema": "^1.92.0",
+    "@aws-cdk/core": "^1.92.0",
+    "semver": "^7.3"
   },
-  "bundledDependencies": [],
+  "bundledDependencies": [
+    "semver"
+  ],
   "keywords": [
     "cdk"
   ],

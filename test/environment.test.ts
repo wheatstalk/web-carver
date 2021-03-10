@@ -3,6 +3,7 @@ import { expect as expectCDK } from '@aws-cdk/assert/lib/expect';
 import * as acm from '@aws-cdk/aws-certificatemanager';
 import * as cdk from '@aws-cdk/core';
 import { Environment } from '../src';
+import { EnvironmentManifest } from '../src/environment-manifest';
 import { PreferencesContext } from '../src/preferences';
 
 describe('Webcarver Environment', () => {
@@ -153,4 +154,25 @@ describe('Webcarver Environment', () => {
       Name: 'mystack',
     }));
   });
+
+  describe('manifest', () => {
+    test('stores a manifest in SSM', () => {
+      // GIVEN
+      const stack = new cdk.Stack();
+      const environment = new Environment(stack, 'WebCarver');
+
+      // WHEN
+      new EnvironmentManifest(stack, 'WebCarverManifest', {
+        parameterName: '/foo',
+        environment,
+      });
+
+      // THEN
+      expectCDK(stack).to(haveResourceLike('AWS::SSM::Parameter', {
+        Name: '/foo',
+        // Value: 'foobar',
+      }));
+    });
+  });
 });
+
