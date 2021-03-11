@@ -1203,7 +1203,7 @@ Object {
         "DnsConfig": Object {
           "DnsRecords": Array [
             Object {
-              "TTL": 60,
+              "TTL": 10,
               "Type": "A",
             },
           ],
@@ -1791,7 +1791,7 @@ Object {
         "DnsConfig": Object {
           "DnsRecords": Array [
             Object {
-              "TTL": 60,
+              "TTL": 10,
               "Type": "A",
             },
           ],
@@ -2283,7 +2283,7 @@ Object {
         "DnsConfig": Object {
           "DnsRecords": Array [
             Object {
-              "TTL": 60,
+              "TTL": 10,
               "Type": "A",
             },
           ],
@@ -2770,7 +2770,7 @@ Object {
         "DnsConfig": Object {
           "DnsRecords": Array [
             Object {
-              "TTL": 60,
+              "TTL": 10,
               "Type": "A",
             },
           ],

@@ -23,11 +23,13 @@ export class IntegEnvironment extends cdk.Stack {
     new webcarver.Service(this, 'GatewayEcho', {
       environment,
       name: webcarver.ServiceName.hostName('gateway-echo'),
-      listeners: [webcarver.ServiceListener.http2(80)],
       extensions: [
         webcarver.ServiceExtension.container({
           image: ecs.ContainerImage.fromRegistry('jmalloc/echo-server'),
           environment: { PORT: '80' },
+          listeners: [
+            webcarver.ServiceListener.http2(80),
+          ],
         }),
         webcarver.ServiceExtension.http2GatewayRoute({ prefixPath: '/gateway-echo' }),
       ],
@@ -36,11 +38,13 @@ export class IntegEnvironment extends cdk.Stack {
     new webcarver.Service(this, 'RoutedEcho', {
       environment,
       name: webcarver.ServiceName.hostName('routed-echo'),
-      listeners: [webcarver.ServiceListener.http1(80)],
       extensions: [
         webcarver.ServiceExtension.container({
           image: ecs.ContainerImage.fromRegistry('jmalloc/echo-server'),
           environment: { PORT: '80' },
+          listeners: [
+            webcarver.ServiceListener.http1(80),
+          ],
         }),
         // Handle requests on /echo
         webcarver.ServiceExtension.httpRoute({ prefixPath: '/echo' }),

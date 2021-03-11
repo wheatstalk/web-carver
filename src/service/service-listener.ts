@@ -1,6 +1,5 @@
 import * as appmesh from '@aws-cdk/aws-appmesh';
 import * as ecs from '@aws-cdk/aws-ecs';
-import { Service } from './service';
 
 /**
  * A service listener.
@@ -9,7 +8,7 @@ export interface IServiceListener {
   /**
    * @internal
    */
-  _bind(service: Service): ServiceListenerConfig;
+  _bind(): ServiceListenerConfig;
 }
 
 /**

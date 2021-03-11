@@ -393,7 +393,6 @@ new Service(scope: Construct, id: string, props: ServiceProps)
   * **environment** (<code>[IEnvironment](#wheatstalk-web-carver-ienvironment)</code>)  The Web Carver environment in which to create the service. 
   * **extensions** (<code>Array<[IServiceExtension](#wheatstalk-web-carver-iserviceextension)></code>)  Add extensions to your service to add features. __*Optional*__
   * **hostName** (<code>string</code>)  Suffix the service name with a host name. __*Optional*__
-  * **listeners** (<code>Array<[IServiceListener](#wheatstalk-web-carver-iservicelistener)></code>)  Description of the main traffic port of the main container. __*Optional*__
   * **name** (<code>[IServiceName](#wheatstalk-web-carver-iservicename)</code>)  Choose a service name. __*Default*__: one is chosen for you
 
 
@@ -408,22 +407,6 @@ Name | Type | Description
 **taskDefinition** | <code>[FargateTaskDefinition](#aws-cdk-aws-ecs-fargatetaskdefinition)</code> | <span></span>
 **virtualNode** | <code>[VirtualNode](#aws-cdk-aws-appmesh-virtualnode)</code> | <span></span>
 **virtualService** | <code>[IVirtualService](#aws-cdk-aws-appmesh-ivirtualservice)</code> | The virtual service representation of the WebCarver service.
-
-### Methods
-
-
-#### addEnvVars(env) <a id="wheatstalk-web-carver-service-addenvvars"></a>
-
-
-
-```ts
-addEnvVars(env: Map<string, string>): void
-```
-
-* **env** (<code>Map<string, string></code>)  *No description*
-
-
-
 
 
 
@@ -457,6 +440,7 @@ static container(props: ContainerExtensionOptions): IServiceExtension
 * **props** (<code>[ContainerExtensionOptions](#wheatstalk-web-carver-containerextensionoptions)</code>)  *No description*
   * **image** (<code>[ContainerImage](#aws-cdk-aws-ecs-containerimage)</code>)  *No description* 
   * **environment** (<code>Map<string, string></code>)  *No description* __*Optional*__
+  * **listeners** (<code>Array<[IServiceListener](#wheatstalk-web-carver-iservicelistener)></code>)  *No description* __*Optional*__
   * **name** (<code>string</code>)  Name of the container. __*Default*__: 'Main'
   * **secret** (<code>Map<string, [Secret](#aws-cdk-aws-ecs-secret)></code>)  *No description* __*Optional*__
 
@@ -648,6 +632,7 @@ Name | Type | Description
 -----|------|-------------
 **image** | <code>[ContainerImage](#aws-cdk-aws-ecs-containerimage)</code> | <span></span>
 **environment**? | <code>Map<string, string></code> | __*Optional*__
+**listeners**? | <code>Array<[IServiceListener](#wheatstalk-web-carver-iservicelistener)></code> | __*Optional*__
 **name**? | <code>string</code> | Name of the container.<br/>__*Default*__: 'Main'
 **secret**? | <code>Map<string, [Secret](#aws-cdk-aws-ecs-secret)></code> | __*Optional*__
 
@@ -943,7 +928,6 @@ Name | Type | Description
 **environment** | <code>[IEnvironment](#wheatstalk-web-carver-ienvironment)</code> | The Web Carver environment in which to create the service.
 **extensions**? | <code>Array<[IServiceExtension](#wheatstalk-web-carver-iserviceextension)></code> | Add extensions to your service to add features.<br/>__*Optional*__
 **hostName**? | <code>string</code> | Suffix the service name with a host name.<br/>__*Optional*__
-**listeners**? | <code>Array<[IServiceListener](#wheatstalk-web-carver-iservicelistener)></code> | Description of the main traffic port of the main container.<br/>__*Optional*__
 **name**? | <code>[IServiceName](#wheatstalk-web-carver-iservicename)</code> | Choose a service name.<br/>__*Default*__: one is chosen for you
 
 

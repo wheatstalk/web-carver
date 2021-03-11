@@ -1,4 +1,4 @@
-import { Service } from '../service';
+import { IServiceExtensionFacade } from '../service';
 import { IServiceExtension } from './api';
 
 /**
@@ -11,7 +11,7 @@ export class EnvVarsExtension implements IServiceExtension {
   constructor(private readonly env: Record<string, string>) {
   }
 
-  _register(service: Service) {
-    service.addEnvVars(this.env);
+  _register(service: IServiceExtensionFacade) {
+    service._addEnvVars(this.env);
   }
 }

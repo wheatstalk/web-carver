@@ -1,7 +1,7 @@
 import * as appmesh from '@aws-cdk/aws-appmesh';
 import * as cdk from '@aws-cdk/core';
 import { IGateway } from '../../gateway';
-import { Service } from '../service';
+import { IServiceExtensionFacade } from '../service';
 import { IServiceExtension } from './api';
 
 /**
@@ -25,9 +25,11 @@ export class Http2GatewayRouteExtension implements IServiceExtension {
   constructor(private readonly props?: Http2GatewayRouteExtensionOptions) {
   }
 
-  _register(service: Service, privateScope: cdk.Construct) {
-    service._virtualServiceEvent.subscribe((_scope, virtualService) => {
-      const gateway = this.props?.gateway ?? service.environment.defaultGateway;
+  _register(service: IServiceExtensionFacade, privateScope: cdk.Construct) {
+    const gateway = this.props?.gateway ?? service.environment.defaultGateway;
+
+    service._onWorkloadReady(workloadOptions => {
+      const { virtualService } = workloadOptions;
 
       new appmesh.GatewayRoute(privateScope, 'Http2GatewayRoute', {
         virtualGateway: gateway,
@@ -36,8 +38,10 @@ export class Http2GatewayRouteExtension implements IServiceExtension {
           routeTarget: virtualService,
         }),
       });
+    });
 
-      service.connections.allowDefaultPortFrom(gateway);
+    service._onConnectionsReady(connections => {
+      connections.allowDefaultPortFrom(gateway);
     });
   }
 }
@@ -61,9 +65,11 @@ export class HttpGatewayRouteExtension implements IServiceExtension {
   constructor(private readonly props?: HttpGatewayRouteExtensionOptions) {
   }
 
-  _register(service: Service, privateScope: cdk.Construct) {
-    service._virtualServiceEvent.subscribe((_scope, virtualService) => {
-      const gateway = this.props?.gateway ?? service.environment.defaultGateway;
+  _register(service: IServiceExtensionFacade, privateScope: cdk.Construct) {
+    const gateway = this.props?.gateway ?? service.environment.defaultGateway;
+
+    service._onWorkloadReady(workloadOptions => {
+      const { virtualService } = workloadOptions;
 
       new appmesh.GatewayRoute(privateScope, 'HttpGatewayRoute', {
         virtualGateway: gateway,
@@ -72,8 +78,10 @@ export class HttpGatewayRouteExtension implements IServiceExtension {
           routeTarget: virtualService,
         }),
       });
+    });
 
-      service.connections.allowDefaultPortFrom(gateway);
+    service._onConnectionsReady(connections => {
+      connections.allowDefaultPortFrom(gateway);
     });
   }
 }

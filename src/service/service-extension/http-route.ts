@@ -1,6 +1,6 @@
 import * as appmesh from '@aws-cdk/aws-appmesh';
 import * as cdk from '@aws-cdk/core';
-import { Service } from '../service';
+import { IServiceExtensionFacade } from '../service';
 import { IServiceExtension } from './api';
 
 /**
@@ -47,9 +47,11 @@ export class HttpRouteExtension implements IServiceExtension {
     };
   }
 
-  _register(service: Service, privateScope: cdk.Construct) {
-    service._virtualNodeEvent.subscribe((_scope, virtualNode) => {
-      const virtualRouter = service.environment.defaultRouter;
+  _register(service: IServiceExtensionFacade, privateScope: cdk.Construct) {
+    const virtualRouter = service.environment.defaultRouter;
+
+    service._onWorkloadReady(workloadOptions => {
+      const { virtualNode } = workloadOptions;
 
       const httpRouteSpec = {
         action: {
@@ -80,8 +82,10 @@ export class HttpRouteExtension implements IServiceExtension {
           }),
         },
       });
+    });
 
-      service.connections.allowDefaultPortFrom(virtualRouter);
+    service._onConnectionsReady(connections => {
+      connections.allowDefaultPortFrom(virtualRouter);
     });
   }
 }

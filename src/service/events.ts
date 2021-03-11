@@ -1,12 +1,10 @@
-import * as cdk from '@aws-cdk/core';
-
 /** @internal */
-export type PubSubHandler<T> = (scope: cdk.Construct, thing: T) => void;
+export type PubSubHandler<T> = (thing: T) => void;
 
 /** @internal */
 export class PubSub<T> {
   private handlers: PubSubHandler<T>[] = [];
-  private lastTuple?: [cdk.Construct, T];
+  private lastTuple?: [T];
 
   constructor(private readonly oneShot: boolean = false) {
   }
@@ -19,10 +17,10 @@ export class PubSub<T> {
     }
   }
 
-  publish(scope: cdk.Construct, event: T) {
-    this.lastTuple = [scope, event];
+  publish(event: T) {
+    this.lastTuple = [event];
     for (const handler of this.handlers) {
-      handler(scope, event);
+      handler(event);
     }
   }
 }

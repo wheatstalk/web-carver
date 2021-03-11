@@ -1,5 +1,5 @@
 import * as cdk from '@aws-cdk/core';
-import { Service } from '../service';
+import { IServiceExtensionFacade, Service } from '../service';
 import { IServiceExtension } from './api';
 
 /**
@@ -34,15 +34,20 @@ export class LinkedServiceExtension implements IServiceExtension {
     this.name = props.name;
   }
 
-  _register(service: Service, _privateScope: cdk.Construct) {
-    service._virtualNodeEvent.subscribe((_scope, virtualNode) => {
+  _register(service: IServiceExtensionFacade, _privateScope: cdk.Construct) {
+    service._onWorkloadReady(workloadOptions => {
+      const { virtualNode } = workloadOptions;
+
       virtualNode.addBackend(this.linkedService.virtualService);
-      this.linkedService.connections.allowDefaultPortFrom(service);
 
       const envName = this.name ? `BACKEND_${this.name}` : 'BACKEND';
-      service.addEnvVars({
+      service._addEnvVars({
         [envName]: this.linkedService.virtualService.virtualServiceName,
       });
+    });
+
+    service._onConnectionsReady(connections => {
+      this.linkedService.connections.allowDefaultPortFrom(connections);
     });
   }
 }

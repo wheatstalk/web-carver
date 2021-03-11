@@ -23,11 +23,13 @@ export class IntegEnvironmentChild extends cdk.Stack {
     const backend = new webcarver.Service(this, 'Backend', {
       environment,
       name: webcarver.ServiceName.hostName('backend'),
-      listeners: [webcarver.ServiceListener.http1(80)],
       extensions: [
         webcarver.ServiceExtension.container({
           image: ecs.ContainerImage.fromAsset(path.join(__dirname, 'mesh-app')),
           environment: { FLASK_APP: 'backend.py' },
+          listeners: [
+            webcarver.ServiceListener.http1(80),
+          ],
         }),
         webcarver.ServiceExtension.httpRoute({
           prefixPath: '/backend',
@@ -38,11 +40,13 @@ export class IntegEnvironmentChild extends cdk.Stack {
     new webcarver.Service(this, 'Consumer', {
       environment,
       name: webcarver.ServiceName.hostName('consumer'),
-      listeners: [webcarver.ServiceListener.http1(80)],
       extensions: [
         webcarver.ServiceExtension.container({
           image: ecs.ContainerImage.fromAsset(path.join(__dirname, 'mesh-app')),
           environment: { FLASK_APP: 'consumer.py' },
+          listeners: [
+            webcarver.ServiceListener.http1(80),
+          ],
         }),
         webcarver.ServiceExtension.httpRoute({ prefixPath: '/consumer' }),
         webcarver.ServiceExtension.linkedService({ service: backend }),

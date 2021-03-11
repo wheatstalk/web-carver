@@ -4,11 +4,12 @@ import * as ecs from '@aws-cdk/aws-ecs';
 import * as servicediscovery from '@aws-cdk/aws-servicediscovery';
 import * as cdk from '@aws-cdk/core';
 import { IEnvironment } from '../environment';
+import { IGateway } from '../gateway';
 import { defaultCapacityProviderStrategy, defaultServiceNetworkConfig } from '../preferences';
+import { IRouter } from '../router';
 import { AddAppMeshEnvoyExtension } from '../util-private';
 import { Filter, PubSub } from './events';
 import { IServiceExtension } from './service-extension/api';
-import { IServiceListener, ServiceListenerConfig } from './service-listener';
 
 /**
  * A WebCarver service.
@@ -46,18 +47,14 @@ export interface ServiceProps {
    * Add extensions to your service to add features.
    */
   readonly extensions?: IServiceExtension[];
-
-  /**
-   * Description of the main traffic port of the main container.
-   */
-  readonly listeners?: IServiceListener[];
 }
 
 /** @internal */
 export interface WorkloadOptions {
   readonly taskDefinition: ecs.FargateTaskDefinition;
   readonly service: ecs.FargateService;
-  readonly serviceListenerConfig: ServiceListenerConfig[];
+  readonly virtualNode: appmesh.VirtualNode;
+  readonly virtualService: appmesh.IVirtualService;
 }
 
 /**
@@ -85,40 +82,18 @@ export class Service extends cdk.Construct implements IService {
    */
   public readonly _filterServiceProps = new Filter<ecs.FargateServiceProps>();
 
-  /**
-   * The virtual node is available.
-   * @internal
-   */
-  public readonly _virtualNodeEvent = new PubSub<appmesh.VirtualNode>(true);
-
-  /**
-   * The virtual service is available.
-   * @internal
-   */
-  public readonly _virtualServiceEvent = new PubSub<appmesh.VirtualService>(true);
-
-  /**
-   * Workloads may add their containers to the task definition now.
-   * @internal
-   */
-  public readonly _workloadReadyEvent = new PubSub<WorkloadOptions>(true);
-
-  /**
-   * Fires whenever a set of environment variables is added.
-   * @internal
-   */
-  public readonly _workloadEnvVarsEvent = new PubSub<Record<string, string>>();
-
-  /**
-   * A container has been added to the service by extension.
-   * @internal
-   */
-  public readonly _containerDefinitionEvent = new PubSub<ecs.ContainerDefinition>(false);
+  private readonly serviceFacade: ServiceFacade;
 
   constructor(scope: cdk.Construct, id: string, props: ServiceProps) {
     super(scope, id);
 
     this.environment = props.environment;
+
+    this.serviceFacade = new ServiceFacade({
+      environment: props.environment,
+      defaultGateway: props.environment.defaultGateway,
+      defaultRouter: props.environment.defaultRouter,
+    });
 
     // Use the user-provided name or create a host name for them.
     const name = props.name ?? ServiceName.hostName(cdk.Names.uniqueId(this));
@@ -128,13 +103,13 @@ export class Service extends cdk.Construct implements IService {
 
     const privateScopeIndecies: Record<string, number> = {};
 
-    props.extensions?.forEach((extension) => {
+    for (const extension of props.extensions ?? []) {
       const extensionTypeName: string = extension._extensionTypeName;
       const privateScopeIndex = privateScopeIndecies[extensionTypeName] = (privateScopeIndecies[extensionTypeName] ?? -1) + 1;
 
       const privateScope = new cdk.Construct(this, `Extension${extensionTypeName}${privateScopeIndex}`);
-      extension._register(this, privateScope);
-    });
+      extension._register(this.serviceFacade, privateScope);
+    }
 
     this.taskDefinition = new ecs.FargateTaskDefinition(this, 'TaskDefinition', this._filterTaskDefinitionProps.filter({
       cpu: 256,
@@ -152,6 +127,7 @@ export class Service extends cdk.Construct implements IService {
       cloudMapOptions: {
         cloudMapNamespace: props.environment.namespace,
         dnsRecordType: servicediscovery.DnsRecordType.A,
+        dnsTtl: cdk.Duration.seconds(10),
         name: name._cloudMapServiceName(this, nameContext),
       },
 
@@ -159,7 +135,7 @@ export class Service extends cdk.Construct implements IService {
       cluster: props.environment.cluster,
       circuitBreaker: { rollback: true },
       minHealthyPercent: 100,
-      maxHealthyPercent: getMaxHealthyPercent(),
+      maxHealthyPercent: 200,
       capacityProviderStrategies: defaultCapacityProviderStrategy(this.node),
 
       // Networking configuration
@@ -167,38 +143,24 @@ export class Service extends cdk.Construct implements IService {
       vpcSubnets: serviceNetworkConfig.vpcSubnets,
     }));
 
-    // Get listener info for all listeners
-    const serviceListenerConfigs = (props.listeners ?? []).map(l => l._bind(this));
-
-    // Publish the workload information
-    this._workloadReadyEvent.publish(this, {
-      service: this.fargateService,
-      taskDefinition: this.taskDefinition,
-      serviceListenerConfig: serviceListenerConfigs,
-    });
-
-    const virtualNodeListeners = serviceListenerConfigs
-      .filter(listenerInfo => Boolean(listenerInfo.virtualNodeListener))
-      .map(listenerInfo => listenerInfo.virtualNodeListener!);
-
-    if (virtualNodeListeners.length > 1) {
-      throw new Error('Not more than one virtual node listener can be registered in AppMesh');
-    }
-
-    this.connections = new ec2.Connections({
-      defaultPort: findDefaultSecurityGroupPort(this.taskDefinition),
-      securityGroups: this.fargateService.connections.securityGroups,
-    });
-
     this.virtualNode = new appmesh.VirtualNode(this, 'VirtualNode', {
       serviceDiscovery: appmesh.ServiceDiscovery.cloudMap({
         service: this.fargateService.cloudMapService!,
       }),
       mesh: props.environment.mesh,
-      listeners: virtualNodeListeners,
     });
 
-    this._virtualNodeEvent.publish(this, this.virtualNode);
+    this._virtualService = new appmesh.VirtualService(this, 'VirtualService', {
+      virtualServiceName: name._virtualServiceName(this, nameContext),
+      virtualServiceProvider: appmesh.VirtualServiceProvider.virtualNode(this.virtualNode),
+    });
+
+    this.serviceFacade.workloadReadyEvent.publish({
+      service: this.fargateService,
+      taskDefinition: this.taskDefinition,
+      virtualNode: this.virtualNode,
+      virtualService: this.virtualService,
+    });
 
     this.taskDefinition.addExtension(
       new AddAppMeshEnvoyExtension({
@@ -207,18 +169,37 @@ export class Service extends cdk.Construct implements IService {
         patchProxyConfiguration: true,
       }));
 
-    const virtualServiceName = name._virtualServiceName(this, nameContext);
-
-    this._virtualService = new appmesh.VirtualService(this, 'VirtualService', {
-      virtualServiceName: virtualServiceName,
-      virtualServiceProvider: appmesh.VirtualServiceProvider.virtualNode(this.virtualNode),
+    this.connections = new ec2.Connections({
+      defaultPort: findDefaultSecurityGroupPort(this.taskDefinition),
+      securityGroups: this.fargateService.connections.securityGroups,
     });
 
-    this._virtualServiceEvent.publish(this, this._virtualService);
+    this.serviceFacade.connectionsReadyEvent.publish(this.connections);
   }
 
-  public addEnvVars(env: Record<string, string>) {
-    this._workloadEnvVarsEvent.publish(this, env);
+  /** @internal */
+  public _publishContainerDefinition(container: ecs.ContainerDefinition) {
+    this.serviceFacade._publishContainerDefinition(container);
+  }
+
+  /** @internal */
+  public _addEnvVars(env: Record<string, string>) {
+    this.serviceFacade._addEnvVars(env);
+  }
+
+  /** @internal */
+  public _onEnvVars(handler: (env: Record<string, string>) => void) {
+    this.serviceFacade._onEnvVars(handler);
+  }
+
+  /** @internal */
+  public _onWorkloadReady(handler: (x: WorkloadOptions) => void) {
+    this.serviceFacade._onWorkloadReady(handler);
+  }
+
+  /** @internal */
+  public _onConnectionsReady(handler: (x: ec2.Connections) => void) {
+    this.serviceFacade._onConnectionsReady(handler);
   }
 }
 
@@ -284,9 +265,60 @@ export abstract class ServiceName {
   }
 }
 
-function getMaxHealthyPercent() {
-  // TODO: AWS recommends a desired count of 2 or 3 use 150, otherwise 125
-  //   but when I tried this, services weren't updating. So I've set it to
-  //   200. We probably need to treat `desiredCount === 1` differently.
-  return 200;
+/**
+ * @internal
+ */
+export interface IServiceExtensionFacade {
+  readonly environment: IEnvironment;
+  readonly defaultRouter: IRouter;
+  readonly defaultGateway: IGateway;
+
+  _addEnvVars(env: Record<string, string>): void;
+  _onEnvVars(handler: (env: Record<string, string>) => void): void;
+  _onWorkloadReady(handler: (x: WorkloadOptions) => void): void;
+  _onConnectionsReady(handler: (x: ec2.Connections) => void): void;
+  _publishContainerDefinition(container: ecs.ContainerDefinition): void;
+}
+
+interface ServiceEventsOptions {
+  readonly environment: IEnvironment;
+  readonly defaultRouter: IRouter;
+  readonly defaultGateway: IGateway;
+}
+
+class ServiceFacade implements IServiceExtensionFacade {
+  public readonly environment: IEnvironment;
+  public readonly defaultRouter: IRouter;
+  public readonly defaultGateway: IGateway;
+
+  public readonly workloadReadyEvent = new PubSub<WorkloadOptions>(true);
+  public readonly connectionsReadyEvent = new PubSub<ec2.Connections>(true);
+  public readonly envVarsAddedEvent = new PubSub<Record<string, string>>();
+  public readonly containerDefinitionPublishedEvent = new PubSub<ecs.ContainerDefinition>(false);
+
+  constructor(options: ServiceEventsOptions) {
+    this.environment = options.environment;
+    this.defaultRouter = options.defaultRouter;
+    this.defaultGateway = options.defaultGateway;
+  }
+
+  public _publishContainerDefinition(container: ecs.ContainerDefinition) {
+    this.containerDefinitionPublishedEvent.publish(container);
+  }
+
+  public _addEnvVars(env: Record<string, string>) {
+    this.envVarsAddedEvent.publish(env);
+  }
+
+  public _onEnvVars(handler: (env: Record<string, string>) => void) {
+    this.envVarsAddedEvent.subscribe(handler);
+  }
+
+  public _onWorkloadReady(handler: (x: WorkloadOptions) => void) {
+    this.workloadReadyEvent.subscribe(handler);
+  }
+
+  public _onConnectionsReady(handler: (x: ec2.Connections) => void) {
+    this.connectionsReadyEvent.subscribe(handler);
+  }
 }

@@ -1,5 +1,6 @@
 import * as ecs from '@aws-cdk/aws-ecs';
-import { Service } from '../service';
+import { IServiceExtensionFacade } from '../service';
+import { IServiceListener } from '../service-listener';
 import { IServiceExtension } from './api';
 
 /**
@@ -15,15 +16,17 @@ export interface ContainerExtensionOptions {
   readonly image: ecs.ContainerImage;
   readonly environment?: Record<string, string>;
   readonly secret?: Record<string, ecs.Secret>;
+  readonly listeners?: IServiceListener[];
 }
 
 /** @internal */
-export class Container implements IServiceExtension {
+export class TrafficContainerExtension implements IServiceExtension {
   private readonly name: string;
   private readonly image: ecs.ContainerImage;
   private readonly environment: Record<string, string>;
   private readonly secrets: Record<string, ecs.Secret>;
   private readonly memoryLimitMiB: number;
+  private readonly serviceListeners: IServiceListener[];
 
   public readonly _extensionTypeName = 'ContainerExtension';
 
@@ -33,11 +36,14 @@ export class Container implements IServiceExtension {
     this.environment = options.environment ?? {};
     this.secrets = options.secret ?? {};
     this.memoryLimitMiB = 512;
+    this.serviceListeners = options.listeners ?? [];
   }
 
-  _register(service: Service) {
-    service._workloadReadyEvent.subscribe((scope, workloadOptions) => {
-      const { taskDefinition } = workloadOptions;
+  _register(service: IServiceExtensionFacade) {
+    const serviceListenerInfos = this.serviceListeners.map(l => l._bind());
+
+    service._onWorkloadReady(workloadOptions => {
+      const { taskDefinition, virtualNode } = workloadOptions;
 
       const container = taskDefinition.addContainer(this.name, {
         image: this.image,
@@ -45,19 +51,18 @@ export class Container implements IServiceExtension {
         secrets: this.secrets,
         memoryLimitMiB: this.memoryLimitMiB,
         essential: true,
+        portMappings: serviceListenerInfos,
       });
+      service._publishContainerDefinition(container);
 
-      for (const listener of workloadOptions.serviceListenerConfig) {
-        container.addPortMappings({
-          containerPort: listener.containerPort,
-          protocol: listener.protocol,
-        });
+      for (const serviceListenerInfo of serviceListenerInfos) {
+        if (serviceListenerInfo.virtualNodeListener) {
+          virtualNode.addListener(serviceListenerInfo.virtualNodeListener);
+        }
       }
-
-      service._containerDefinitionEvent.publish(scope, container);
     });
 
-    service._workloadEnvVarsEvent.subscribe((_scope, envVars) => {
+    service._onEnvVars((envVars) => {
       Object.assign(this.environment, envVars);
     });
   }
