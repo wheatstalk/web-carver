@@ -56,5 +56,32 @@ export class IntegEnvironment extends cdk.Stack {
         }),
       ],
     });
+
+    new webcarver.Service(this, 'ProtectedEcho', {
+      environment,
+      name: webcarver.ServiceName.hostName('protected-echo'),
+      extensions: [
+        webcarver.ServiceExtension.container({
+          image: ecs.ContainerImage.fromRegistry('jmalloc/echo-server'),
+          environment: { PORT: '8080' },
+          listeners: [
+            webcarver.ServiceListener.oidcHttpProxy({
+              containerPort: 8080,
+              oidcDiscoveryEndpoint: 'https://oidc-mock.wheatstalk.ca/.well-known/openid-configuration',
+              // Bad: Only for the sake of demonstration. Use a Secret Manager
+              // secret instead.
+              oidcPlainTextCredentials: {
+                // We're using a mock OIDC service. The credentials are not
+                // used by the mock for authenticating.
+                clientId: 'fake',
+                clientSecret: 'fake',
+              },
+            }),
+          ],
+        }),
+        webcarver.ServiceExtension.httpRoute({ prefixPath: '/protected-echo' }),
+        webcarver.ServiceExtension.httpRoute({ prefixPath: '/redirect_uri' }),
+      ],
+    });
   }
 }

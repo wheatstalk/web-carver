@@ -19,6 +19,7 @@ const project = new pj.AwsCdkConstructLibrary({
     '@aws-cdk/aws-iam',
     '@aws-cdk/aws-ssm',
     '@aws-cdk/aws-servicediscovery',
+    '@aws-cdk/aws-secretsmanager',
     '@aws-cdk/aws-certificatemanager',
     '@aws-cdk/cloud-assembly-schema',
   ],

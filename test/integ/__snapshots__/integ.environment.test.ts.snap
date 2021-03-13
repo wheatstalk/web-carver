@@ -1556,6 +1556,654 @@ Object {
       },
       "Type": "AWS::ServiceDiscovery::PrivateDnsNamespace",
     },
+    "ProtectedEchoExtensionHttpRouteExtension0HTTP2493B0AEF": Object {
+      "Properties": Object {
+        "MeshName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentMeshE4273EA5",
+            "MeshName",
+          ],
+        },
+        "RouteName": "integenvironment2ProtectedEchoExtensionHttpRouteExtension0HTTP2E0AE62D2",
+        "Spec": Object {
+          "Http2Route": Object {
+            "Action": Object {
+              "WeightedTargets": Array [
+                Object {
+                  "VirtualNode": Object {
+                    "Fn::GetAtt": Array [
+                      "ProtectedEchoVirtualNodeE216A2A7",
+                      "VirtualNodeName",
+                    ],
+                  },
+                  "Weight": 1,
+                },
+              ],
+            },
+            "Match": Object {
+              "Prefix": "/protected-echo",
+            },
+          },
+        },
+        "VirtualRouterName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentRouter36ACE08F",
+            "VirtualRouterName",
+          ],
+        },
+      },
+      "Type": "AWS::AppMesh::Route",
+    },
+    "ProtectedEchoExtensionHttpRouteExtension0HTTP80B8683C": Object {
+      "Properties": Object {
+        "MeshName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentMeshE4273EA5",
+            "MeshName",
+          ],
+        },
+        "RouteName": "integenvironment2ProtectedEchoExtensionHttpRouteExtension0HTTP14C9D297",
+        "Spec": Object {
+          "HttpRoute": Object {
+            "Action": Object {
+              "WeightedTargets": Array [
+                Object {
+                  "VirtualNode": Object {
+                    "Fn::GetAtt": Array [
+                      "ProtectedEchoVirtualNodeE216A2A7",
+                      "VirtualNodeName",
+                    ],
+                  },
+                  "Weight": 1,
+                },
+              ],
+            },
+            "Match": Object {
+              "Prefix": "/protected-echo",
+            },
+          },
+        },
+        "VirtualRouterName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentRouter36ACE08F",
+            "VirtualRouterName",
+          ],
+        },
+      },
+      "Type": "AWS::AppMesh::Route",
+    },
+    "ProtectedEchoExtensionHttpRouteExtension1HTTP21DAF69A7": Object {
+      "Properties": Object {
+        "MeshName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentMeshE4273EA5",
+            "MeshName",
+          ],
+        },
+        "RouteName": "integenvironment2ProtectedEchoExtensionHttpRouteExtension1HTTP26A4FF05C",
+        "Spec": Object {
+          "Http2Route": Object {
+            "Action": Object {
+              "WeightedTargets": Array [
+                Object {
+                  "VirtualNode": Object {
+                    "Fn::GetAtt": Array [
+                      "ProtectedEchoVirtualNodeE216A2A7",
+                      "VirtualNodeName",
+                    ],
+                  },
+                  "Weight": 1,
+                },
+              ],
+            },
+            "Match": Object {
+              "Prefix": "/redirect_uri",
+            },
+          },
+        },
+        "VirtualRouterName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentRouter36ACE08F",
+            "VirtualRouterName",
+          ],
+        },
+      },
+      "Type": "AWS::AppMesh::Route",
+    },
+    "ProtectedEchoExtensionHttpRouteExtension1HTTP2BA380F8": Object {
+      "Properties": Object {
+        "MeshName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentMeshE4273EA5",
+            "MeshName",
+          ],
+        },
+        "RouteName": "integenvironment2ProtectedEchoExtensionHttpRouteExtension1HTTP4DACCBBE",
+        "Spec": Object {
+          "HttpRoute": Object {
+            "Action": Object {
+              "WeightedTargets": Array [
+                Object {
+                  "VirtualNode": Object {
+                    "Fn::GetAtt": Array [
+                      "ProtectedEchoVirtualNodeE216A2A7",
+                      "VirtualNodeName",
+                    ],
+                  },
+                  "Weight": 1,
+                },
+              ],
+            },
+            "Match": Object {
+              "Prefix": "/redirect_uri",
+            },
+          },
+        },
+        "VirtualRouterName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentRouter36ACE08F",
+            "VirtualRouterName",
+          ],
+        },
+      },
+      "Type": "AWS::AppMesh::Route",
+    },
+    "ProtectedEchoFargateService25A47FBA": Object {
+      "Properties": Object {
+        "CapacityProviderStrategy": Array [
+          Object {
+            "CapacityProvider": "FARGATE_SPOT",
+            "Weight": 1000,
+          },
+          Object {
+            "CapacityProvider": "FARGATE",
+            "Weight": 1,
+          },
+        ],
+        "Cluster": Object {
+          "Ref": "EnvironmentClusterE81C7902",
+        },
+        "DeploymentConfiguration": Object {
+          "DeploymentCircuitBreaker": Object {
+            "Enable": true,
+            "Rollback": true,
+          },
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 100,
+        },
+        "EnableECSManagedTags": false,
+        "NetworkConfiguration": Object {
+          "AwsvpcConfiguration": Object {
+            "AssignPublicIp": "ENABLED",
+            "SecurityGroups": Array [
+              Object {
+                "Fn::GetAtt": Array [
+                  "ProtectedEchoFargateServiceSecurityGroupE51BE587",
+                  "GroupId",
+                ],
+              },
+            ],
+            "Subnets": Array [
+              Object {
+                "Ref": "EnvironmentVpcpublicSubnet1Subnet1C4BD5BB",
+              },
+              Object {
+                "Ref": "EnvironmentVpcpublicSubnet2Subnet62C9A92D",
+              },
+            ],
+          },
+        },
+        "ServiceName": "protected-echo-integ-environment2-integenvironment2ProtectedEchoE41A70F2",
+        "ServiceRegistries": Array [
+          Object {
+            "RegistryArn": Object {
+              "Fn::GetAtt": Array [
+                "ProtectedEchoFargateServiceCloudmapService49E73D53",
+                "Arn",
+              ],
+            },
+          },
+        ],
+        "TaskDefinition": Object {
+          "Ref": "ProtectedEchoTaskDefinition5FA1CF86",
+        },
+      },
+      "Type": "AWS::ECS::Service",
+    },
+    "ProtectedEchoFargateServiceCloudmapService49E73D53": Object {
+      "Properties": Object {
+        "DnsConfig": Object {
+          "DnsRecords": Array [
+            Object {
+              "TTL": 10,
+              "Type": "A",
+            },
+          ],
+          "NamespaceId": Object {
+            "Fn::GetAtt": Array [
+              "Namespace9B63B8C8",
+              "Id",
+            ],
+          },
+          "RoutingPolicy": "MULTIVALUE",
+        },
+        "HealthCheckCustomConfig": Object {
+          "FailureThreshold": 1,
+        },
+        "Name": "protected-echo",
+        "NamespaceId": Object {
+          "Fn::GetAtt": Array [
+            "Namespace9B63B8C8",
+            "Id",
+          ],
+        },
+      },
+      "Type": "AWS::ServiceDiscovery::Service",
+    },
+    "ProtectedEchoFargateServiceSecurityGroupE51BE587": Object {
+      "Properties": Object {
+        "GroupDescription": "integ-environment2/ProtectedEcho/FargateService/SecurityGroup",
+        "SecurityGroupEgress": Array [
+          Object {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "EnvironmentVpc6FD2605E",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "ProtectedEchoFargateServiceSecurityGroupfromintegenvironment2EnvironmentGatewayFargateGatewayServiceSecurityGroup2152FE4D803F3D7502": Object {
+      "Properties": Object {
+        "Description": "from integenvironment2EnvironmentGatewayFargateGatewayServiceSecurityGroup2152FE4D:80",
+        "FromPort": 80,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "ProtectedEchoFargateServiceSecurityGroupE51BE587",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29",
+            "GroupId",
+          ],
+        },
+        "ToPort": 80,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "ProtectedEchoTaskDefinition5FA1CF86": Object {
+      "Properties": Object {
+        "ContainerDefinitions": Array [
+          Object {
+            "Environment": Array [
+              Object {
+                "Name": "OID_SESSION_NAME",
+                "Value": Object {
+                  "Fn::GetAtt": Array [
+                    "ProtectedEchoVirtualNodeE216A2A7",
+                    "VirtualNodeName",
+                  ],
+                },
+              },
+              Object {
+                "Name": "PROXY_HOST",
+                "Value": "127.0.0.1",
+              },
+              Object {
+                "Name": "PROXY_PORT",
+                "Value": "8080",
+              },
+              Object {
+                "Name": "PROXY_PROTOCOL",
+                "Value": "http",
+              },
+              Object {
+                "Name": "OID_DISCOVERY",
+                "Value": "https://oidc-mock.wheatstalk.ca/.well-known/openid-configuration",
+              },
+              Object {
+                "Name": "OIDC_AUTH_METHOD",
+                "Value": "client_secret_post",
+              },
+              Object {
+                "Name": "ADD_HOST_HEADER",
+                "Value": "true",
+              },
+              Object {
+                "Name": "OID_CLIENT_ID",
+                "Value": "fake",
+              },
+              Object {
+                "Name": "OID_CLIENT_SECRET",
+                "Value": "fake",
+              },
+            ],
+            "Essential": true,
+            "Image": "evry/oidc-proxy:v1.3.0",
+            "LogConfiguration": Object {
+              "LogDriver": "awslogs",
+              "Options": Object {
+                "awslogs-group": Object {
+                  "Ref": "ProtectedEchoTaskDefinitionOidcHttpProxyLogGroup045E07B5",
+                },
+                "awslogs-region": Object {
+                  "Ref": "AWS::Region",
+                },
+                "awslogs-stream-prefix": "Http2Proxy",
+              },
+            },
+            "Name": "OidcHttpProxy",
+            "PortMappings": Array [
+              Object {
+                "ContainerPort": 80,
+                "Protocol": "tcp",
+              },
+            ],
+            "Secrets": Array [],
+          },
+          Object {
+            "Environment": Array [
+              Object {
+                "Name": "PORT",
+                "Value": "8080",
+              },
+            ],
+            "Essential": true,
+            "Image": "jmalloc/echo-server",
+            "Memory": 512,
+            "Name": "Main",
+            "PortMappings": Array [
+              Object {
+                "ContainerPort": 8080,
+                "Protocol": "tcp",
+              },
+            ],
+            "Secrets": Array [],
+          },
+          Object {
+            "Environment": Array [
+              Object {
+                "Name": "APPMESH_VIRTUAL_NODE_NAME",
+                "Value": Object {
+                  "Ref": "ProtectedEchoVirtualNodeE216A2A7",
+                },
+              },
+              Object {
+                "Name": "AWS_REGION",
+                "Value": Object {
+                  "Ref": "AWS::Region",
+                },
+              },
+              Object {
+                "Name": "ENABLE_ENVOY_STATS_TAGS",
+                "Value": "1",
+              },
+              Object {
+                "Name": "ENABLE_ENVOY_DOG_STATSD",
+                "Value": "1",
+              },
+            ],
+            "Essential": true,
+            "HealthCheck": Object {
+              "Command": Array [
+                "CMD",
+                "sh",
+                "-c",
+                "curl -s http://127.0.0.1:9901/ready | grep -q LIVE",
+              ],
+              "Interval": 5,
+              "Retries": 3,
+              "StartPeriod": 10,
+              "Timeout": 2,
+            },
+            "Image": "public.ecr.aws/appmesh/aws-appmesh-envoy:v1.16.1.0-prod",
+            "LogConfiguration": Object {
+              "LogDriver": "awslogs",
+              "Options": Object {
+                "awslogs-group": Object {
+                  "Ref": "ProtectedEchoTaskDefinitionEnvoyLogGroupF103A165",
+                },
+                "awslogs-region": Object {
+                  "Ref": "AWS::Region",
+                },
+                "awslogs-stream-prefix": "envoy",
+              },
+            },
+            "Name": "Envoy",
+            "Ulimits": Array [
+              Object {
+                "HardLimit": 1024000,
+                "Name": "nofile",
+                "SoftLimit": 1024000,
+              },
+            ],
+            "User": "1337",
+          },
+        ],
+        "Cpu": "256",
+        "ExecutionRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "ProtectedEchoTaskDefinitionExecutionRole6DC53044",
+            "Arn",
+          ],
+        },
+        "Family": "integenvironment2ProtectedEchoTaskDefinition88E61F18",
+        "Memory": "512",
+        "NetworkMode": "awsvpc",
+        "ProxyConfiguration": Object {
+          "ContainerName": "Envoy",
+          "ProxyConfigurationProperties": Array [
+            Object {
+              "Name": "AppPorts",
+              "Value": "80",
+            },
+            Object {
+              "Name": "ProxyEgressPort",
+              "Value": "15001",
+            },
+            Object {
+              "Name": "ProxyIngressPort",
+              "Value": "15000",
+            },
+            Object {
+              "Name": "IgnoredUID",
+              "Value": "1337",
+            },
+            Object {
+              "Name": "IgnoredGID",
+              "Value": "1338",
+            },
+            Object {
+              "Name": "EgressIgnoredIPs",
+              "Value": "169.254.170.2,169.254.169.254",
+            },
+          ],
+          "Type": "APPMESH",
+        },
+        "RequiresCompatibilities": Array [
+          "FARGATE",
+        ],
+        "TaskRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "ProtectedEchoTaskDefinitionTaskRoleE6E4F674",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::ECS::TaskDefinition",
+    },
+    "ProtectedEchoTaskDefinitionEnvoyLogGroupF103A165": Object {
+      "DeletionPolicy": "Retain",
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ProtectedEchoTaskDefinitionExecutionRole6DC53044": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ProtectedEchoTaskDefinitionExecutionRoleDefaultPolicy877E605A": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ProtectedEchoTaskDefinitionOidcHttpProxyLogGroup045E07B5",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ProtectedEchoTaskDefinitionEnvoyLogGroupF103A165",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ProtectedEchoTaskDefinitionExecutionRoleDefaultPolicy877E605A",
+        "Roles": Array [
+          Object {
+            "Ref": "ProtectedEchoTaskDefinitionExecutionRole6DC53044",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ProtectedEchoTaskDefinitionOidcHttpProxyLogGroup045E07B5": Object {
+      "DeletionPolicy": "Retain",
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ProtectedEchoTaskDefinitionTaskRoleDefaultPolicyEE64F6C6": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "appmesh:StreamAggregatedResources",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "ProtectedEchoVirtualNodeE216A2A7",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ProtectedEchoTaskDefinitionTaskRoleDefaultPolicyEE64F6C6",
+        "Roles": Array [
+          Object {
+            "Ref": "ProtectedEchoTaskDefinitionTaskRoleE6E4F674",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ProtectedEchoTaskDefinitionTaskRoleE6E4F674": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ProtectedEchoVirtualNodeE216A2A7": Object {
+      "Properties": Object {
+        "MeshName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentMeshE4273EA5",
+            "MeshName",
+          ],
+        },
+        "Spec": Object {
+          "Listeners": Array [
+            Object {
+              "PortMapping": Object {
+                "Port": 80,
+                "Protocol": "http",
+              },
+            },
+          ],
+          "ServiceDiscovery": Object {
+            "AWSCloudMap": Object {
+              "NamespaceName": "integ-environment2",
+              "ServiceName": Object {
+                "Fn::GetAtt": Array [
+                  "ProtectedEchoFargateServiceCloudmapService49E73D53",
+                  "Name",
+                ],
+              },
+            },
+          },
+        },
+        "VirtualNodeName": "integenvironment2ProtectedEchoVirtualNode8252841F",
+      },
+      "Type": "AWS::AppMesh::VirtualNode",
+    },
+    "ProtectedEchoVirtualServiceBDDF74A7": Object {
+      "Properties": Object {
+        "MeshName": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentMeshE4273EA5",
+            "MeshName",
+          ],
+        },
+        "Spec": Object {
+          "Provider": Object {
+            "VirtualNode": Object {
+              "VirtualNodeName": Object {
+                "Fn::GetAtt": Array [
+                  "ProtectedEchoVirtualNodeE216A2A7",
+                  "VirtualNodeName",
+                ],
+              },
+            },
+          },
+        },
+        "VirtualServiceName": "protected-echo.integ-environment2",
+      },
+      "Type": "AWS::AppMesh::VirtualService",
+    },
     "RoutedEchoExtensionHttpRouteExtension0HTTP25CF6BD8E": Object {
       "Properties": Object {
         "MeshName": Object {

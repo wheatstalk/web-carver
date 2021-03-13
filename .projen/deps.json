@@ -139,6 +139,11 @@
       "type": "peer"
     },
     {
+      "name": "@aws-cdk/aws-secretsmanager",
+      "version": "^1.92.0",
+      "type": "peer"
+    },
+    {
       "name": "@aws-cdk/aws-servicediscovery",
       "version": "^1.92.0",
       "type": "peer"
@@ -195,6 +200,11 @@
     },
     {
       "name": "@aws-cdk/aws-iam",
+      "version": "^1.92.0",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-cdk/aws-secretsmanager",
       "version": "^1.92.0",
       "type": "runtime"
     },

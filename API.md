@@ -29,6 +29,8 @@ Name|Description
 [HttpRouteExtensionOptions](#wheatstalk-web-carver-httprouteextensionoptions)|Options for adding Http routes.
 [HttpRouteHeaderMatchRangeOptions](#wheatstalk-web-carver-httprouteheadermatchrangeoptions)|Options for a matching HTTP headers in a range.
 [LinkedServiceExtensionOptions](#wheatstalk-web-carver-linkedserviceextensionoptions)|Props for `LinkedServiceExtension`.
+[OidcHttpProxyServiceListenerOptions](#wheatstalk-web-carver-oidchttpproxyservicelisteneroptions)|*No description*
+[OidcHttpProxyServiceListenerOptionsPlainTextCredentials](#wheatstalk-web-carver-oidchttpproxyservicelisteneroptionsplaintextcredentials)|Plaintext configuration.
 [Preferences](#wheatstalk-web-carver-preferences)|Global preferences.
 [RouterProps](#wheatstalk-web-carver-routerprops)|Props for `Router`.
 [ServiceProps](#wheatstalk-web-carver-serviceprops)|Props for `Service`.
@@ -527,6 +529,7 @@ __Returns__:
 
 Provides service listeners.
 
+__Implements__: [IServiceListener](#wheatstalk-web-carver-iservicelistener)
 
 ### Initializer
 
@@ -542,12 +545,12 @@ new ServiceListener()
 ### Methods
 
 
-#### *static* http1(containerPort) <a id="wheatstalk-web-carver-servicelistener-http1"></a>
+#### *static* grpc(containerPort?) <a id="wheatstalk-web-carver-servicelistener-grpc"></a>
 
-Provides a listener that supports at most HTTP/1.1. This is probably a little more useful for software that doesn't support HTTP/2 at all, which can happen, but probably isn't happening to you.
+Provides a listener that supports gRPC.
 
 ```ts
-static http1(containerPort: number): IServiceListener
+static grpc(containerPort?: number): IServiceListener
 ```
 
 * **containerPort** (<code>number</code>)  *No description*
@@ -555,12 +558,82 @@ static http1(containerPort: number): IServiceListener
 __Returns__:
 * <code>[IServiceListener](#wheatstalk-web-carver-iservicelistener)</code>
 
-#### *static* http2(containerPort) <a id="wheatstalk-web-carver-servicelistener-http2"></a>
+#### *static* http1(containerPort?) <a id="wheatstalk-web-carver-servicelistener-http1"></a>
+
+Provides a listener that supports at most HTTP/1.1. This is probably a little more useful for software that doesn't support HTTP/2 at all, which can happen, but probably isn't happening to you.
+
+```ts
+static http1(containerPort?: number): IServiceListener
+```
+
+* **containerPort** (<code>number</code>)  *No description*
+
+__Returns__:
+* <code>[IServiceListener](#wheatstalk-web-carver-iservicelistener)</code>
+
+#### *static* http2(containerPort?) <a id="wheatstalk-web-carver-servicelistener-http2"></a>
 
 Provides a listener that supports HTTP/2 and HTTP/1.1.
 
 ```ts
-static http2(containerPort: number): IServiceListener
+static http2(containerPort?: number): IServiceListener
+```
+
+* **containerPort** (<code>number</code>)  *No description*
+
+__Returns__:
+* <code>[IServiceListener](#wheatstalk-web-carver-iservicelistener)</code>
+
+#### *static* oidcHttpProxy(options) <a id="wheatstalk-web-carver-servicelistener-oidchttpproxy"></a>
+
+
+
+```ts
+static oidcHttpProxy(options: OidcHttpProxyServiceListenerOptions): IServiceListener
+```
+
+* **options** (<code>[OidcHttpProxyServiceListenerOptions](#wheatstalk-web-carver-oidchttpproxyservicelisteneroptions)</code>)  *No description*
+  * **containerPort** (<code>number</code>)  The port to forward traffic to. 
+  * **oidcDiscoveryEndpoint** (<code>string</code>)  The discovery endpoint. 
+  * **image** (<code>[ContainerImage](#aws-cdk-aws-ecs-containerimage)</code>)  The container image to use as a proxy. __*Default*__: 'evry/oidc-proxy:v1.3.0'
+  * **oidcPlainTextCredentials** (<code>[OidcHttpProxyServiceListenerOptionsPlainTextCredentials](#wheatstalk-web-carver-oidchttpproxyservicelisteneroptionsplaintextcredentials)</code>)  Plaintext credentials. __*Optional*__
+  * **oidcSecretCredentials** (<code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code>)  Credentials from an SSM Secret. The secret should be JSON that looks like:. __*Optional*__
+
+__Returns__:
+* <code>[IServiceListener](#wheatstalk-web-carver-iservicelistener)</code>
+
+#### *static* tcp(containerPort) <a id="wheatstalk-web-carver-servicelistener-tcp"></a>
+
+Provides a listener that supports basic TCP connections.
+
+```ts
+static tcp(containerPort: number): IServiceListener
+```
+
+* **containerPort** (<code>number</code>)  *No description*
+
+__Returns__:
+* <code>[IServiceListener](#wheatstalk-web-carver-iservicelistener)</code>
+
+#### *static* tcpPortMapping(containerPort) <a id="wheatstalk-web-carver-servicelistener-tcpportmapping"></a>
+
+Maps a TCP port without producing a virtual node listener.
+
+```ts
+static tcpPortMapping(containerPort: number): IServiceListener
+```
+
+* **containerPort** (<code>number</code>)  *No description*
+
+__Returns__:
+* <code>[IServiceListener](#wheatstalk-web-carver-iservicelistener)</code>
+
+#### *static* udpPortMapping(containerPort) <a id="wheatstalk-web-carver-servicelistener-udpportmapping"></a>
+
+Maps a UDP port without producing a virtual node listener.
+
+```ts
+static udpPortMapping(containerPort: number): IServiceListener
 ```
 
 * **containerPort** (<code>number</code>)  *No description*
@@ -861,7 +934,7 @@ Extends the service with additional features.
 
 ## interface IServiceListener  <a id="wheatstalk-web-carver-iservicelistener"></a>
 
-__Obtainable from__: [ServiceListener](#wheatstalk-web-carver-servicelistener).[http1](#wheatstalk-web-carver-servicelistener#wheatstalk-web-carver-servicelistener-http1)(), [ServiceListener](#wheatstalk-web-carver-servicelistener).[http2](#wheatstalk-web-carver-servicelistener#wheatstalk-web-carver-servicelistener-http2)()
+__Obtainable from__: [ServiceListener](#wheatstalk-web-carver-servicelistener).[grpc](#wheatstalk-web-carver-servicelistener#wheatstalk-web-carver-servicelistener-grpc)(), [ServiceListener](#wheatstalk-web-carver-servicelistener).[http1](#wheatstalk-web-carver-servicelistener#wheatstalk-web-carver-servicelistener-http1)(), [ServiceListener](#wheatstalk-web-carver-servicelistener).[http2](#wheatstalk-web-carver-servicelistener#wheatstalk-web-carver-servicelistener-http2)(), [ServiceListener](#wheatstalk-web-carver-servicelistener).[oidcHttpProxy](#wheatstalk-web-carver-servicelistener#wheatstalk-web-carver-servicelistener-oidchttpproxy)(), [ServiceListener](#wheatstalk-web-carver-servicelistener).[tcp](#wheatstalk-web-carver-servicelistener#wheatstalk-web-carver-servicelistener-tcp)(), [ServiceListener](#wheatstalk-web-carver-servicelistener).[tcpPortMapping](#wheatstalk-web-carver-servicelistener#wheatstalk-web-carver-servicelistener-tcpportmapping)(), [ServiceListener](#wheatstalk-web-carver-servicelistener).[udpPortMapping](#wheatstalk-web-carver-servicelistener#wheatstalk-web-carver-servicelistener-udpportmapping)()
 
 A service listener.
 
@@ -884,6 +957,37 @@ Name | Type | Description
 -----|------|-------------
 **service** | <code>[Service](#wheatstalk-web-carver-service)</code> | The Web Carver service to link to.
 **name**? | <code>string</code> | Name of the linked service for environment variable choice.<br/>__*Optional*__
+
+
+
+## struct OidcHttpProxyServiceListenerOptions  <a id="wheatstalk-web-carver-oidchttpproxyservicelisteneroptions"></a>
+
+
+
+
+
+
+Name | Type | Description 
+-----|------|-------------
+**containerPort** | <code>number</code> | The port to forward traffic to.
+**oidcDiscoveryEndpoint** | <code>string</code> | The discovery endpoint.
+**image**? | <code>[ContainerImage](#aws-cdk-aws-ecs-containerimage)</code> | The container image to use as a proxy.<br/>__*Default*__: 'evry/oidc-proxy:v1.3.0'
+**oidcPlainTextCredentials**? | <code>[OidcHttpProxyServiceListenerOptionsPlainTextCredentials](#wheatstalk-web-carver-oidchttpproxyservicelisteneroptionsplaintextcredentials)</code> | Plaintext credentials.<br/>__*Optional*__
+**oidcSecretCredentials**? | <code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code> | Credentials from an SSM Secret. The secret should be JSON that looks like:.<br/>__*Optional*__
+
+
+
+## struct OidcHttpProxyServiceListenerOptionsPlainTextCredentials  <a id="wheatstalk-web-carver-oidchttpproxyservicelisteneroptionsplaintextcredentials"></a>
+
+
+Plaintext configuration.
+
+
+
+Name | Type | Description 
+-----|------|-------------
+**clientId** | <code>string</code> | <span></span>
+**clientSecret** | <code>string</code> | <span></span>
 
 
 
