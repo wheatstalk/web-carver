@@ -46,7 +46,10 @@ class ReplayingPubSub<T> extends PubSubBase<T> {
 
   subscribe(handler: PubSubHandler<T>) {
     super.subscribe(handler);
-    for (const event of this.eventRecord) {
+    // Create a copy of the event record so that we aren't looping over a
+    // mutating list.
+    const eventRecordCopy = [...this.eventRecord];
+    for (const event of eventRecordCopy) {
       handler(event);
     }
   }

@@ -33,6 +33,34 @@ test('replaying PubSub publishes all old events to new subscribers', () => {
   pubSub.subscribe(handler2);
 
   // THEN
+  expect(handler1).toBeCalledTimes(2);
+  expect(handler1).toBeCalledWith(1337);
+  expect(handler1).toBeCalledWith(31337);
+  expect(handler2).toBeCalledTimes(2);
   expect(handler2).toBeCalledWith(1337);
   expect(handler2).toBeCalledWith(31337);
+});
+
+test('replaying PubSub handles mutation of the event log during replay', () => {
+  const pubSub = PubSub.replayingPubSub<number>();
+  const subscriber = jest.fn();
+
+  pubSub.subscribe(subscriber);
+  pubSub.publish(1);
+
+  // WHEN
+  const tracking = new Array<number>();
+  pubSub.subscribe(x => {
+    if (tracking.find(y => y === x)) {
+      throw new Error('Test failed');
+    } else {
+      tracking.push(x);
+    }
+    if (x === 1) {
+      pubSub.publish(2);
+    }
+  });
+
+  // THEN
+  expect(subscriber).toBeCalledTimes(2);
 });
