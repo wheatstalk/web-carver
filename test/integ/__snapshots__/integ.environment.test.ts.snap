@@ -1181,7 +1181,6 @@ Object {
             ],
           },
         },
-        "ServiceName": "gateway-echo-integ-environment2-integenvironment2GatewayEchoD4302EA3",
         "ServiceRegistries": Array [
           Object {
             "RegistryArn": Object {
@@ -1519,7 +1518,7 @@ Object {
             },
           },
         },
-        "VirtualNodeName": "integenvironment2GatewayEchoVirtualNode239EC8A5",
+        "VirtualNodeName": "gateway-echo-integ-environment2",
       },
       "Type": "AWS::AppMesh::VirtualNode",
     },
@@ -1753,7 +1752,6 @@ Object {
             ],
           },
         },
-        "ServiceName": "protected-echo-integ-environment2-integenvironment2ProtectedEchoE41A70F2",
         "ServiceRegistries": Array [
           Object {
             "RegistryArn": Object {
@@ -2176,7 +2174,7 @@ Object {
             },
           },
         },
-        "VirtualNodeName": "integenvironment2ProtectedEchoVirtualNode8252841F",
+        "VirtualNodeName": "protected-echo-integ-environment2",
       },
       "Type": "AWS::AppMesh::VirtualNode",
     },
@@ -2417,7 +2415,6 @@ Object {
             ],
           },
         },
-        "ServiceName": "routed-echo-integ-environment2-integenvironment2RoutedEcho2AFDA6D2",
         "ServiceRegistries": Array [
           Object {
             "RegistryArn": Object {
@@ -2755,7 +2752,7 @@ Object {
             },
           },
         },
-        "VirtualNodeName": "integenvironment2RoutedEchoVirtualNode26F01980",
+        "VirtualNodeName": "routed-echo-integ-environment2",
       },
       "Type": "AWS::AppMesh::VirtualNode",
     },
@@ -2901,7 +2898,6 @@ Object {
             ],
           },
         },
-        "ServiceName": "backend-fake-integenvironment2childBackendF65FE668",
         "ServiceRegistries": Array [
           Object {
             "RegistryArn": Object {
@@ -3310,7 +3306,7 @@ Object {
             },
           },
         ],
-        "VirtualNodeName": "integenvironment2childBackendVirtualNodeF6CABCBC",
+        "VirtualNodeName": "backend-fake",
       },
       "Type": "AWS::AppMesh::VirtualNode",
     },
@@ -3480,7 +3476,6 @@ Object {
             ],
           },
         },
-        "ServiceName": "consumer-fake-integenvironment2childConsumer2696F6B1",
         "ServiceRegistries": Array [
           Object {
             "RegistryArn": Object {
@@ -3861,7 +3856,7 @@ Object {
             },
           },
         ],
-        "VirtualNodeName": "integenvironment2childConsumerVirtualNode7AC8D396",
+        "VirtualNodeName": "consumer-fake",
       },
       "Type": "AWS::AppMesh::VirtualNode",
     },

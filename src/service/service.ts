@@ -11,6 +11,7 @@ import { AddAppMeshEnvoyExtension } from '../util-private';
 import { FilterChain } from '../util-private/filter-chain';
 import { PubSub } from '../util-private/pub-sub';
 import { IServiceExtension } from './service-extension/api';
+import { IServiceName, ServiceName } from './service-name';
 
 /**
  * A WebCarver service.
@@ -30,13 +31,6 @@ export interface ServiceProps {
    * The Web Carver environment in which to create the service.
    */
   readonly environment: IEnvironment;
-
-  /**
-   * Suffix the service name with a host name. The resulting service name
-   * will be a FQDN to work around the resolvability issue from
-   * https://github.com/aws/aws-app-mesh-roadmap/issues/65
-   */
-  readonly hostName?: string;
 
   /**
    * Choose a service name.
@@ -145,6 +139,7 @@ export class Service extends cdk.Construct implements IService {
     }));
 
     this.virtualNode = new appmesh.VirtualNode(this, 'VirtualNode', {
+      virtualNodeName: name._virtualNodeName(this, nameContext),
       serviceDiscovery: appmesh.ServiceDiscovery.cloudMap({
         service: this.fargateService.cloudMapService!,
       }),
@@ -194,54 +189,6 @@ function findDefaultSecurityGroupPort(taskDefinition: ecs.TaskDefinition) {
 }
 
 /**
- * How to name the service.
- */
-export interface IServiceName {
-  /**
-   * @internal
-   */
-  _serviceName(scope: cdk.Construct, context: ServiceNameContext): string;
-
-  /**
-   * @internal
-   */
-  _virtualServiceName(scope: cdk.Construct, context: ServiceNameContext): string;
-
-  /**
-   * @internal
-   */
-  _cloudMapServiceName(scope: cdk.Construct, context: ServiceNameContext): string;
-}
-
-interface ServiceNameContext {
-  readonly namespace: servicediscovery.INamespace;
-}
-
-/**
- * Provides ways to name your services and associated resources.
- */
-export abstract class ServiceName {
-  /**
-   * Provide a host name within the mesh.
-   * @param hostName
-   */
-  static hostName(hostName: string): IServiceName {
-    return {
-      _serviceName: (scope, context) => cdk.Fn.join('-', [
-        hostName,
-        context.namespace.namespaceName,
-        cdk.Names.nodeUniqueId(scope.node),
-      ]),
-      _virtualServiceName: (_scope, context) => cdk.Fn.join('.', [
-        hostName,
-        context.namespace.namespaceName,
-      ]),
-      _cloudMapServiceName: () => hostName,
-    };
-  }
-}
-
-/**
  * @internal
  */
 export interface IServiceExtensionFacade {
@@ -253,6 +200,7 @@ export interface IServiceExtensionFacade {
   _onEnvVars(handler: (env: Record<string, string>) => void): void;
   _onWorkloadReady(handler: (x: WorkloadOptions) => void): void;
   _onConnectionsReady(handler: (x: ec2.Connections) => void): void;
+  _onContainerDefinitionPublished(handler: (x: ecs.ContainerDefinition) => void): void;
   _publishContainerDefinition(container: ecs.ContainerDefinition): void;
 }
 
@@ -276,6 +224,10 @@ class ServiceFacade implements IServiceExtensionFacade {
     this.environment = options.environment;
     this.defaultRouter = options.defaultRouter;
     this.defaultGateway = options.defaultGateway;
+  }
+
+  public _onContainerDefinitionPublished(handler: (x: ecs.ContainerDefinition) => void): void {
+    this.containerDefinitionPublishedEvent.subscribe(handler);
   }
 
   public _publishContainerDefinition(container: ecs.ContainerDefinition) {

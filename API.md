@@ -394,7 +394,6 @@ new Service(scope: Construct, id: string, props: ServiceProps)
 * **props** (<code>[ServiceProps](#wheatstalk-web-carver-serviceprops)</code>)  *No description*
   * **environment** (<code>[IEnvironment](#wheatstalk-web-carver-ienvironment)</code>)  The Web Carver environment in which to create the service. 
   * **extensions** (<code>Array<[IServiceExtension](#wheatstalk-web-carver-iserviceextension)></code>)  Add extensions to your service to add features. __*Optional*__
-  * **hostName** (<code>string</code>)  Suffix the service name with a host name. __*Optional*__
   * **name** (<code>[IServiceName](#wheatstalk-web-carver-iservicename)</code>)  Choose a service name. __*Default*__: a name is chosen for you
 
 
@@ -647,6 +646,7 @@ __Returns__:
 
 Provides ways to name your services and associated resources.
 
+__Implements__: [IServiceName](#wheatstalk-web-carver-iservicename)
 
 ### Initializer
 
@@ -1031,7 +1031,6 @@ Name | Type | Description
 -----|------|-------------
 **environment** | <code>[IEnvironment](#wheatstalk-web-carver-ienvironment)</code> | The Web Carver environment in which to create the service.
 **extensions**? | <code>Array<[IServiceExtension](#wheatstalk-web-carver-iserviceextension)></code> | Add extensions to your service to add features.<br/>__*Optional*__
-**hostName**? | <code>string</code> | Suffix the service name with a host name.<br/>__*Optional*__
 **name**? | <code>[IServiceName](#wheatstalk-web-carver-iservicename)</code> | Choose a service name.<br/>__*Default*__: a name is chosen for you
 
 
