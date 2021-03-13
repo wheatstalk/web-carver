@@ -101,6 +101,10 @@ export abstract class ServiceListener implements IServiceListener {
     });
   };
 
+  /**
+   * Creates an HTTP listener that is made available through a reverse proxy
+   * that first requires OIDC authentication.
+   */
   static oidcHttpProxy(options: OidcHttpProxyServiceListenerOptions): IServiceListener {
     return new OidcHttpProxyServiceListener(options);
   }
@@ -117,6 +121,9 @@ class ServiceListenerImpl extends ServiceListener {
   _bind = () => this.serviceListenerConfig;
 }
 
+/**
+ * Options for an OIDC HTTP Proxy
+ */
 export interface OidcHttpProxyServiceListenerOptions {
   /**
    * The container image to use as a proxy.
@@ -157,9 +164,18 @@ export interface OidcHttpProxyServiceListenerOptions {
   readonly oidcSecretCredentials?: secrets.ISecret;
 }
 
-/** Plaintext configuration */
+/**
+ * Plaintext credentials
+ */
 export interface OidcHttpProxyServiceListenerOptionsPlainTextCredentials {
+  /**
+   * The OIDC client ID
+   */
   readonly clientId: string;
+
+  /**
+   * The OIDC client secret
+   */
   readonly clientSecret: string;
 }
 

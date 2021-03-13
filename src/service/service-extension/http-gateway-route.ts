@@ -5,9 +5,16 @@ import { IServiceExtensionFacade } from '../service';
 import { IServiceExtension } from './api';
 
 /**
- * Options for adding gateway routes.
+ * HTTP/2 Gateway Route Extension Options
  */
-export interface Http2GatewayRouteExtensionOptions extends appmesh.HttpGatewayRouteMatch {
+export interface Http2GatewayRouteExtensionOptions {
+  /**
+   * The path prefix the gateway route should match. Your service will receive
+   * a rewritten host path.
+   * @default '/'
+   */
+  readonly prefixPath?: string;
+
   /**
    * The gateway to add a route to.
    * @default - the service's default gateway.
@@ -21,8 +28,12 @@ export interface Http2GatewayRouteExtensionOptions extends appmesh.HttpGatewayRo
  */
 export class Http2GatewayRouteExtension implements IServiceExtension {
   public readonly _extensionTypeName = 'Http2GatewayRouteExtension';
+  private readonly http2GatewayRouteSpecMatch: appmesh.HttpGatewayRouteMatch;
 
   constructor(private readonly props?: Http2GatewayRouteExtensionOptions) {
+    this.http2GatewayRouteSpecMatch = {
+      prefixPath: props?.prefixPath ?? '/',
+    };
   }
 
   _register(service: IServiceExtensionFacade, privateScope: cdk.Construct) {
@@ -34,7 +45,7 @@ export class Http2GatewayRouteExtension implements IServiceExtension {
       new appmesh.GatewayRoute(privateScope, 'Http2GatewayRoute', {
         virtualGateway: gateway,
         routeSpec: appmesh.GatewayRouteSpec.http2({
-          match: this.props,
+          match: this.http2GatewayRouteSpecMatch,
           routeTarget: virtualService,
         }),
       });
@@ -46,11 +57,21 @@ export class Http2GatewayRouteExtension implements IServiceExtension {
   }
 }
 
-export interface HttpGatewayRouteExtensionOptions extends appmesh.HttpGatewayRouteMatch {
+/**
+ * HTTP Gateway Route Extension Options
+ */
+export interface HttpGatewayRouteExtensionOptions {
   /**
-   * The gateway to add a route to.
-   * @default - the service's default gateway.
+   * The path prefix the gateway route should match. Your service will receive
+   * a rewritten host path.
+   * @default '/'
    */
+  readonly prefixPath?: string;
+
+  /**
+    * The gateway to add a route to.
+    * @default - the service's default gateway.
+    */
   readonly gateway?: IGateway;
 }
 
@@ -61,8 +82,12 @@ export interface HttpGatewayRouteExtensionOptions extends appmesh.HttpGatewayRou
  */
 export class HttpGatewayRouteExtension implements IServiceExtension {
   public readonly _extensionTypeName = 'HttpGatewayRouteExtension';
+  private readonly http2GatewayRouteSpecMatch: appmesh.HttpGatewayRouteMatch;
 
   constructor(private readonly props?: HttpGatewayRouteExtensionOptions) {
+    this.http2GatewayRouteSpecMatch = {
+      prefixPath: props?.prefixPath ?? '/',
+    };
   }
 
   _register(service: IServiceExtensionFacade, privateScope: cdk.Construct) {
@@ -74,7 +99,7 @@ export class HttpGatewayRouteExtension implements IServiceExtension {
       new appmesh.GatewayRoute(privateScope, 'HttpGatewayRoute', {
         virtualGateway: gateway,
         routeSpec: appmesh.GatewayRouteSpec.http({
-          match: this.props,
+          match: this.http2GatewayRouteSpecMatch,
           routeTarget: virtualService,
         }),
       });

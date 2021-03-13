@@ -24,13 +24,13 @@ Name|Description
 [ContainerExtensionOptions](#wheatstalk-web-carver-containerextensionoptions)|Container extension options.
 [EnvironmentManifestProps](#wheatstalk-web-carver-environmentmanifestprops)|Props for `EnvironmentManifest`.
 [EnvironmentProps](#wheatstalk-web-carver-environmentprops)|Props for `Environment`.
-[Http2GatewayRouteExtensionOptions](#wheatstalk-web-carver-http2gatewayrouteextensionoptions)|Options for adding gateway routes.
-[HttpGatewayRouteExtensionOptions](#wheatstalk-web-carver-httpgatewayrouteextensionoptions)|*No description*
+[Http2GatewayRouteExtensionOptions](#wheatstalk-web-carver-http2gatewayrouteextensionoptions)|HTTP/2 Gateway Route Extension Options.
+[HttpGatewayRouteExtensionOptions](#wheatstalk-web-carver-httpgatewayrouteextensionoptions)|HTTP Gateway Route Extension Options.
 [HttpRouteExtensionOptions](#wheatstalk-web-carver-httprouteextensionoptions)|Options for adding Http routes.
 [HttpRouteHeaderMatchRangeOptions](#wheatstalk-web-carver-httprouteheadermatchrangeoptions)|Options for a matching HTTP headers in a range.
 [LinkedServiceExtensionOptions](#wheatstalk-web-carver-linkedserviceextensionoptions)|Props for `LinkedServiceExtension`.
-[OidcHttpProxyServiceListenerOptions](#wheatstalk-web-carver-oidchttpproxyservicelisteneroptions)|*No description*
-[OidcHttpProxyServiceListenerOptionsPlainTextCredentials](#wheatstalk-web-carver-oidchttpproxyservicelisteneroptionsplaintextcredentials)|Plaintext configuration.
+[OidcHttpProxyServiceListenerOptions](#wheatstalk-web-carver-oidchttpproxyservicelisteneroptions)|Options for an OIDC HTTP Proxy.
+[OidcHttpProxyServiceListenerOptionsPlainTextCredentials](#wheatstalk-web-carver-oidchttpproxyservicelisteneroptionsplaintextcredentials)|Plaintext credentials.
 [Preferences](#wheatstalk-web-carver-preferences)|Global preferences.
 [RouterProps](#wheatstalk-web-carver-routerprops)|Props for `Router`.
 [ServiceProps](#wheatstalk-web-carver-serviceprops)|Props for `Service`.
@@ -395,7 +395,7 @@ new Service(scope: Construct, id: string, props: ServiceProps)
   * **environment** (<code>[IEnvironment](#wheatstalk-web-carver-ienvironment)</code>)  The Web Carver environment in which to create the service. 
   * **extensions** (<code>Array<[IServiceExtension](#wheatstalk-web-carver-iserviceextension)></code>)  Add extensions to your service to add features. __*Optional*__
   * **hostName** (<code>string</code>)  Suffix the service name with a host name. __*Optional*__
-  * **name** (<code>[IServiceName](#wheatstalk-web-carver-iservicename)</code>)  Choose a service name. __*Default*__: one is chosen for you
+  * **name** (<code>[IServiceName](#wheatstalk-web-carver-iservicename)</code>)  Choose a service name. __*Default*__: a name is chosen for you
 
 
 
@@ -433,7 +433,7 @@ new ServiceExtension()
 
 #### *static* container(props) <a id="wheatstalk-web-carver-serviceextension-container"></a>
 
-
+Add a container.
 
 ```ts
 static container(props: ContainerExtensionOptions): IServiceExtension
@@ -444,7 +444,7 @@ static container(props: ContainerExtensionOptions): IServiceExtension
   * **environment** (<code>Map<string, string></code>)  *No description* __*Optional*__
   * **listeners** (<code>Array<[IServiceListener](#wheatstalk-web-carver-iservicelistener)></code>)  *No description* __*Optional*__
   * **name** (<code>string</code>)  Name of the container. __*Default*__: 'Main'
-  * **secret** (<code>Map<string, [Secret](#aws-cdk-aws-ecs-secret)></code>)  *No description* __*Optional*__
+  * **secrets** (<code>Map<string, [Secret](#aws-cdk-aws-ecs-secret)></code>)  *No description* __*Optional*__
 
 __Returns__:
 * <code>[IServiceExtension](#wheatstalk-web-carver-iserviceextension)</code>
@@ -471,8 +471,8 @@ static http2GatewayRoute(options?: Http2GatewayRouteExtensionOptions): IServiceE
 ```
 
 * **options** (<code>[Http2GatewayRouteExtensionOptions](#wheatstalk-web-carver-http2gatewayrouteextensionoptions)</code>)  *No description*
-  * **prefixPath** (<code>string</code>)  Specifies the path to match requests with. 
   * **gateway** (<code>[IGateway](#wheatstalk-web-carver-igateway)</code>)  The gateway to add a route to. __*Default*__: the service's default gateway.
+  * **prefixPath** (<code>string</code>)  The path prefix the gateway route should match. __*Default*__: '/'
 
 __Returns__:
 * <code>[IServiceExtension](#wheatstalk-web-carver-iserviceextension)</code>
@@ -486,8 +486,8 @@ static httpGatewayRoute(options?: HttpGatewayRouteExtensionOptions): IServiceExt
 ```
 
 * **options** (<code>[HttpGatewayRouteExtensionOptions](#wheatstalk-web-carver-httpgatewayrouteextensionoptions)</code>)  *No description*
-  * **prefixPath** (<code>string</code>)  Specifies the path to match requests with. 
   * **gateway** (<code>[IGateway](#wheatstalk-web-carver-igateway)</code>)  The gateway to add a route to. __*Default*__: the service's default gateway.
+  * **prefixPath** (<code>string</code>)  The path prefix the gateway route should match. __*Default*__: '/'
 
 __Returns__:
 * <code>[IServiceExtension](#wheatstalk-web-carver-iserviceextension)</code>
@@ -586,7 +586,7 @@ __Returns__:
 
 #### *static* oidcHttpProxy(options) <a id="wheatstalk-web-carver-servicelistener-oidchttpproxy"></a>
 
-
+Creates an HTTP listener that is made available through a reverse proxy that first requires OIDC authentication.
 
 ```ts
 static oidcHttpProxy(options: OidcHttpProxyServiceListenerOptions): IServiceListener
@@ -707,7 +707,7 @@ Name | Type | Description
 **environment**? | <code>Map<string, string></code> | __*Optional*__
 **listeners**? | <code>Array<[IServiceListener](#wheatstalk-web-carver-iservicelistener)></code> | __*Optional*__
 **name**? | <code>string</code> | Name of the container.<br/>__*Default*__: 'Main'
-**secret**? | <code>Map<string, [Secret](#aws-cdk-aws-ecs-secret)></code> | __*Optional*__
+**secrets**? | <code>Map<string, [Secret](#aws-cdk-aws-ecs-secret)></code> | __*Optional*__
 
 
 
@@ -744,28 +744,28 @@ Name | Type | Description
 ## struct Http2GatewayRouteExtensionOptions  <a id="wheatstalk-web-carver-http2gatewayrouteextensionoptions"></a>
 
 
-Options for adding gateway routes.
+HTTP/2 Gateway Route Extension Options.
 
 
 
 Name | Type | Description 
 -----|------|-------------
-**prefixPath**🔹 | <code>string</code> | Specifies the path to match requests with.
 **gateway**? | <code>[IGateway](#wheatstalk-web-carver-igateway)</code> | The gateway to add a route to.<br/>__*Default*__: the service's default gateway.
+**prefixPath**? | <code>string</code> | The path prefix the gateway route should match.<br/>__*Default*__: '/'
 
 
 
 ## struct HttpGatewayRouteExtensionOptions  <a id="wheatstalk-web-carver-httpgatewayrouteextensionoptions"></a>
 
 
-
+HTTP Gateway Route Extension Options.
 
 
 
 Name | Type | Description 
 -----|------|-------------
-**prefixPath**🔹 | <code>string</code> | Specifies the path to match requests with.
 **gateway**? | <code>[IGateway](#wheatstalk-web-carver-igateway)</code> | The gateway to add a route to.<br/>__*Default*__: the service's default gateway.
+**prefixPath**? | <code>string</code> | The path prefix the gateway route should match.<br/>__*Default*__: '/'
 
 
 
@@ -963,7 +963,7 @@ Name | Type | Description
 ## struct OidcHttpProxyServiceListenerOptions  <a id="wheatstalk-web-carver-oidchttpproxyservicelisteneroptions"></a>
 
 
-
+Options for an OIDC HTTP Proxy.
 
 
 
@@ -980,14 +980,14 @@ Name | Type | Description
 ## struct OidcHttpProxyServiceListenerOptionsPlainTextCredentials  <a id="wheatstalk-web-carver-oidchttpproxyservicelisteneroptionsplaintextcredentials"></a>
 
 
-Plaintext configuration.
+Plaintext credentials.
 
 
 
 Name | Type | Description 
 -----|------|-------------
-**clientId** | <code>string</code> | <span></span>
-**clientSecret** | <code>string</code> | <span></span>
+**clientId** | <code>string</code> | The OIDC client ID.
+**clientSecret** | <code>string</code> | The OIDC client secret.
 
 
 
@@ -1032,7 +1032,7 @@ Name | Type | Description
 **environment** | <code>[IEnvironment](#wheatstalk-web-carver-ienvironment)</code> | The Web Carver environment in which to create the service.
 **extensions**? | <code>Array<[IServiceExtension](#wheatstalk-web-carver-iserviceextension)></code> | Add extensions to your service to add features.<br/>__*Optional*__
 **hostName**? | <code>string</code> | Suffix the service name with a host name.<br/>__*Optional*__
-**name**? | <code>[IServiceName](#wheatstalk-web-carver-iservicename)</code> | Choose a service name.<br/>__*Default*__: one is chosen for you
+**name**? | <code>[IServiceName](#wheatstalk-web-carver-iservicename)</code> | Choose a service name.<br/>__*Default*__: a name is chosen for you
 
 
 

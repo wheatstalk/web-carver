@@ -16,12 +16,12 @@ export interface ContainerExtensionOptions {
   readonly name?: string;
   readonly image: ecs.ContainerImage;
   readonly environment?: Record<string, string>;
-  readonly secret?: Record<string, ecs.Secret>;
+  readonly secrets?: Record<string, ecs.Secret>;
   readonly listeners?: IServiceListener[];
 }
 
 /** @internal */
-export class TrafficContainerExtension implements IServiceExtension {
+export class ContainerExtension implements IServiceExtension {
   private readonly name: string;
   private readonly image: ecs.ContainerImage;
   private readonly environment: Record<string, string>;
@@ -35,7 +35,7 @@ export class TrafficContainerExtension implements IServiceExtension {
     this.name = options.name ?? 'Main';
     this.image = options.image;
     this.environment = options.environment ?? {};
-    this.secrets = options.secret ?? {};
+    this.secrets = options.secrets ?? {};
     this.memoryLimitMiB = 512;
     this.serviceListeners = options.listeners ?? [];
   }

@@ -8,7 +8,8 @@ import { IGateway } from '../gateway';
 import { defaultCapacityProviderStrategy, defaultServiceNetworkConfig } from '../preferences';
 import { IRouter } from '../router';
 import { AddAppMeshEnvoyExtension } from '../util-private';
-import { Filter, PubSub } from './events';
+import { FilterChain } from '../util-private/filter-chain';
+import { PubSub } from '../util-private/pub-sub';
 import { IServiceExtension } from './service-extension/api';
 
 /**
@@ -39,7 +40,7 @@ export interface ServiceProps {
 
   /**
    * Choose a service name.
-   * @default - one is chosen for you
+   * @default - a name is chosen for you
    */
   readonly name?: IServiceName;
 
@@ -74,13 +75,13 @@ export class Service extends cdk.Construct implements IService {
    * Filter the Fargate Task Definition props.
    * @internal
    */
-  public readonly _filterTaskDefinitionProps = new Filter<ecs.FargateTaskDefinitionProps>();
+  public readonly _filterTaskDefinitionProps = new FilterChain<ecs.FargateTaskDefinitionProps>();
 
   /**
    * Filter the Fargate Service construct props.
    * @internal
    */
-  public readonly _filterServiceProps = new Filter<ecs.FargateServiceProps>();
+  public readonly _filterServiceProps = new FilterChain<ecs.FargateServiceProps>();
 
   private readonly serviceFacade: ServiceFacade;
 
@@ -176,31 +177,6 @@ export class Service extends cdk.Construct implements IService {
 
     this.serviceFacade.connectionsReadyEvent.publish(this.connections);
   }
-
-  /** @internal */
-  public _publishContainerDefinition(container: ecs.ContainerDefinition) {
-    this.serviceFacade._publishContainerDefinition(container);
-  }
-
-  /** @internal */
-  public _addEnvVars(env: Record<string, string>) {
-    this.serviceFacade._addEnvVars(env);
-  }
-
-  /** @internal */
-  public _onEnvVars(handler: (env: Record<string, string>) => void) {
-    this.serviceFacade._onEnvVars(handler);
-  }
-
-  /** @internal */
-  public _onWorkloadReady(handler: (x: WorkloadOptions) => void) {
-    this.serviceFacade._onWorkloadReady(handler);
-  }
-
-  /** @internal */
-  public _onConnectionsReady(handler: (x: ec2.Connections) => void) {
-    this.serviceFacade._onConnectionsReady(handler);
-  }
 }
 
 /**
@@ -291,10 +267,10 @@ class ServiceFacade implements IServiceExtensionFacade {
   public readonly defaultRouter: IRouter;
   public readonly defaultGateway: IGateway;
 
-  public readonly workloadReadyEvent = new PubSub<WorkloadOptions>(true);
-  public readonly connectionsReadyEvent = new PubSub<ec2.Connections>(true);
-  public readonly envVarsAddedEvent = new PubSub<Record<string, string>>();
-  public readonly containerDefinitionPublishedEvent = new PubSub<ecs.ContainerDefinition>(false);
+  public readonly workloadReadyEvent = PubSub.replayingPubSub<WorkloadOptions>();
+  public readonly connectionsReadyEvent = PubSub.replayingPubSub<ec2.Connections>();
+  public readonly envVarsAddedEvent = PubSub.replayingPubSub<Record<string, string>>();
+  public readonly containerDefinitionPublishedEvent = PubSub.replayingPubSub<ecs.ContainerDefinition>();
 
   constructor(options: ServiceEventsOptions) {
     this.environment = options.environment;

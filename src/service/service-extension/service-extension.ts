@@ -1,5 +1,5 @@
 import { IServiceExtension } from './api';
-import { TrafficContainerExtension, ContainerExtensionOptions } from './container';
+import { ContainerExtension, ContainerExtensionOptions } from './container';
 import { EnvVarsExtension } from './env-vars';
 import {
   Http2GatewayRouteExtension,
@@ -49,7 +49,10 @@ export abstract class ServiceExtension {
     return new HttpRouteExtension(options);
   }
 
+  /**
+   * Add a container.
+   */
   static container(props: ContainerExtensionOptions): IServiceExtension {
-    return new TrafficContainerExtension(props);
+    return new ContainerExtension(props);
   }
 }
