@@ -29,8 +29,8 @@ Name|Description
 [HttpRouteExtensionOptions](#wheatstalk-web-carver-httprouteextensionoptions)|Options for adding Http routes.
 [HttpRouteHeaderMatchRangeOptions](#wheatstalk-web-carver-httprouteheadermatchrangeoptions)|Options for a matching HTTP headers in a range.
 [LinkedServiceExtensionOptions](#wheatstalk-web-carver-linkedserviceextensionoptions)|Props for `LinkedServiceExtension`.
-[OidcHttpProxyServiceListenerOptions](#wheatstalk-web-carver-oidchttpproxyservicelisteneroptions)|Options for an OIDC HTTP Proxy.
-[OidcHttpProxyServiceListenerOptionsPlainTextCredentials](#wheatstalk-web-carver-oidchttpproxyservicelisteneroptionsplaintextcredentials)|Plaintext credentials.
+[OidcHttpExtensionPlainTextCredentials](#wheatstalk-web-carver-oidchttpextensionplaintextcredentials)|Plaintext credentials.
+[OidcHttpProxyExtensionOptions](#wheatstalk-web-carver-oidchttpproxyextensionoptions)|Options for an OIDC HTTP Proxy.
 [Preferences](#wheatstalk-web-carver-preferences)|Global preferences.
 [RouterProps](#wheatstalk-web-carver-routerprops)|Props for `Router`.
 [ServiceProps](#wheatstalk-web-carver-serviceprops)|Props for `Service`.
@@ -588,14 +588,14 @@ __Returns__:
 Creates an HTTP listener that is made available through a reverse proxy that first requires OIDC authentication.
 
 ```ts
-static oidcHttpProxy(options: OidcHttpProxyServiceListenerOptions): IServiceListener
+static oidcHttpProxy(options: OidcHttpProxyExtensionOptions): IServiceListener
 ```
 
-* **options** (<code>[OidcHttpProxyServiceListenerOptions](#wheatstalk-web-carver-oidchttpproxyservicelisteneroptions)</code>)  *No description*
+* **options** (<code>[OidcHttpProxyExtensionOptions](#wheatstalk-web-carver-oidchttpproxyextensionoptions)</code>)  *No description*
   * **containerPort** (<code>number</code>)  The port to forward traffic to. 
   * **oidcDiscoveryEndpoint** (<code>string</code>)  The discovery endpoint. 
   * **image** (<code>[ContainerImage](#aws-cdk-aws-ecs-containerimage)</code>)  The container image to use as a proxy. __*Default*__: 'evry/oidc-proxy:v1.3.0'
-  * **oidcPlainTextCredentials** (<code>[OidcHttpProxyServiceListenerOptionsPlainTextCredentials](#wheatstalk-web-carver-oidchttpproxyservicelisteneroptionsplaintextcredentials)</code>)  Plaintext credentials. __*Optional*__
+  * **oidcPlainTextCredentials** (<code>[OidcHttpExtensionPlainTextCredentials](#wheatstalk-web-carver-oidchttpextensionplaintextcredentials)</code>)  Plaintext credentials. __*Optional*__
   * **oidcSecretCredentials** (<code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code>)  Credentials from an SSM Secret. The secret should be JSON that looks like:. __*Optional*__
 
 __Returns__:
@@ -960,7 +960,21 @@ Name | Type | Description
 
 
 
-## struct OidcHttpProxyServiceListenerOptions  <a id="wheatstalk-web-carver-oidchttpproxyservicelisteneroptions"></a>
+## struct OidcHttpExtensionPlainTextCredentials  <a id="wheatstalk-web-carver-oidchttpextensionplaintextcredentials"></a>
+
+
+Plaintext credentials.
+
+
+
+Name | Type | Description 
+-----|------|-------------
+**clientId** | <code>string</code> | The OIDC client ID.
+**clientSecret** | <code>string</code> | The OIDC client secret.
+
+
+
+## struct OidcHttpProxyExtensionOptions  <a id="wheatstalk-web-carver-oidchttpproxyextensionoptions"></a>
 
 
 Options for an OIDC HTTP Proxy.
@@ -972,22 +986,8 @@ Name | Type | Description
 **containerPort** | <code>number</code> | The port to forward traffic to.
 **oidcDiscoveryEndpoint** | <code>string</code> | The discovery endpoint.
 **image**? | <code>[ContainerImage](#aws-cdk-aws-ecs-containerimage)</code> | The container image to use as a proxy.<br/>__*Default*__: 'evry/oidc-proxy:v1.3.0'
-**oidcPlainTextCredentials**? | <code>[OidcHttpProxyServiceListenerOptionsPlainTextCredentials](#wheatstalk-web-carver-oidchttpproxyservicelisteneroptionsplaintextcredentials)</code> | Plaintext credentials.<br/>__*Optional*__
+**oidcPlainTextCredentials**? | <code>[OidcHttpExtensionPlainTextCredentials](#wheatstalk-web-carver-oidchttpextensionplaintextcredentials)</code> | Plaintext credentials.<br/>__*Optional*__
 **oidcSecretCredentials**? | <code>[ISecret](#aws-cdk-aws-secretsmanager-isecret)</code> | Credentials from an SSM Secret. The secret should be JSON that looks like:.<br/>__*Optional*__
-
-
-
-## struct OidcHttpProxyServiceListenerOptionsPlainTextCredentials  <a id="wheatstalk-web-carver-oidchttpproxyservicelisteneroptionsplaintextcredentials"></a>
-
-
-Plaintext credentials.
-
-
-
-Name | Type | Description 
------|------|-------------
-**clientId** | <code>string</code> | The OIDC client ID.
-**clientSecret** | <code>string</code> | The OIDC client secret.
 
 
 

@@ -61,6 +61,7 @@ it('sends all events to extensions', () => {
   const stack = new cdk.Stack(app, 'Stack', { env: { account: 'some-account', region: 'some-region' } });
   const environment = webcarver.EnvironmentManifest.environmentFromStringParameter(stack, 'Environment', '/param');
 
+  const onServiceExtensionAdded = jest.fn();
   const onWorkloadReady = jest.fn();
   const onEnvVars = jest.fn();
   const onConnectionsReady = jest.fn();
@@ -79,6 +80,7 @@ it('sends all events to extensions', () => {
       _register: (service, privateScope) => {
         givenService = service;
         givenPrivateScope = privateScope;
+        service._onServiceExtensionAdded(onServiceExtensionAdded);
         service._onWorkloadReady(onWorkloadReady);
         service._onEnvVars(onEnvVars);
         service._onConnectionsReady(onConnectionsReady);
@@ -104,10 +106,11 @@ it('sends all events to extensions', () => {
   expect(givenPrivateScope).toBeDefined();
   expect(givenPrivateScope).not.toBe(webCarverService);
 
-  expect(onWorkloadReady).toBeCalled();
-  expect(onEnvVars).toBeCalledWith(expect.objectContaining({
-    FOO: 'bar',
-  }));
+  expect(onServiceExtensionAdded).toBeCalledTimes(1); // with itself
+  expect(onWorkloadReady).toBeCalledTimes(1);
+  expect(onEnvVars).toBeCalledWith(expect.objectContaining({ FOO: 'bar' }));
   expect(onConnectionsReady).toBeCalledWith(webCarverService.connections);
+  expect(onConnectionsReady).toBeCalledTimes(1);
   expect(onContainerDefinitionPublished).toBeCalledWith(producedContainer);
+  expect(onContainerDefinitionPublished).toBeCalledTimes(1);
 });

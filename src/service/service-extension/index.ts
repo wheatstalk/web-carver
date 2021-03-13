@@ -5,3 +5,4 @@ export * from './http-gateway-route';
 export * from './http-route';
 export * from './linked-service';
 export * from './service-extension';
+export * from './oidc-http-proxy';

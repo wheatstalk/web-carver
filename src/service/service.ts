@@ -77,14 +77,14 @@ export class Service extends cdk.Construct implements IService {
    */
   public readonly _filterServiceProps = new FilterChain<ecs.FargateServiceProps>();
 
-  private readonly serviceFacade: ServiceFacade;
+  private readonly serviceFacade: ServiceExtensionFacade;
 
   constructor(scope: cdk.Construct, id: string, props: ServiceProps) {
     super(scope, id);
 
     this.environment = props.environment;
 
-    this.serviceFacade = new ServiceFacade({
+    this.serviceFacade = new ServiceExtensionFacade({
       environment: props.environment,
       defaultGateway: props.environment.defaultGateway,
       defaultRouter: props.environment.defaultRouter,
@@ -96,15 +96,28 @@ export class Service extends cdk.Construct implements IService {
       namespace: props.environment.namespace,
     };
 
-    const privateScopeIndecies: Record<string, number> = {};
-
+    // Add each one of the service extensions.
     for (const extension of props.extensions ?? []) {
+      this.serviceFacade._addServiceExtension(extension);
+    }
+
+    // Every time a service extension is added, register it and give it a
+    // private scope.
+    const privateScopeIndecies: Record<string, number> = {};
+    const trackedExtensions = new Array<IServiceExtension>();
+    this.serviceFacade._onServiceExtensionAdded(extension => {
+      if (trackedExtensions.find(e => e === extension)) {
+        throw new Error('Internal error: The service received the same extension twice.');
+      } else {
+        trackedExtensions.push(extension);
+      }
+
       const extensionTypeName: string = extension._extensionTypeName;
       const privateScopeIndex = privateScopeIndecies[extensionTypeName] = (privateScopeIndecies[extensionTypeName] ?? -1) + 1;
 
       const privateScope = new cdk.Construct(this, `Extension${extensionTypeName}${privateScopeIndex}`);
       extension._register(this.serviceFacade, privateScope);
-    }
+    });
 
     this.taskDefinition = new ecs.FargateTaskDefinition(this, 'TaskDefinition', this._filterTaskDefinitionProps.filter({
       cpu: 256,
@@ -171,6 +184,7 @@ export class Service extends cdk.Construct implements IService {
     });
 
     this.serviceFacade.connectionsReadyEvent.publish(this.connections);
+    return;
   }
 }
 
@@ -198,32 +212,32 @@ export interface IServiceExtensionFacade {
 
   _addEnvVars(env: Record<string, string>): void;
   _onEnvVars(handler: (env: Record<string, string>) => void): void;
+  _addServiceExtension(extension: IServiceExtension): void;
+  _onServiceExtensionAdded(handler: (x: IServiceExtension) => void): void;
   _onWorkloadReady(handler: (x: WorkloadOptions) => void): void;
   _onConnectionsReady(handler: (x: ec2.Connections) => void): void;
   _onContainerDefinitionPublished(handler: (x: ecs.ContainerDefinition) => void): void;
   _publishContainerDefinition(container: ecs.ContainerDefinition): void;
 }
 
-interface ServiceEventsOptions {
-  readonly environment: IEnvironment;
-  readonly defaultRouter: IRouter;
-  readonly defaultGateway: IGateway;
-}
-
-class ServiceFacade implements IServiceExtensionFacade {
-  public readonly environment: IEnvironment;
-  public readonly defaultRouter: IRouter;
-  public readonly defaultGateway: IGateway;
+/** @internal */
+export abstract class ServiceExtensionFacadeBase implements IServiceExtensionFacade {
+  public abstract readonly environment: IEnvironment;
+  public abstract readonly defaultRouter: IRouter;
+  public abstract readonly defaultGateway: IGateway;
 
   public readonly workloadReadyEvent = PubSub.replayingPubSub<WorkloadOptions>();
   public readonly connectionsReadyEvent = PubSub.replayingPubSub<ec2.Connections>();
   public readonly envVarsAddedEvent = PubSub.replayingPubSub<Record<string, string>>();
   public readonly containerDefinitionPublishedEvent = PubSub.replayingPubSub<ecs.ContainerDefinition>();
+  public readonly serviceExtensionAddedEvent = PubSub.replayingPubSub<IServiceExtension>();
 
-  constructor(options: ServiceEventsOptions) {
-    this.environment = options.environment;
-    this.defaultRouter = options.defaultRouter;
-    this.defaultGateway = options.defaultGateway;
+  public _addServiceExtension(extension: IServiceExtension): void {
+    this.serviceExtensionAddedEvent.publish(extension);
+  }
+
+  public _onServiceExtensionAdded(handler: (x: IServiceExtension) => void): void {
+    this.serviceExtensionAddedEvent.subscribe(handler);
   }
 
   public _onContainerDefinitionPublished(handler: (x: ecs.ContainerDefinition) => void): void {
@@ -248,5 +262,27 @@ class ServiceFacade implements IServiceExtensionFacade {
 
   public _onConnectionsReady(handler: (x: ec2.Connections) => void) {
     this.connectionsReadyEvent.subscribe(handler);
+  }
+}
+
+/** @internal */
+interface ServiceExtensionFacadeOptions {
+  readonly environment: IEnvironment;
+  readonly defaultRouter: IRouter;
+  readonly defaultGateway: IGateway;
+}
+
+/** @internal */
+export class ServiceExtensionFacade extends ServiceExtensionFacadeBase {
+  public readonly environment: IEnvironment;
+  public readonly defaultRouter: IRouter;
+  public readonly defaultGateway: IGateway;
+
+  constructor(options: ServiceExtensionFacadeOptions) {
+    super();
+
+    this.environment = options.environment;
+    this.defaultRouter = options.defaultRouter;
+    this.defaultGateway = options.defaultGateway;
   }
 }
