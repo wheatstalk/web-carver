@@ -2,7 +2,7 @@
 export type FilterHandler<T> = (item: T) => T;
 
 /** @internal */
-export class Filter<T> {
+export class FilterChain<T> {
   private filters: FilterHandler<T>[] = [];
 
   add(filter: FilterHandler<T>) {
