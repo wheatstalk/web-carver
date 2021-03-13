@@ -39,6 +39,9 @@ const project = new pj.AwsCdkConstructLibrary({
 
   releaseToNpm: true,
   releaseEveryCommit: true,
+  releaseBranches: ['master'],
+
+  codeCov: true,
 
   /* AwsCdkConstructLibraryOptions */
   // cdkAssert: true,                                                          /* Install the @aws-cdk/assert library? */
