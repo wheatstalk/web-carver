@@ -1,5 +1,6 @@
-// import { ABSENT, expect as expectCDK, haveResource, haveResourceLike } from '@aws-cdk/assert';
+import { expect as expectCDK, haveResourceLike } from '@aws-cdk/assert';
 import * as ecs from '@aws-cdk/aws-ecs';
+import * as secrets from '@aws-cdk/aws-secretsmanager';
 import * as cdk from '@aws-cdk/core';
 import * as webcarver from '../../src';
 
@@ -107,27 +108,127 @@ it('creates a udp port mapping that has no virtual node listener listener', () =
   expect(serviceListenerConfig.virtualNodeListener).toBeUndefined();
 });
 
-it('adds an oidc http proxy', () => {
-  const stack = new cdk.Stack();
-  const serviceListener = webcarver.ServiceListener.oidcHttpProxy({
-    containerPort: 3000,
-    oidcDiscoveryEndpoint: 'something',
-    oidcPlainTextCredentials: { clientId: 'something', clientSecret: 'something' },
+describe('oidc http proxy', () => {
+  it('adds an oidc http proxy', () => {
+    // GIVEN
+    const stack = new cdk.Stack();
+    const environment = new webcarver.Environment(stack, 'Environment');
+
+    // WHEN
+    new webcarver.Service(stack, 'Service', {
+      environment,
+      extensions: [
+        webcarver.ServiceExtension.container({
+          image: ecs.ContainerImage.fromRegistry('nginx'),
+          listeners: [
+            webcarver.ServiceListener.oidcHttpProxy({
+              containerPort: 3000,
+              oidcDiscoveryEndpoint: 'something',
+              oidcPlainTextCredentials: { clientId: 'something', clientSecret: 'something' },
+            }),
+          ],
+        }),
+      ],
+    });
+
+    // THEN
+    expectCDK(stack).to(haveResourceLike('AWS::ECS::TaskDefinition', {
+      ContainerDefinitions: [
+        {
+          Name: 'OidcHttpProxy',
+          Image: 'evry/oidc-proxy:v1.3.0',
+          Essential: true,
+          LogConfiguration: { LogDriver: 'awslogs' },
+          PortMappings: [{
+            ContainerPort: 80,
+            Protocol: 'tcp',
+          }],
+          Environment: [
+            {
+              Name: 'OID_SESSION_NAME',
+              Value: { 'Fn::GetAtt': ['ServiceVirtualNode93E7428B', 'VirtualNodeName'] },
+            },
+            { Name: 'PROXY_HOST', Value: '127.0.0.1' },
+            { Name: 'PROXY_PORT', Value: '3000' },
+            { Name: 'PROXY_PROTOCOL', Value: 'http' },
+            { Name: 'OID_DISCOVERY', Value: 'something' },
+            { Name: 'OIDC_AUTH_METHOD', Value: 'client_secret_post' },
+            { Name: 'ADD_HOST_HEADER', Value: 'true' },
+            { Name: 'OID_CLIENT_ID', Value: 'something' },
+            { Name: 'OID_CLIENT_SECRET', Value: 'something' },
+          ],
+        },
+        {
+          Name: 'Main',
+          Image: 'nginx',
+          PortMappings: [{
+            ContainerPort: 3000,
+            Protocol: 'tcp',
+          }],
+        },
+        { Name: 'Envoy' },
+      ],
+    }));
+    expectCDK(stack).to(haveResourceLike('AWS::AppMesh::VirtualNode', {
+      Spec: {
+        Listeners: [{
+          PortMapping: {
+            Port: 80,
+            Protocol: 'http',
+          },
+        }],
+      },
+    }));
   });
 
-  const facade = new MockServiceExtensionApi();
-  const onServiceExtensionAdded = jest.fn();
-  facade._onServiceExtensionAdded(onServiceExtensionAdded);
+  it('adds an oidc http proxy with secrets manager secrets', () => {
+    // GIVEN
+    const stack = new cdk.Stack();
+    const environment = new webcarver.Environment(stack, 'Environment');
+    const secret = new secrets.Secret(stack, 'Secret');
 
-  // WHEN
-  const serviceListenerConfig = serviceListener._bind(stack, facade);
+    // WHEN
+    new webcarver.Service(stack, 'Service', {
+      environment,
+      extensions: [
+        webcarver.ServiceExtension.container({
+          image: ecs.ContainerImage.fromRegistry('nginx'),
+          listeners: [
+            webcarver.ServiceListener.oidcHttpProxy({
+              containerPort: 3000,
+              oidcDiscoveryEndpoint: 'something',
+              oidcSecretCredentials: secret,
+            }),
+          ],
+        }),
+      ],
+    });
 
-  // THEN
-  expect(serviceListenerConfig.containerPort).toEqual(3000);
-  expect(serviceListenerConfig.protocol).toEqual(ecs.Protocol.TCP);
-  expect(serviceListenerConfig.virtualNodeListener).toBeUndefined();
-  expect(onServiceExtensionAdded).toBeCalledTimes(1);
-  expect(onServiceExtensionAdded.mock.calls[0][0]).toBeInstanceOf(webcarver.OidcHttpProxyExtension);
+    // THEN
+    expectCDK(stack).to(haveResourceLike('AWS::ECS::TaskDefinition', {
+      ContainerDefinitions: [
+        {
+          Name: 'OidcHttpProxy',
+          Secrets: [
+            {
+              Name: 'OID_CLIENT_ID',
+              ValueFrom: {
+                'Fn::Join': ['', [{ Ref: 'SecretA720EF05' }, ':clientId::']],
+              },
+            },
+            {
+              Name: 'OID_CLIENT_SECRET',
+              ValueFrom: {
+                'Fn::Join': ['', [{ Ref: 'SecretA720EF05' }, ':clientSecret::']],
+              },
+            },
+          ],
+        },
+        { Name: 'Main' },
+        { Name: 'Envoy' },
+      ],
+    }));
+  });
 });
 
 class MockServiceExtensionApi extends webcarver.ServiceExtensionApiBase {
