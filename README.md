@@ -1,5 +1,9 @@
 # WebCarver
 
+[![Release](https://github.com/wheatstalk/web-carver/actions/workflows/release.yml/badge.svg)](https://github.com/wheatstalk/web-carver/actions/workflows/release.yml)
+[![npm](https://img.shields.io/npm/v/@wheatstalk/web-carver)](https://www.npmjs.com/package/@wheatstalk/web-carver)
+[![codecov](https://codecov.io/gh/wheatstalk/web-carver/branch/master/graph/badge.svg?token=5SOOzoDZDQ)](https://codecov.io/gh/wheatstalk/web-carver)
+
 WebCarver is a micro-framework for building and deploying Fargate tasks to an AWS App Mesh.
 
 ## Features
