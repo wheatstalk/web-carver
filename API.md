@@ -34,6 +34,7 @@ Name|Description
 [Preferences](#wheatstalk-web-carver-preferences)|Global preferences.
 [RouterProps](#wheatstalk-web-carver-routerprops)|Props for `Router`.
 [ServiceProps](#wheatstalk-web-carver-serviceprops)|Props for `Service`.
+[TaskSizeExtensionOptions](#wheatstalk-web-carver-tasksizeextensionoptions)|Task size options.
 
 
 **Interfaces**
@@ -547,6 +548,21 @@ static spotCapacity(): IServiceExtension
 __Returns__:
 * <code>[IServiceExtension](#wheatstalk-web-carver-iserviceextension)</code>
 
+#### *static* taskSize(options) <a id="wheatstalk-web-carver-serviceextension-tasksize"></a>
+
+Choose the amount of CPU and memory to provision.
+
+```ts
+static taskSize(options: TaskSizeExtensionOptions): IServiceExtension
+```
+
+* **options** (<code>[TaskSizeExtensionOptions](#wheatstalk-web-carver-tasksizeextensionoptions)</code>)  *No description*
+  * **cpu** (<code>number</code>)  Fargate CPU size. 
+  * **memoryLimitMiB** (<code>number</code>)  Fargate memory size. 
+
+__Returns__:
+* <code>[IServiceExtension](#wheatstalk-web-carver-iserviceextension)</code>
+
 
 
 ## class ServiceListener  <a id="wheatstalk-web-carver-servicelistener"></a>
@@ -952,7 +968,7 @@ Name | Type | Description
 
 ## interface IServiceExtension  <a id="wheatstalk-web-carver-iserviceextension"></a>
 
-__Obtainable from__: [ServiceExtension](#wheatstalk-web-carver-serviceextension).[capacityProviderStrategies](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-capacityproviderstrategies)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[container](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-container)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[envVars](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-envvars)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[http2GatewayRoute](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-http2gatewayroute)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[httpGatewayRoute](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-httpgatewayroute)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[httpRoute](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-httproute)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[linkedService](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-linkedservice)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[spotCapacity](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-spotcapacity)()
+__Obtainable from__: [ServiceExtension](#wheatstalk-web-carver-serviceextension).[capacityProviderStrategies](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-capacityproviderstrategies)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[container](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-container)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[envVars](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-envvars)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[http2GatewayRoute](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-http2gatewayroute)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[httpGatewayRoute](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-httpgatewayroute)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[httpRoute](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-httproute)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[linkedService](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-linkedservice)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[spotCapacity](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-spotcapacity)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[taskSize](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-tasksize)()
 
 Extends the service with additional features.
 
@@ -1057,6 +1073,20 @@ Name | Type | Description
 **environment** | <code>[IEnvironment](#wheatstalk-web-carver-ienvironment)</code> | The Web Carver environment in which to create the service.
 **extensions**? | <code>Array<[IServiceExtension](#wheatstalk-web-carver-iserviceextension)></code> | Add extensions to your service to add features.<br/>__*Optional*__
 **name**? | <code>[IServiceName](#wheatstalk-web-carver-iservicename)</code> | Choose a service name.<br/>__*Default*__: a name is chosen for you
+
+
+
+## struct TaskSizeExtensionOptions  <a id="wheatstalk-web-carver-tasksizeextensionoptions"></a>
+
+
+Task size options.
+
+
+
+Name | Type | Description 
+-----|------|-------------
+**cpu** | <code>number</code> | Fargate CPU size.
+**memoryLimitMiB** | <code>number</code> | Fargate memory size.
 
 
 
