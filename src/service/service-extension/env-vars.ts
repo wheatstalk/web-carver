@@ -1,5 +1,4 @@
-import { IServiceExtensionApi } from '../service';
-import { IServiceExtension } from './api';
+import { IServiceExtension, IServiceExtensionApi } from './api';
 
 /**
  * Adds environment variables to the container.

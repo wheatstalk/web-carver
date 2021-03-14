@@ -1,6 +1,6 @@
 import * as cdk from '@aws-cdk/core';
-import { IServiceExtensionApi, Service } from '../service';
-import { IServiceExtension } from './api';
+import { Service } from '../service';
+import { IServiceExtension, IServiceExtensionApi } from './api';
 
 /**
  * Props for `LinkedServiceExtension`

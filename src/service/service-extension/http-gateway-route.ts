@@ -1,8 +1,7 @@
 import * as appmesh from '@aws-cdk/aws-appmesh';
 import * as cdk from '@aws-cdk/core';
 import { IGateway } from '../../gateway';
-import { IServiceExtensionApi } from '../service';
-import { IServiceExtension } from './api';
+import { IServiceExtension, IServiceExtensionApi } from './api';
 
 /**
  * HTTP/2 Gateway Route Extension Options

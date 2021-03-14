@@ -1,7 +1,6 @@
 import * as appmesh from '@aws-cdk/aws-appmesh';
 import * as cdk from '@aws-cdk/core';
-import { IServiceExtensionApi } from '../service';
-import { IServiceExtension } from './api';
+import { IServiceExtension, IServiceExtensionApi } from './api';
 
 /**
  * Options for adding Http routes

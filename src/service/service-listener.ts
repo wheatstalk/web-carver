@@ -1,7 +1,7 @@
 import * as appmesh from '@aws-cdk/aws-appmesh';
 import * as ecs from '@aws-cdk/aws-ecs';
 import * as cdk from '@aws-cdk/core';
-import { IServiceExtensionApi } from './service';
+import { IServiceExtensionApi } from './service-extension';
 import { OidcHttpProxyExtension, OidcHttpProxyExtensionOptions } from './service-extension/oidc-http-proxy';
 
 /**

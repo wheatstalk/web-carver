@@ -1,7 +1,6 @@
 import * as ecs from '@aws-cdk/aws-ecs';
 import { Construct } from '@aws-cdk/core';
-import { IServiceExtensionApi } from '../service';
-import { IServiceExtension } from './api';
+import { IServiceExtension, IServiceExtensionApi } from './api';
 
 /** @internal */
 export class CapacityProviderStrategiesExtension implements IServiceExtension {

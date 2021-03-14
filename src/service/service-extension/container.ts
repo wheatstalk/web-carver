@@ -1,8 +1,7 @@
 import * as ecs from '@aws-cdk/aws-ecs';
 import * as cdk from '@aws-cdk/core';
-import { IServiceExtensionApi } from '../service';
 import { IServiceListener } from '../service-listener';
-import { IServiceExtension } from './api';
+import { IServiceExtension, IServiceExtensionApi } from './api';
 
 /**
  * Container extension options
