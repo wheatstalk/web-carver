@@ -4,9 +4,10 @@ const project = new pj.AwsCdkConstructLibrary({
   author: 'Josh Kellendonk',
   authorAddress: 'joshkellendonk@gmail.com',
   cdkVersion: '1.92.0',
-  defaultReleaseBranch: 'main',
+  defaultReleaseBranch: 'master',
   jsiiFqn: 'projen.AwsCdkConstructLibrary',
   name: '@wheatstalk/web-carver',
+  description: 'A micro-framework for building and deploying Fargate tasks into an AWS App Mesh',
   repositoryUrl: 'https://github.com/wheatstalk/web-carver.git',
 
   cdkDependencies: [
@@ -39,7 +40,6 @@ const project = new pj.AwsCdkConstructLibrary({
 
   releaseToNpm: true,
   releaseEveryCommit: true,
-  releaseBranches: ['master'],
 
   codeCov: true,
 

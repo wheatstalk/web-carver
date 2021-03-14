@@ -1,5 +1,6 @@
 {
   "name": "@wheatstalk/web-carver",
+  "description": "A micro-framework for building and deploying Fargate tasks into an AWS App Mesh",
   "repository": {
     "type": "git",
     "url": "https://github.com/wheatstalk/web-carver.git"
