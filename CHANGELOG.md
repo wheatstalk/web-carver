@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.7](https://github.com/wheatstalk/web-carver/compare/v0.0.6...v0.0.7) (2021-03-14)
+
+
+### Features
+
+* select fargate task size ([ece54bd](https://github.com/wheatstalk/web-carver/commit/ece54bd1e6d15ea5362ca3eec3e9e671814284e4))
+* spot capacity and capacity provider extension ([9baf1a8](https://github.com/wheatstalk/web-carver/commit/9baf1a8fc7eb8ca0a2a91bbbd6ab538245450d76))
+
+
+### Bug Fixes
+
+* projen needed to be rerun ([39df3c0](https://github.com/wheatstalk/web-carver/commit/39df3c0ed1f07257388281fac319754073dba449))
+* task size options were not exported ([bda0429](https://github.com/wheatstalk/web-carver/commit/bda04297707d973c3d1a775d84a549241a6a0bfb))
+
 ### [0.0.6](https://github.com/wheatstalk/web-carver/compare/v0.0.5...v0.0.6) (2021-03-14)
 
 ### [0.0.5](https://github.com/wheatstalk/web-carver/compare/v0.0.4...v0.0.5) (2021-03-14)
