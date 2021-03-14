@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.5](https://github.com/wheatstalk/web-carver/compare/v0.0.4...v0.0.5) (2021-03-14)
+
+
+### Features
+
+* add extension support for adding extensions ([0083a2c](https://github.com/wheatstalk/web-carver/commit/0083a2ce79b532aff73809cd4ba10286f6a1179c))
+
+
+### Bug Fixes
+
+* replaying pub sub didn't handle event record mutation during replay ([775fa59](https://github.com/wheatstalk/web-carver/commit/775fa59eb1adf1895f016aa34dfc7e25adcde84c))
+* service naming scheme was not fully tested ([8948e15](https://github.com/wheatstalk/web-carver/commit/8948e1544cade503bf87b45b53005951bfde203a))
+
 ### [0.0.4](https://github.com/wheatstalk/web-carver/compare/v0.0.3...v0.0.4) (2021-03-13)
 
 
