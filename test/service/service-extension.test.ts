@@ -54,3 +54,28 @@ describe('capacityProviderStrategies', () => {
     }));
   });
 });
+
+describe('taskSize', () => {
+  test('sets the task size to the right size', () => {
+    // GIVEN
+    const stack = new cdk.Stack();
+    const environment = new webcarver.Environment(stack, 'Environment');
+
+    // WHEN
+    new webcarver.Service(stack, 'Service', {
+      environment,
+      extensions: [
+        webcarver.ServiceExtension.taskSize({
+          cpu: 1024,
+          memoryLimitMiB: 2048,
+        }),
+      ],
+    });
+
+    // THEN
+    expectCDK(stack).to(haveResourceLike('AWS::ECS::TaskDefinition', {
+      Cpu: '1024',
+      Memory: '2048',
+    }));
+  });
+});

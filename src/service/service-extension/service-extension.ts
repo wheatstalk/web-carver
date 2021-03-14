@@ -10,6 +10,7 @@ import {
 } from './http-gateway-route';
 import { HttpRouteExtension, HttpRouteExtensionOptions } from './http-route';
 import { LinkedServiceExtension, LinkedServiceExtensionOptions } from './linked-service';
+import { TaskSizeExtension, TaskSizeExtensionOptions } from './task-size';
 import { CapacityProviderStrategiesExtension } from './use-spot-capacity';
 
 /**
@@ -73,5 +74,12 @@ export abstract class ServiceExtension {
    */
   static capacityProviderStrategies(capacityProviderStrategies: ecs.CapacityProviderStrategy[]): IServiceExtension {
     return new CapacityProviderStrategiesExtension(capacityProviderStrategies);
+  }
+
+  /**
+   * Choose the amount of CPU and memory to provision.
+   */
+  static taskSize(options: TaskSizeExtensionOptions): IServiceExtension {
+    return new TaskSizeExtension(options);
   }
 }
