@@ -157,3 +157,86 @@ describe('http2GatewayRoute', () => {
     }));
   });
 });
+
+describe('httpRoute', () => {
+  it('creates routes', () => {
+    // GIVEN
+    const stack = new cdk.Stack();
+    const environment = new webcarver.Environment(stack, 'Environment');
+
+    // WHEN
+    new webcarver.Service(stack, 'Service', {
+      environment,
+      extensions: [
+        webcarver.ServiceExtension.httpRoute({
+          prefixPath: '/path',
+          method: 'GET',
+          headers: [
+            webcarver.HttpRouteHeaderMatch.regex('Content-Type', 'text/.*'),
+            webcarver.HttpRouteHeaderMatch.suffix('Content-Type', '/plain'),
+            webcarver.HttpRouteHeaderMatch.prefix('Content-Type', 'text/'),
+            webcarver.HttpRouteHeaderMatch.exact('Content-Type', 'text/plain'),
+            webcarver.HttpRouteHeaderMatch.range('Something', {
+              start: 5,
+              end: 10,
+            }),
+          ],
+        }),
+      ],
+    });
+
+    // THEN
+    const route = {
+      Action: {
+        WeightedTargets: [
+          {
+            VirtualNode: { 'Fn::GetAtt': ['ServiceVirtualNode93E7428B', 'VirtualNodeName'] },
+            Weight: 1,
+          },
+        ],
+      },
+      Match: {
+        Headers: [
+          {
+            Match: { Regex: 'text/.*' },
+            Name: 'Content-Type',
+          },
+          {
+            Match: { Suffix: '/plain' },
+            Name: 'Content-Type',
+          },
+          {
+            Match: { Prefix: 'text/' },
+            Name: 'Content-Type',
+          },
+          {
+            Match: { Exact: 'text/plain' },
+            Name: 'Content-Type',
+          },
+          {
+            Match: {
+              Range: {
+                End: 10,
+                Start: 5,
+              },
+            },
+            Name: 'Something',
+          },
+        ],
+        Method: 'GET',
+        Prefix: '/path',
+      },
+    };
+
+    expectCDK(stack).to(haveResourceLike('AWS::AppMesh::Route', {
+      Spec: {
+        HttpRoute: route,
+      },
+    }));
+    expectCDK(stack).to(haveResourceLike('AWS::AppMesh::Route', {
+      Spec: {
+        Http2Route: route,
+      },
+    }));
+  });
+});
