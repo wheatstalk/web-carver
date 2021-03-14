@@ -1,6 +1,6 @@
 import * as ecs from '@aws-cdk/aws-ecs';
 import { Construct } from '@aws-cdk/core';
-import { IServiceExtensionFacade } from '../service';
+import { IServiceExtensionApi } from '../service';
 import { IServiceExtension } from './api';
 
 /** @internal */
@@ -11,7 +11,7 @@ export class CapacityProviderStrategiesExtension implements IServiceExtension {
 
   }
 
-  _register(service: IServiceExtensionFacade, _privateScope: Construct): void {
+  _register(service: IServiceExtensionApi, _privateScope: Construct): void {
     service._addServicePropsFilter(props => {
       return {
         ...props,

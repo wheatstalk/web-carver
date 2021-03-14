@@ -1,7 +1,7 @@
 import * as appmesh from '@aws-cdk/aws-appmesh';
 import * as cdk from '@aws-cdk/core';
 import { IGateway } from '../../gateway';
-import { IServiceExtensionFacade } from '../service';
+import { IServiceExtensionApi } from '../service';
 import { IServiceExtension } from './api';
 
 /**
@@ -36,7 +36,7 @@ export class Http2GatewayRouteExtension implements IServiceExtension {
     };
   }
 
-  _register(service: IServiceExtensionFacade, privateScope: cdk.Construct) {
+  _register(service: IServiceExtensionApi, privateScope: cdk.Construct) {
     const gateway = this.props?.gateway ?? service.environment.defaultGateway;
 
     service._onWorkloadReady(workloadOptions => {
@@ -90,7 +90,7 @@ export class HttpGatewayRouteExtension implements IServiceExtension {
     };
   }
 
-  _register(service: IServiceExtensionFacade, privateScope: cdk.Construct) {
+  _register(service: IServiceExtensionApi, privateScope: cdk.Construct) {
     const gateway = this.props?.gateway ?? service.environment.defaultGateway;
 
     service._onWorkloadReady(workloadOptions => {

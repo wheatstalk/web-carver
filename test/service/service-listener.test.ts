@@ -9,7 +9,7 @@ it('creates an http1 listener', () => {
   const serviceListener = webcarver.ServiceListener.http1();
 
   // WHEN
-  const serviceListenerConfig = serviceListener._bind(stack, new MockServiceExtensionFacade());
+  const serviceListenerConfig = serviceListener._bind(stack, new MockServiceExtensionApi());
   const virtualNodeListenerConfig = serviceListenerConfig.virtualNodeListener!.bind(stack);
 
   // THEN
@@ -28,7 +28,7 @@ it('creates an http2 listener', () => {
   const serviceListener = webcarver.ServiceListener.http2();
 
   // WHEN
-  const serviceListenerConfig = serviceListener._bind(stack, new MockServiceExtensionFacade());
+  const serviceListenerConfig = serviceListener._bind(stack, new MockServiceExtensionApi());
   const virtualNodeListenerConfig = serviceListenerConfig.virtualNodeListener!.bind(stack);
 
   // THEN
@@ -47,7 +47,7 @@ it('creates a grpc listener', () => {
   const serviceListener = webcarver.ServiceListener.grpc();
 
   // WHEN
-  const serviceListenerConfig = serviceListener._bind(stack, new MockServiceExtensionFacade());
+  const serviceListenerConfig = serviceListener._bind(stack, new MockServiceExtensionApi());
   const virtualNodeListenerConfig = serviceListenerConfig.virtualNodeListener!.bind(stack);
 
   // THEN
@@ -66,7 +66,7 @@ it('creates a tcp listener', () => {
   const serviceListener = webcarver.ServiceListener.tcp(3306);
 
   // WHEN
-  const serviceListenerConfig = serviceListener._bind(stack, new MockServiceExtensionFacade());
+  const serviceListenerConfig = serviceListener._bind(stack, new MockServiceExtensionApi());
   const virtualNodeListenerConfig = serviceListenerConfig.virtualNodeListener?.bind(stack);
 
   // THEN
@@ -85,7 +85,7 @@ it('creates a tcp port mapping that has no virtual node listener listener', () =
   const serviceListener = webcarver.ServiceListener.tcpPortMapping(3306);
 
   // WHEN
-  const serviceListenerConfig = serviceListener._bind(stack, new MockServiceExtensionFacade());
+  const serviceListenerConfig = serviceListener._bind(stack, new MockServiceExtensionApi());
 
   // THEN
   expect(serviceListenerConfig.containerPort).toEqual(3306);
@@ -99,7 +99,7 @@ it('creates a udp port mapping that has no virtual node listener listener', () =
   const serviceListener = webcarver.ServiceListener.udpPortMapping(53);
 
   // WHEN
-  const serviceListenerConfig = serviceListener._bind(stack, new MockServiceExtensionFacade());
+  const serviceListenerConfig = serviceListener._bind(stack, new MockServiceExtensionApi());
 
   // THEN
   expect(serviceListenerConfig.containerPort).toEqual(53);
@@ -115,7 +115,7 @@ it('adds an oidc http proxy', () => {
     oidcPlainTextCredentials: { clientId: 'something', clientSecret: 'something' },
   });
 
-  const facade = new MockServiceExtensionFacade();
+  const facade = new MockServiceExtensionApi();
   const onServiceExtensionAdded = jest.fn();
   facade._onServiceExtensionAdded(onServiceExtensionAdded);
 
@@ -130,7 +130,7 @@ it('adds an oidc http proxy', () => {
   expect(onServiceExtensionAdded.mock.calls[0][0]).toBeInstanceOf(webcarver.OidcHttpProxyExtension);
 });
 
-class MockServiceExtensionFacade extends webcarver.ServiceExtensionFacadeBase {
+class MockServiceExtensionApi extends webcarver.ServiceExtensionApiBase {
   public get environment(): webcarver.IEnvironment { throw new Error('not implemented'); }
   public get defaultRouter(): webcarver.IRouter { throw new Error('not implemented'); }
   public get defaultGateway(): webcarver.IGateway { throw new Error('not implemented'); }

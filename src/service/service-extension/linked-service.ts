@@ -1,5 +1,5 @@
 import * as cdk from '@aws-cdk/core';
-import { IServiceExtensionFacade, Service } from '../service';
+import { IServiceExtensionApi, Service } from '../service';
 import { IServiceExtension } from './api';
 
 /**
@@ -34,7 +34,7 @@ export class LinkedServiceExtension implements IServiceExtension {
     this.name = props.name;
   }
 
-  _register(service: IServiceExtensionFacade, _privateScope: cdk.Construct) {
+  _register(service: IServiceExtensionApi, _privateScope: cdk.Construct) {
     service._onWorkloadReady(workloadOptions => {
       const { virtualNode } = workloadOptions;
 

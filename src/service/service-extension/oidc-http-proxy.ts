@@ -2,7 +2,7 @@ import * as appmesh from '@aws-cdk/aws-appmesh';
 import * as ecs from '@aws-cdk/aws-ecs';
 import * as secrets from '@aws-cdk/aws-secretsmanager';
 import * as cdk from '@aws-cdk/core';
-import { IServiceExtensionFacade, IServiceExtension } from '..';
+import { IServiceExtensionApi, IServiceExtension } from '..';
 
 /**
  * Options for an OIDC HTTP Proxy
@@ -106,7 +106,7 @@ export class OidcHttpProxyExtension implements IServiceExtension {
     }
   }
 
-  _register(service: IServiceExtensionFacade, _privateScope: cdk.Construct): void {
+  _register(service: IServiceExtensionApi, _privateScope: cdk.Construct): void {
     service._onWorkloadReady(workloadOptions => {
       // Add the proxy container as a sidecar.
       workloadOptions.taskDefinition.addContainer('OidcHttpProxy', {

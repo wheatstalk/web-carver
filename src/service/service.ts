@@ -77,14 +77,14 @@ export class Service extends cdk.Construct implements IService {
    */
   public readonly _filterServiceProps = new FilterChain<ecs.FargateServiceProps>();
 
-  private readonly serviceFacade: ServiceExtensionFacade;
+  private readonly serviceExtensionApi: ServiceExtensionApi;
 
   constructor(scope: cdk.Construct, id: string, props: ServiceProps) {
     super(scope, id);
 
     this.environment = props.environment;
 
-    this.serviceFacade = new ServiceExtensionFacade({
+    this.serviceExtensionApi = new ServiceExtensionApi({
       environment: props.environment,
       defaultGateway: props.environment.defaultGateway,
       defaultRouter: props.environment.defaultRouter,
@@ -98,14 +98,14 @@ export class Service extends cdk.Construct implements IService {
 
     // Add each one of the service extensions.
     for (const extension of props.extensions ?? []) {
-      this.serviceFacade._addServiceExtension(extension);
+      this.serviceExtensionApi._addServiceExtension(extension);
     }
 
     // Every time a service extension is added, register it and give it a
     // private scope.
     const privateScopeIndecies: Record<string, number> = {};
     const trackedExtensions = new Array<IServiceExtension>();
-    this.serviceFacade._onServiceExtensionAdded(extension => {
+    this.serviceExtensionApi._onServiceExtensionAdded(extension => {
       if (trackedExtensions.find(e => e === extension)) {
         throw new Error('Internal error: The service received the same extension twice.');
       } else {
@@ -116,12 +116,12 @@ export class Service extends cdk.Construct implements IService {
       const privateScopeIndex = privateScopeIndecies[extensionTypeName] = (privateScopeIndecies[extensionTypeName] ?? -1) + 1;
 
       const privateScope = new cdk.Construct(this, `Extension${extensionTypeName}${privateScopeIndex}`);
-      extension._register(this.serviceFacade, privateScope);
+      extension._register(this.serviceExtensionApi, privateScope);
     });
 
     // Run the task definition props through the extension filter chain so
     // that extensions can hook in.
-    const taskDefinitionProps = this.serviceFacade.taskDefinitionPropsFilter.filter({
+    const taskDefinitionProps = this.serviceExtensionApi.taskDefinitionPropsFilter.filter({
       cpu: 256,
       memoryLimitMiB: 512,
     });
@@ -134,7 +134,7 @@ export class Service extends cdk.Construct implements IService {
     // Allow extensions to modify the service props
     // Run the service props through the extension filter chain so that
     // extensions can hook in.
-    const fargateServiceProps = this.serviceFacade.servicePropsFilter.filter({
+    const fargateServiceProps = this.serviceExtensionApi.servicePropsFilter.filter({
       serviceName: name._serviceName(this, nameContext),
       taskDefinition: this.taskDefinition,
 
@@ -172,7 +172,7 @@ export class Service extends cdk.Construct implements IService {
       virtualServiceProvider: appmesh.VirtualServiceProvider.virtualNode(this.virtualNode),
     });
 
-    this.serviceFacade.workloadReadyEvent.publish({
+    this.serviceExtensionApi.workloadReadyEvent.publish({
       service: this.fargateService,
       taskDefinition: this.taskDefinition,
       virtualNode: this.virtualNode,
@@ -191,8 +191,7 @@ export class Service extends cdk.Construct implements IService {
       securityGroups: this.fargateService.connections.securityGroups,
     });
 
-    this.serviceFacade.connectionsReadyEvent.publish(this.connections);
-    return;
+    this.serviceExtensionApi.connectionsReadyEvent.publish(this.connections);
   }
 }
 
@@ -213,7 +212,7 @@ function findDefaultSecurityGroupPort(taskDefinition: ecs.TaskDefinition) {
 /**
  * @internal
  */
-export interface IServiceExtensionFacade {
+export interface IServiceExtensionApi {
   readonly environment: IEnvironment;
   readonly defaultRouter: IRouter;
   readonly defaultGateway: IGateway;
@@ -231,7 +230,7 @@ export interface IServiceExtensionFacade {
 }
 
 /** @internal */
-export abstract class ServiceExtensionFacadeBase implements IServiceExtensionFacade {
+export abstract class ServiceExtensionApiBase implements IServiceExtensionApi {
   public abstract readonly environment: IEnvironment;
   public abstract readonly defaultRouter: IRouter;
   public abstract readonly defaultGateway: IGateway;
@@ -287,19 +286,19 @@ export abstract class ServiceExtensionFacadeBase implements IServiceExtensionFac
 }
 
 /** @internal */
-interface ServiceExtensionFacadeOptions {
+interface ServiceExtensionApiOptions {
   readonly environment: IEnvironment;
   readonly defaultRouter: IRouter;
   readonly defaultGateway: IGateway;
 }
 
 /** @internal */
-export class ServiceExtensionFacade extends ServiceExtensionFacadeBase {
+export class ServiceExtensionApi extends ServiceExtensionApiBase {
   public readonly environment: IEnvironment;
   public readonly defaultRouter: IRouter;
   public readonly defaultGateway: IGateway;
 
-  constructor(options: ServiceExtensionFacadeOptions) {
+  constructor(options: ServiceExtensionApiOptions) {
     super();
 
     this.environment = options.environment;

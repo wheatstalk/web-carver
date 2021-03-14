@@ -1,5 +1,5 @@
 import * as cdk from '@aws-cdk/core';
-import { IServiceExtensionFacade } from '../service';
+import { IServiceExtensionApi } from '../service';
 
 /**
  * Extends the service with additional features.
@@ -9,5 +9,5 @@ export interface IServiceExtension {
   readonly _extensionTypeName: string;
 
   /** @internal */
-  _register(service: IServiceExtensionFacade, privateScope: cdk.Construct): void;
+  _register(service: IServiceExtensionApi, privateScope: cdk.Construct): void;
 }

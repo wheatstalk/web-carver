@@ -1,6 +1,6 @@
 import * as ecs from '@aws-cdk/aws-ecs';
 import * as cdk from '@aws-cdk/core';
-import { IServiceExtensionFacade } from '../service';
+import { IServiceExtensionApi } from '../service';
 import { IServiceListener } from '../service-listener';
 import { IServiceExtension } from './api';
 
@@ -40,7 +40,7 @@ export class ContainerExtension implements IServiceExtension {
     this.serviceListeners = options.listeners ?? [];
   }
 
-  _register(service: IServiceExtensionFacade, privateScope: cdk.Construct) {
+  _register(service: IServiceExtensionApi, privateScope: cdk.Construct) {
     const serviceListenerInfos = this.serviceListeners.map(l => l._bind(privateScope, service));
 
     service._onWorkloadReady(workloadOptions => {

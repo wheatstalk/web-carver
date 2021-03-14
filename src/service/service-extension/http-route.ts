@@ -1,6 +1,6 @@
 import * as appmesh from '@aws-cdk/aws-appmesh';
 import * as cdk from '@aws-cdk/core';
-import { IServiceExtensionFacade } from '../service';
+import { IServiceExtensionApi } from '../service';
 import { IServiceExtension } from './api';
 
 /**
@@ -47,7 +47,7 @@ export class HttpRouteExtension implements IServiceExtension {
     };
   }
 
-  _register(service: IServiceExtensionFacade, privateScope: cdk.Construct) {
+  _register(service: IServiceExtensionApi, privateScope: cdk.Construct) {
     const virtualRouter = service.environment.defaultRouter;
 
     service._onWorkloadReady(workloadOptions => {

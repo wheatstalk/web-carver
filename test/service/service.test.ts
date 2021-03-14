@@ -68,7 +68,7 @@ it('sends all events to extensions', () => {
   const onContainerDefinitionPublished = jest.fn();
 
   // WHEN
-  let givenService: webcarver.IServiceExtensionFacade|undefined;
+  let givenService: webcarver.IServiceExtensionApi|undefined;
   let givenPrivateScope: cdk.Construct|undefined;
   let producedContainer: ecs.ContainerDefinition|undefined;
 

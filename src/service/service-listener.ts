@@ -1,7 +1,7 @@
 import * as appmesh from '@aws-cdk/aws-appmesh';
 import * as ecs from '@aws-cdk/aws-ecs';
 import * as cdk from '@aws-cdk/core';
-import { IServiceExtensionFacade } from './service';
+import { IServiceExtensionApi } from './service';
 import { OidcHttpProxyExtension, OidcHttpProxyExtensionOptions } from './service-extension/oidc-http-proxy';
 
 /**
@@ -11,7 +11,7 @@ export interface IServiceListener {
   /**
    * @internal
    */
-  _bind(scope: cdk.Construct, service: IServiceExtensionFacade): ServiceListenerConfig;
+  _bind(scope: cdk.Construct, service: IServiceExtensionApi): ServiceListenerConfig;
 }
 
 /**
@@ -110,7 +110,7 @@ export abstract class ServiceListener implements IServiceListener {
   }
 
   /** @internal */
-  public abstract _bind(scope: cdk.Construct, service: IServiceExtensionFacade): ServiceListenerConfig;
+  public abstract _bind(scope: cdk.Construct, service: IServiceExtensionApi): ServiceListenerConfig;
 }
 
 class ServiceListenerImpl extends ServiceListener {
@@ -126,7 +126,7 @@ class OidcHttpProxyServiceListener extends ServiceListener {
     super();
   }
 
-  _bind(_scope: cdk.Construct, service: IServiceExtensionFacade): ServiceListenerConfig {
+  _bind(_scope: cdk.Construct, service: IServiceExtensionApi): ServiceListenerConfig {
     service._addServiceExtension(new OidcHttpProxyExtension(this.options));
 
     return {
