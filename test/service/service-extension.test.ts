@@ -79,3 +79,81 @@ describe('taskSize', () => {
     }));
   });
 });
+
+describe('httpGatewayRoute', () => {
+  it('creates a virtual gateway route', () => {
+    // GIVEN
+    const stack = new cdk.Stack();
+    const environment = new webcarver.Environment(stack, 'Environment');
+
+    // WHEN
+    new webcarver.Service(stack, 'Service', {
+      environment,
+      extensions: [
+        webcarver.ServiceExtension.httpGatewayRoute({
+          gateway: environment.defaultGateway,
+          prefixPath: '/path',
+        }),
+      ],
+    });
+
+    // THEN
+    expectCDK(stack).to(haveResourceLike('AWS::AppMesh::GatewayRoute', {
+      Spec: {
+        HttpRoute: {
+          Action: {
+            Target: {
+              VirtualService: {
+                VirtualServiceName: {
+                  'Fn::GetAtt': ['ServiceVirtualServiceD08EEC86', 'VirtualServiceName'],
+                },
+              },
+            },
+          },
+          Match: {
+            Prefix: '/path',
+          },
+        },
+      },
+    }));
+  });
+});
+
+describe('http2GatewayRoute', () => {
+  it('creates a virtual gateway route', () => {
+    // GIVEN
+    const stack = new cdk.Stack();
+    const environment = new webcarver.Environment(stack, 'Environment');
+
+    // WHEN
+    new webcarver.Service(stack, 'Service', {
+      environment,
+      extensions: [
+        webcarver.ServiceExtension.http2GatewayRoute({
+          gateway: environment.defaultGateway,
+          prefixPath: '/path',
+        }),
+      ],
+    });
+
+    // THEN
+    expectCDK(stack).to(haveResourceLike('AWS::AppMesh::GatewayRoute', {
+      Spec: {
+        Http2Route: {
+          Action: {
+            Target: {
+              VirtualService: {
+                VirtualServiceName: {
+                  'Fn::GetAtt': ['ServiceVirtualServiceD08EEC86', 'VirtualServiceName'],
+                },
+              },
+            },
+          },
+          Match: {
+            Prefix: '/path',
+          },
+        },
+      },
+    }));
+  });
+});
