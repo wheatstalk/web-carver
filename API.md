@@ -430,6 +430,19 @@ new ServiceExtension()
 ### Methods
 
 
+#### *static* capacityProviderStrategies(capacityProviderStrategies) <a id="wheatstalk-web-carver-serviceextension-capacityproviderstrategies"></a>
+
+Use the given capacity provider strategies.
+
+```ts
+static capacityProviderStrategies(capacityProviderStrategies: Array<CapacityProviderStrategy>): IServiceExtension
+```
+
+* **capacityProviderStrategies** (<code>Array<[CapacityProviderStrategy](#aws-cdk-aws-ecs-capacityproviderstrategy)></code>)  *No description*
+
+__Returns__:
+* <code>[IServiceExtension](#wheatstalk-web-carver-iserviceextension)</code>
+
 #### *static* container(props) <a id="wheatstalk-web-carver-serviceextension-container"></a>
 
 Add a container.
@@ -518,6 +531,18 @@ static linkedService(options: LinkedServiceExtensionOptions): IServiceExtension
 * **options** (<code>[LinkedServiceExtensionOptions](#wheatstalk-web-carver-linkedserviceextensionoptions)</code>)  *No description*
   * **service** (<code>[Service](#wheatstalk-web-carver-service)</code>)  The Web Carver service to link to. 
   * **name** (<code>string</code>)  Name of the linked service for environment variable choice. __*Optional*__
+
+__Returns__:
+* <code>[IServiceExtension](#wheatstalk-web-carver-iserviceextension)</code>
+
+#### *static* spotCapacity() <a id="wheatstalk-web-carver-serviceextension-spotcapacity"></a>
+
+Use spot capacity.
+
+```ts
+static spotCapacity(): IServiceExtension
+```
+
 
 __Returns__:
 * <code>[IServiceExtension](#wheatstalk-web-carver-iserviceextension)</code>
@@ -927,7 +952,7 @@ Name | Type | Description
 
 ## interface IServiceExtension  <a id="wheatstalk-web-carver-iserviceextension"></a>
 
-__Obtainable from__: [ServiceExtension](#wheatstalk-web-carver-serviceextension).[container](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-container)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[envVars](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-envvars)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[http2GatewayRoute](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-http2gatewayroute)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[httpGatewayRoute](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-httpgatewayroute)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[httpRoute](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-httproute)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[linkedService](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-linkedservice)()
+__Obtainable from__: [ServiceExtension](#wheatstalk-web-carver-serviceextension).[capacityProviderStrategies](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-capacityproviderstrategies)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[container](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-container)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[envVars](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-envvars)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[http2GatewayRoute](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-http2gatewayroute)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[httpGatewayRoute](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-httpgatewayroute)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[httpRoute](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-httproute)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[linkedService](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-linkedservice)(), [ServiceExtension](#wheatstalk-web-carver-serviceextension).[spotCapacity](#wheatstalk-web-carver-serviceextension#wheatstalk-web-carver-serviceextension-spotcapacity)()
 
 Extends the service with additional features.
 

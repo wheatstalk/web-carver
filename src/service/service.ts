@@ -119,15 +119,22 @@ export class Service extends cdk.Construct implements IService {
       extension._register(this.serviceFacade, privateScope);
     });
 
-    this.taskDefinition = new ecs.FargateTaskDefinition(this, 'TaskDefinition', this._filterTaskDefinitionProps.filter({
+    // Run the task definition props through the extension filter chain so
+    // that extensions can hook in.
+    const taskDefinitionProps = this.serviceFacade.taskDefinitionPropsFilter.filter({
       cpu: 256,
       memoryLimitMiB: 512,
-    }));
+    });
+
+    this.taskDefinition = new ecs.FargateTaskDefinition(this, 'TaskDefinition', taskDefinitionProps);
 
     // Get the default networking configuration for this node.
     const serviceNetworkConfig = defaultServiceNetworkConfig(this.node);
 
-    this.fargateService = new ecs.FargateService(this, 'FargateService', this._filterServiceProps.filter({
+    // Allow extensions to modify the service props
+    // Run the service props through the extension filter chain so that
+    // extensions can hook in.
+    const fargateServiceProps = this.serviceFacade.servicePropsFilter.filter({
       serviceName: name._serviceName(this, nameContext),
       taskDefinition: this.taskDefinition,
 
@@ -149,7 +156,8 @@ export class Service extends cdk.Construct implements IService {
       // Networking configuration
       assignPublicIp: serviceNetworkConfig.assignPublicIp,
       vpcSubnets: serviceNetworkConfig.vpcSubnets,
-    }));
+    });
+    this.fargateService = new ecs.FargateService(this, 'FargateService', fargateServiceProps);
 
     this.virtualNode = new appmesh.VirtualNode(this, 'VirtualNode', {
       virtualNodeName: name._virtualNodeName(this, nameContext),
@@ -210,6 +218,8 @@ export interface IServiceExtensionFacade {
   readonly defaultRouter: IRouter;
   readonly defaultGateway: IGateway;
 
+  _addTaskDefinitionPropsFilter(filter: (props: ecs.FargateTaskDefinitionProps) => ecs.FargateTaskDefinitionProps): void;
+  _addServicePropsFilter(filter: (props: ecs.FargateServiceProps) => ecs.FargateServiceProps): void;
   _addEnvVars(env: Record<string, string>): void;
   _onEnvVars(handler: (env: Record<string, string>) => void): void;
   _addServiceExtension(extension: IServiceExtension): void;
@@ -226,11 +236,22 @@ export abstract class ServiceExtensionFacadeBase implements IServiceExtensionFac
   public abstract readonly defaultRouter: IRouter;
   public abstract readonly defaultGateway: IGateway;
 
+  public readonly taskDefinitionPropsFilter = new FilterChain<ecs.FargateTaskDefinitionProps>();
+  public readonly servicePropsFilter = new FilterChain<ecs.FargateServiceProps>();
+
   public readonly workloadReadyEvent = PubSub.replayingPubSub<WorkloadOptions>();
   public readonly connectionsReadyEvent = PubSub.replayingPubSub<ec2.Connections>();
   public readonly envVarsAddedEvent = PubSub.replayingPubSub<Record<string, string>>();
   public readonly containerDefinitionPublishedEvent = PubSub.replayingPubSub<ecs.ContainerDefinition>();
   public readonly serviceExtensionAddedEvent = PubSub.replayingPubSub<IServiceExtension>();
+
+  public _addTaskDefinitionPropsFilter(filter: (props: ecs.FargateTaskDefinitionProps) => ecs.FargateTaskDefinitionProps): void {
+    this.taskDefinitionPropsFilter.add(filter);
+  }
+
+  public _addServicePropsFilter(filter: (props: ecs.FargateServiceProps) => ecs.FargateServiceProps): void {
+    this.servicePropsFilter.add(filter);
+  }
 
   public _addServiceExtension(extension: IServiceExtension): void {
     this.serviceExtensionAddedEvent.publish(extension);

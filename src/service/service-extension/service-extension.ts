@@ -1,3 +1,4 @@
+import * as ecs from '@aws-cdk/aws-ecs';
 import { IServiceExtension } from './api';
 import { ContainerExtension, ContainerExtensionOptions } from './container';
 import { EnvVarsExtension } from './env-vars';
@@ -9,6 +10,7 @@ import {
 } from './http-gateway-route';
 import { HttpRouteExtension, HttpRouteExtensionOptions } from './http-route';
 import { LinkedServiceExtension, LinkedServiceExtensionOptions } from './linked-service';
+import { CapacityProviderStrategiesExtension } from './use-spot-capacity';
 
 /**
  * Used to create service extensions.
@@ -54,5 +56,22 @@ export abstract class ServiceExtension {
    */
   static container(props: ContainerExtensionOptions): IServiceExtension {
     return new ContainerExtension(props);
+  }
+
+  /**
+   * Use spot capacity
+   */
+  static spotCapacity(): IServiceExtension {
+    return new CapacityProviderStrategiesExtension([
+      { capacityProvider: 'FARGATE_SPOT', weight: 100 },
+      { capacityProvider: 'FARGATE', weight: 1 },
+    ]);
+  }
+
+  /**
+   * Use the given capacity provider strategies.
+   */
+  static capacityProviderStrategies(capacityProviderStrategies: ecs.CapacityProviderStrategy[]): IServiceExtension {
+    return new CapacityProviderStrategiesExtension(capacityProviderStrategies);
   }
 }
