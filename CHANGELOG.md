@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.9](https://github.com/wheatstalk/web-carver/compare/v0.0.8...v0.0.9) (2021-03-15)
+
+
+### Features
+
+* add an environment-wide security group ([dc48082](https://github.com/wheatstalk/web-carver/commit/dc48082fcbf294bca24f8b4bfe19746ce06e1305))
+
 ### [0.0.8](https://github.com/wheatstalk/web-carver/compare/v0.0.7...v0.0.8) (2021-03-15)
 
 ### [0.0.7](https://github.com/wheatstalk/web-carver/compare/v0.0.6...v0.0.7) (2021-03-14)
