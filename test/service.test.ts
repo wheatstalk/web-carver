@@ -126,4 +126,30 @@ describe('Service', () => {
       },
     }));
   });
+
+  it('is in the environment security group', () => {
+    // GIVEN
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, 'MyStack');
+    const environment = new webcarver.Environment(stack, 'WebCarver');
+
+    // WHEN
+    const service = new webcarver.Service(stack, 'Service', {
+      environment,
+    });
+
+    // THEN
+    expectCDK(stack).to(haveResourceLike('AWS::ECS::Service', {
+      NetworkConfiguration: {
+        AwsvpcConfiguration: {
+          SecurityGroups: [
+            { 'Fn::GetAtt': ['ServiceSecurityGroupC96ED6A7', 'GroupId'] },
+            { 'Fn::GetAtt': ['WebCarverSecurityGroupC23EEF3F', 'GroupId'] },
+          ],
+        },
+      },
+    }));
+    // service connections should not include the environment's security group
+    expect(service.connections.securityGroups.some(sg => sg === environment.securityGroup)).toEqual(false);
+  });
 });

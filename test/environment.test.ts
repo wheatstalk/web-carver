@@ -155,6 +155,31 @@ describe('Webcarver Environment', () => {
     }));
   });
 
+  test('gateway service uses environment security group', () => {
+    // GIVEN
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, 'MyStack');
+
+    // WHEN
+    const environment = new Environment(stack, 'WebCarver');
+
+    // THEN
+    expectCDK(stack).to(haveResourceLike('AWS::ECS::Service', {
+      NetworkConfiguration: {
+        AwsvpcConfiguration: {
+          SecurityGroups: [
+            { 'Fn::GetAtt': ['WebCarverGatewaySecurityGroup914397CC', 'GroupId'] },
+            { 'Fn::GetAtt': ['WebCarverSecurityGroupC23EEF3F', 'GroupId'] },
+          ],
+        },
+      },
+    }));
+    // default gateway connections should not include the environment's security group
+    expect(environment.defaultGateway.connections.securityGroups.some(sg => sg === environment.securityGroup)).toEqual(false);
+    // default router connections should not include the environment's security group
+    expect(environment.defaultRouter.connections.securityGroups.some(sg => sg === environment.securityGroup)).toEqual(false);
+  });
+
   describe('manifest', () => {
     test('stores a manifest in SSM', () => {
       // GIVEN

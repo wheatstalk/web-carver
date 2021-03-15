@@ -15,6 +15,11 @@ export interface EnvironmentManifestV1 {
   readonly vpcId: string;
 
   /**
+   * The environment-wide security group
+   */
+  readonly securityGroupId: string;
+
+  /**
    * The environment's App Mesh arn
    */
   readonly meshArn: string;

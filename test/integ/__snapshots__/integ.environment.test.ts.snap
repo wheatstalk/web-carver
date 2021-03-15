@@ -118,7 +118,13 @@ Object {
             "SecurityGroups": Array [
               Object {
                 "Fn::GetAtt": Array [
-                  "EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29",
+                  "EnvironmentGatewaySecurityGroup473A5143",
+                  "GroupId",
+                ],
+              },
+              Object {
+                "Fn::GetAtt": Array [
+                  "EnvironmentSecurityGroupF309ED62",
                   "GroupId",
                 ],
               },
@@ -189,49 +195,6 @@ Object {
         ],
       },
       "Type": "AWS::ServiceDiscovery::Service",
-    },
-    "EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29": Object {
-      "Properties": Object {
-        "GroupDescription": "integ-environment2/Environment/Gateway/Fargate/GatewayService/SecurityGroup",
-        "SecurityGroupEgress": Array [
-          Object {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Allow all outbound traffic by default",
-            "IpProtocol": "-1",
-          },
-        ],
-        "Tags": Array [
-          Object {
-            "Key": "WebCarver-Environment",
-            "Value": "integ-environment2",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "EnvironmentVpc6FD2605E",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
-    },
-    "EnvironmentGatewayFargateGatewayServiceSecurityGroupfromintegenvironment2EnvironmentGatewayLoadBalancerSecurityGroup26C615151608002DE6F7C": Object {
-      "Properties": Object {
-        "Description": "Load balancer to target",
-        "FromPort": 16080,
-        "GroupId": Object {
-          "Fn::GetAtt": Array [
-            "EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29",
-            "GroupId",
-          ],
-        },
-        "IpProtocol": "tcp",
-        "SourceSecurityGroupId": Object {
-          "Fn::GetAtt": Array [
-            "EnvironmentGatewayLoadBalancerSecurityGroup3B0420D5",
-            "GroupId",
-          ],
-        },
-        "ToPort": 16080,
-      },
-      "Type": "AWS::EC2::SecurityGroupIngress",
     },
     "EnvironmentGatewayFargateGatewayTaskDefinition017A318F": Object {
       "Properties": Object {
@@ -662,12 +625,33 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "EnvironmentGatewayLoadBalancerSecurityGrouptointegenvironment2EnvironmentGatewayFargateGatewayServiceSecurityGroup2152FE4D160808E70ED5E": Object {
+    "EnvironmentGatewayLoadBalancerSecurityGrouptointegenvironment2EnvironmentGatewaySecurityGroup8711BD80160808BE86A32": Object {
       "Properties": Object {
         "Description": "Load balancer to target",
         "DestinationSecurityGroupId": Object {
           "Fn::GetAtt": Array [
-            "EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29",
+            "EnvironmentGatewaySecurityGroup473A5143",
+            "GroupId",
+          ],
+        },
+        "FromPort": 16080,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentGatewayLoadBalancerSecurityGroup3B0420D5",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 16080,
+      },
+      "Type": "AWS::EC2::SecurityGroupEgress",
+    },
+    "EnvironmentGatewayLoadBalancerSecurityGrouptointegenvironment2EnvironmentSecurityGroupA4E937A9160802AD83860": Object {
+      "Properties": Object {
+        "Description": "Load balancer to target",
+        "DestinationSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentSecurityGroupF309ED62",
             "GroupId",
           ],
         },
@@ -726,6 +710,49 @@ Object {
       },
       "Type": "AWS::AppMesh::GatewayRoute",
     },
+    "EnvironmentGatewaySecurityGroup473A5143": Object {
+      "Properties": Object {
+        "GroupDescription": "integ-environment2/Environment/Gateway/SecurityGroup",
+        "SecurityGroupEgress": Array [
+          Object {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "EnvironmentVpc6FD2605E",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "EnvironmentGatewaySecurityGroupfromintegenvironment2EnvironmentGatewayLoadBalancerSecurityGroup26C61515160800662AF16": Object {
+      "Properties": Object {
+        "Description": "Load balancer to target",
+        "FromPort": 16080,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentGatewaySecurityGroup473A5143",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentGatewayLoadBalancerSecurityGroup3B0420D5",
+            "GroupId",
+          ],
+        },
+        "ToPort": 16080,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
     "EnvironmentManifest626E80AB": Object {
       "Properties": Object {
         "Name": "/integ-environment2",
@@ -736,31 +763,32 @@ Object {
   \\"version\\": \\"1.0.0\\",
   \\"crossStackDependencyExportName\\": \\"integenvironment2EnvironmentManifestA5A81B7E\\",
   \\"vpcId\\": \\"\${Ref0}\\",
+  \\"securityGroupId\\": \\"\${Ref1}\\",
   \\"namespaceAttributes\\": {
     \\"namespaceType\\": \\"DNS_PRIVATE\\",
-    \\"namespaceArn\\": \\"\${Ref1}\\",
-    \\"namespaceId\\": \\"\${Ref2}\\",
-    \\"namespaceName\\": \\"\${Ref3}\\"
+    \\"namespaceArn\\": \\"\${Ref2}\\",
+    \\"namespaceId\\": \\"\${Ref3}\\",
+    \\"namespaceName\\": \\"\${Ref4}\\"
   },
-  \\"meshArn\\": \\"\${Ref4}\\",
+  \\"meshArn\\": \\"\${Ref5}\\",
   \\"clusterAttributes\\": {
-    \\"clusterName\\": \\"\${Ref5}\\",
-    \\"clusterArn\\": \\"\${Ref6}\\",
+    \\"clusterName\\": \\"\${Ref6}\\",
+    \\"clusterArn\\": \\"\${Ref7}\\",
     \\"hasEc2Capacity\\": false,
     \\"securityGroupIds\\": []
   },
   \\"defaultGatewayAttributes\\": {
     \\"securityGroupIds\\": [
-      \\"\${Ref7}\\"
+      \\"\${Ref8}\\"
     ],
-    \\"virtualGatewayArn\\": \\"\${Ref8}\\"
+    \\"virtualGatewayArn\\": \\"\${Ref9}\\"
   },
   \\"defaultRouterAttributes\\": {
     \\"securityGroupIds\\": [
-      \\"\${Ref9}\\"
+      \\"\${Ref10}\\"
     ],
-    \\"virtualRouterArn\\": \\"\${Ref10}\\",
-    \\"virtualServiceArn\\": \\"\${Ref11}\\"
+    \\"virtualRouterArn\\": \\"\${Ref11}\\",
+    \\"virtualServiceArn\\": \\"\${Ref12}\\"
   }
 }",
             Object {
@@ -769,49 +797,55 @@ Object {
               },
               "Ref1": Object {
                 "Fn::GetAtt": Array [
-                  "Namespace9B63B8C8",
-                  "Arn",
+                  "EnvironmentSecurityGroupF309ED62",
+                  "GroupId",
                 ],
               },
               "Ref10": Object {
-                "Ref": "EnvironmentRouter36ACE08F",
+                "Fn::GetAtt": Array [
+                  "EnvironmentGatewaySecurityGroup473A5143",
+                  "GroupId",
+                ],
               },
               "Ref11": Object {
+                "Ref": "EnvironmentRouter36ACE08F",
+              },
+              "Ref12": Object {
                 "Ref": "EnvironmentRouterService4B5D623E",
               },
               "Ref2": Object {
                 "Fn::GetAtt": Array [
                   "Namespace9B63B8C8",
+                  "Arn",
+                ],
+              },
+              "Ref3": Object {
+                "Fn::GetAtt": Array [
+                  "Namespace9B63B8C8",
                   "Id",
                 ],
               },
-              "Ref3": "integ-environment2",
-              "Ref4": Object {
+              "Ref4": "integ-environment2",
+              "Ref5": Object {
                 "Ref": "EnvironmentMeshE4273EA5",
               },
-              "Ref5": Object {
+              "Ref6": Object {
                 "Ref": "EnvironmentClusterE81C7902",
               },
-              "Ref6": Object {
+              "Ref7": Object {
                 "Fn::GetAtt": Array [
                   "EnvironmentClusterE81C7902",
                   "Arn",
                 ],
               },
-              "Ref7": Object {
+              "Ref8": Object {
                 "Fn::GetAtt": Array [
-                  "EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29",
+                  "EnvironmentGatewaySecurityGroup473A5143",
                   "GroupId",
                 ],
-              },
-              "Ref8": Object {
-                "Ref": "EnvironmentGateway3306D38F",
               },
               "Ref9": Object {
-                "Fn::GetAtt": Array [
-                  "EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29",
-                  "GroupId",
-                ],
+                "Ref": "EnvironmentGateway3306D38F",
               },
             },
           ],
@@ -893,6 +927,51 @@ Object {
         "VirtualServiceName": "integenvironment2EnvironmentRouterServiceA45ECAF8",
       },
       "Type": "AWS::AppMesh::VirtualService",
+    },
+    "EnvironmentSecurityGroupF309ED62": Object {
+      "Properties": Object {
+        "GroupDescription": "integ-environment2/Environment/SecurityGroup",
+        "SecurityGroupEgress": Array [
+          Object {
+            "CidrIp": "255.255.255.255/32",
+            "Description": "Disallow all traffic",
+            "FromPort": 252,
+            "IpProtocol": "icmp",
+            "ToPort": 86,
+          },
+        ],
+        "Tags": Array [
+          Object {
+            "Key": "WebCarver-Environment",
+            "Value": "integ-environment2",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "EnvironmentVpc6FD2605E",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "EnvironmentSecurityGroupfromintegenvironment2EnvironmentGatewayLoadBalancerSecurityGroup26C6151516080C5EB4E54": Object {
+      "Properties": Object {
+        "Description": "Load balancer to target",
+        "FromPort": 16080,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentSecurityGroupF309ED62",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "EnvironmentGatewayLoadBalancerSecurityGroup3B0420D5",
+            "GroupId",
+          ],
+        },
+        "ToPort": 16080,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
     },
     "EnvironmentVpc6FD2605E": Object {
       "Properties": Object {
@@ -1166,7 +1245,13 @@ Object {
             "SecurityGroups": Array [
               Object {
                 "Fn::GetAtt": Array [
-                  "GatewayEchoFargateServiceSecurityGroupD1F95AFB",
+                  "GatewayEchoSecurityGroupA6D43B34",
+                  "GroupId",
+                ],
+              },
+              Object {
+                "Fn::GetAtt": Array [
+                  "EnvironmentSecurityGroupF309ED62",
                   "GroupId",
                 ],
               },
@@ -1227,9 +1312,9 @@ Object {
       },
       "Type": "AWS::ServiceDiscovery::Service",
     },
-    "GatewayEchoFargateServiceSecurityGroupD1F95AFB": Object {
+    "GatewayEchoSecurityGroupA6D43B34": Object {
       "Properties": Object {
-        "GroupDescription": "integ-environment2/GatewayEcho/FargateService/SecurityGroup",
+        "GroupDescription": "integ-environment2/GatewayEcho/SecurityGroup",
         "SecurityGroupEgress": Array [
           Object {
             "CidrIp": "0.0.0.0/0",
@@ -1243,20 +1328,20 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "GatewayEchoFargateServiceSecurityGroupfromintegenvironment2EnvironmentGatewayFargateGatewayServiceSecurityGroup2152FE4D805BD6C796": Object {
+    "GatewayEchoSecurityGroupfromintegenvironment2EnvironmentGatewaySecurityGroup8711BD80800AB7EA3E": Object {
       "Properties": Object {
-        "Description": "from integenvironment2EnvironmentGatewayFargateGatewayServiceSecurityGroup2152FE4D:80",
+        "Description": "from integenvironment2EnvironmentGatewaySecurityGroup8711BD80:80",
         "FromPort": 80,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "GatewayEchoFargateServiceSecurityGroupD1F95AFB",
+            "GatewayEchoSecurityGroupA6D43B34",
             "GroupId",
           ],
         },
         "IpProtocol": "tcp",
         "SourceSecurityGroupId": Object {
           "Fn::GetAtt": Array [
-            "EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29",
+            "EnvironmentGatewaySecurityGroup473A5143",
             "GroupId",
           ],
         },
@@ -1737,7 +1822,13 @@ Object {
             "SecurityGroups": Array [
               Object {
                 "Fn::GetAtt": Array [
-                  "ProtectedEchoFargateServiceSecurityGroupE51BE587",
+                  "ProtectedEchoSecurityGroup39EAC6A0",
+                  "GroupId",
+                ],
+              },
+              Object {
+                "Fn::GetAtt": Array [
+                  "EnvironmentSecurityGroupF309ED62",
                   "GroupId",
                 ],
               },
@@ -1798,9 +1889,9 @@ Object {
       },
       "Type": "AWS::ServiceDiscovery::Service",
     },
-    "ProtectedEchoFargateServiceSecurityGroupE51BE587": Object {
+    "ProtectedEchoSecurityGroup39EAC6A0": Object {
       "Properties": Object {
-        "GroupDescription": "integ-environment2/ProtectedEcho/FargateService/SecurityGroup",
+        "GroupDescription": "integ-environment2/ProtectedEcho/SecurityGroup",
         "SecurityGroupEgress": Array [
           Object {
             "CidrIp": "0.0.0.0/0",
@@ -1814,20 +1905,20 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "ProtectedEchoFargateServiceSecurityGroupfromintegenvironment2EnvironmentGatewayFargateGatewayServiceSecurityGroup2152FE4D803F3D7502": Object {
+    "ProtectedEchoSecurityGroupfromintegenvironment2EnvironmentGatewaySecurityGroup8711BD8080A49C6159": Object {
       "Properties": Object {
-        "Description": "from integenvironment2EnvironmentGatewayFargateGatewayServiceSecurityGroup2152FE4D:80",
+        "Description": "from integenvironment2EnvironmentGatewaySecurityGroup8711BD80:80",
         "FromPort": 80,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "ProtectedEchoFargateServiceSecurityGroupE51BE587",
+            "ProtectedEchoSecurityGroup39EAC6A0",
             "GroupId",
           ],
         },
         "IpProtocol": "tcp",
         "SourceSecurityGroupId": Object {
           "Fn::GetAtt": Array [
-            "EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29",
+            "EnvironmentGatewaySecurityGroup473A5143",
             "GroupId",
           ],
         },
@@ -2402,7 +2493,13 @@ Object {
             "SecurityGroups": Array [
               Object {
                 "Fn::GetAtt": Array [
-                  "RoutedEchoFargateServiceSecurityGroup0BD9028A",
+                  "RoutedEchoSecurityGroup444EB1B7",
+                  "GroupId",
+                ],
+              },
+              Object {
+                "Fn::GetAtt": Array [
+                  "EnvironmentSecurityGroupF309ED62",
                   "GroupId",
                 ],
               },
@@ -2463,9 +2560,9 @@ Object {
       },
       "Type": "AWS::ServiceDiscovery::Service",
     },
-    "RoutedEchoFargateServiceSecurityGroup0BD9028A": Object {
+    "RoutedEchoSecurityGroup444EB1B7": Object {
       "Properties": Object {
-        "GroupDescription": "integ-environment2/RoutedEcho/FargateService/SecurityGroup",
+        "GroupDescription": "integ-environment2/RoutedEcho/SecurityGroup",
         "SecurityGroupEgress": Array [
           Object {
             "CidrIp": "0.0.0.0/0",
@@ -2479,20 +2576,20 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "RoutedEchoFargateServiceSecurityGroupfromintegenvironment2EnvironmentGatewayFargateGatewayServiceSecurityGroup2152FE4D8050DEE87B": Object {
+    "RoutedEchoSecurityGroupfromintegenvironment2EnvironmentGatewaySecurityGroup8711BD8080D5287A3C": Object {
       "Properties": Object {
-        "Description": "from integenvironment2EnvironmentGatewayFargateGatewayServiceSecurityGroup2152FE4D:80",
+        "Description": "from integenvironment2EnvironmentGatewaySecurityGroup8711BD80:80",
         "FromPort": 80,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "RoutedEchoFargateServiceSecurityGroup0BD9028A",
+            "RoutedEchoSecurityGroup444EB1B7",
             "GroupId",
           ],
         },
         "IpProtocol": "tcp",
         "SourceSecurityGroupId": Object {
           "Fn::GetAtt": Array [
-            "EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29",
+            "EnvironmentGatewaySecurityGroup473A5143",
             "GroupId",
           ],
         },
@@ -2889,10 +2986,11 @@ Object {
             "SecurityGroups": Array [
               Object {
                 "Fn::GetAtt": Array [
-                  "BackendFargateServiceSecurityGroup739708B1",
+                  "BackendSecurityGroup19C7428D",
                   "GroupId",
                 ],
               },
+              "sg-12345",
             ],
             "Subnets": Array [
               "s-12345",
@@ -2952,9 +3050,9 @@ Object {
       },
       "Type": "AWS::ServiceDiscovery::Service",
     },
-    "BackendFargateServiceSecurityGroup739708B1": Object {
+    "BackendSecurityGroup19C7428D": Object {
       "Properties": Object {
-        "GroupDescription": "integ-environment2-child/Backend/FargateService/SecurityGroup",
+        "GroupDescription": "integ-environment2-child/Backend/SecurityGroup",
         "SecurityGroupEgress": Array [
           Object {
             "CidrIp": "0.0.0.0/0",
@@ -2974,20 +3072,20 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "BackendFargateServiceSecurityGroupfromintegenvironment2childConsumerFargateServiceSecurityGroupFA852E6180D47317BA": Object {
+    "BackendSecurityGroupfromintegenvironment2childConsumerSecurityGroupBCE14480806A93DAEF": Object {
       "Properties": Object {
-        "Description": "from integenvironment2childConsumerFargateServiceSecurityGroupFA852E61:80",
+        "Description": "from integenvironment2childConsumerSecurityGroupBCE14480:80",
         "FromPort": 80,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "BackendFargateServiceSecurityGroup739708B1",
+            "BackendSecurityGroup19C7428D",
             "GroupId",
           ],
         },
         "IpProtocol": "tcp",
         "SourceSecurityGroupId": Object {
           "Fn::GetAtt": Array [
-            "ConsumerFargateServiceSecurityGroupC5BA9DFC",
+            "ConsumerSecurityGroupA5B4FEF1",
             "GroupId",
           ],
         },
@@ -3467,10 +3565,11 @@ Object {
             "SecurityGroups": Array [
               Object {
                 "Fn::GetAtt": Array [
-                  "ConsumerFargateServiceSecurityGroupC5BA9DFC",
+                  "ConsumerSecurityGroupA5B4FEF1",
                   "GroupId",
                 ],
               },
+              "sg-12345",
             ],
             "Subnets": Array [
               "s-12345",
@@ -3502,9 +3601,9 @@ Object {
       },
       "Type": "AWS::ECS::Service",
     },
-    "ConsumerFargateServiceSecurityGroupC5BA9DFC": Object {
+    "ConsumerSecurityGroupA5B4FEF1": Object {
       "Properties": Object {
-        "GroupDescription": "integ-environment2-child/Consumer/FargateService/SecurityGroup",
+        "GroupDescription": "integ-environment2-child/Consumer/SecurityGroup",
         "SecurityGroupEgress": Array [
           Object {
             "CidrIp": "0.0.0.0/0",

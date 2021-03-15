@@ -37,6 +37,10 @@ export class ApplicationLoadBalancedFargateGateway extends appmesh.VirtualGatewa
 
     const serviceNetworkConfig = defaultServiceNetworkConfig(this.node);
 
+    const serviceSecurityGroup = new ec2.SecurityGroup(this, 'SecurityGroup', {
+      vpc: props.cluster.vpc,
+    });
+
     const { service } = new FargateVirtualGatewayService(this, 'Fargate', {
       // Mesh props
       virtualGateway: this,
@@ -51,9 +55,12 @@ export class ApplicationLoadBalancedFargateGateway extends appmesh.VirtualGatewa
       // Networking configuration
       vpcSubnets: serviceNetworkConfig.vpcSubnets,
       assignPublicIp: serviceNetworkConfig.assignPublicIp,
+      securityGroups: [serviceSecurityGroup, ...props.securityGroups ?? []],
     });
 
-    this.connections = service.connections;
+    this.connections = new ec2.Connections({
+      securityGroups: [serviceSecurityGroup],
+    });
 
     const loadBalancer = new elbv2.ApplicationLoadBalancer(this, 'LoadBalancer', {
       vpc: props.cluster.vpc,

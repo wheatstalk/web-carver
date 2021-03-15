@@ -92,7 +92,7 @@ Name | Type | Description
 
 Creates a WebCarver environment.
 
-__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable), [IEnvironment](#wheatstalk-web-carver-ienvironment)
+__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable), [IEnvironment](#wheatstalk-web-carver-ienvironment), [IConnectable](#aws-cdk-aws-ec2-iconnectable)
 __Extends__: [Construct](#aws-cdk-core-construct)
 
 ### Initializer
@@ -120,10 +120,12 @@ new Environment(scope: Construct, id: string, props?: EnvironmentProps)
 Name | Type | Description 
 -----|------|-------------
 **cluster** | <code>[ICluster](#aws-cdk-aws-ecs-icluster)</code> | The default ECS cluster.
+**connections** | <code>[Connections](#aws-cdk-aws-ec2-connections)</code> | <span></span>
 **defaultGateway** | <code>[IGateway](#wheatstalk-web-carver-igateway)</code> | The default gateway.
 **defaultRouter** | <code>[IRouter](#wheatstalk-web-carver-irouter)</code> | The default router connected to the default gateway.
 **mesh** | <code>[IMesh](#aws-cdk-aws-appmesh-imesh)</code> | The environment's service mesh.
 **namespace** | <code>[INamespace](#aws-cdk-aws-servicediscovery-inamespace)</code> | The default service discovery namespace.
+**securityGroup** | <code>[ISecurityGroup](#aws-cdk-aws-ec2-isecuritygroup)</code> | The security group that all members of the environment are part of.
 **vpc** | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | The default VPC.
 
 
@@ -925,10 +927,12 @@ A WebCarver environment.
 Name | Type | Description 
 -----|------|-------------
 **cluster** | <code>[ICluster](#aws-cdk-aws-ecs-icluster)</code> | The default ECS cluster.
+**connections** | <code>[Connections](#aws-cdk-aws-ec2-connections)</code> | <span></span>
 **defaultGateway** | <code>[IGateway](#wheatstalk-web-carver-igateway)</code> | The default gateway.
 **defaultRouter** | <code>[IRouter](#wheatstalk-web-carver-irouter)</code> | The default router connected to the default gateway.
 **mesh** | <code>[IMesh](#aws-cdk-aws-appmesh-imesh)</code> | The environment's service mesh.
 **namespace** | <code>[INamespace](#aws-cdk-aws-servicediscovery-inamespace)</code> | The default service discovery namespace.
+**securityGroup** | <code>[ISecurityGroup](#aws-cdk-aws-ec2-isecuritygroup)</code> | The security group that all members of the environment are part of.
 **vpc** | <code>[IVpc](#aws-cdk-aws-ec2-ivpc)</code> | The default VPC.
 
 

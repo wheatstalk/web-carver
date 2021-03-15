@@ -99,6 +99,8 @@ export class EnvironmentFromManifest extends cdk.Construct implements IEnvironme
   readonly defaultRouter: IRouter;
   readonly mesh: appmesh.IMesh;
   readonly namespace: cloudmap.INamespace;
+  readonly securityGroup: ec2.ISecurityGroup;
+  readonly connections: ec2.Connections;
 
   constructor(scope: cdk.Construct, id: string, manifest: EnvironmentManifestV1) {
     super(scope, id);
@@ -113,6 +115,11 @@ export class EnvironmentFromManifest extends cdk.Construct implements IEnvironme
 
     this.vpc = ec2.Vpc.fromLookup(this, 'Vpc', {
       vpcId: manifest.vpcId,
+    });
+
+    this.securityGroup = ec2.SecurityGroup.fromLookup(this, 'SecurityGroup', manifest.securityGroupId);
+    this.connections = new ec2.Connections({
+      securityGroups: [this.securityGroup],
     });
 
     switch (manifest.namespaceAttributes.namespaceType) {
@@ -163,6 +170,7 @@ export const DUMMY_ENVIRONMENT_MANIFEST_V1: EnvironmentManifestV1 = {
   version: '1.0.0',
   crossStackDependencyExportName: 'fake',
   vpcId: 'vpc-fake',
+  securityGroupId: 'sg-fakefake',
   namespaceAttributes: {
     namespaceType: cloudmap.NamespaceType.DNS_PRIVATE,
     namespaceArn: 'arn:aws:servicediscovery:ca-central-1:0000000000000:namespace/fake-ns',
@@ -193,6 +201,7 @@ function renderManifestJson(crossStackDependencyExportName: string, environment:
     version: '1.0.0',
     crossStackDependencyExportName: crossStackDependencyExportName,
     vpcId: manifestRefTracker.ref(environment.cluster.vpc.vpcId),
+    securityGroupId: manifestRefTracker.ref(environment.securityGroup.securityGroupId),
     namespaceAttributes: {
       namespaceType: environment.namespace.type,
       namespaceArn: manifestRefTracker.ref(environment.namespace.namespaceArn),

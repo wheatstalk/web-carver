@@ -119,8 +119,8 @@ describe('httpGatewayRoute', () => {
     }));
     // Allow traffic from the gateway:
     expectCDK(stack).to(haveResourceLike('AWS::EC2::SecurityGroupIngress', {
-      GroupId: { 'Fn::GetAtt': ['ServiceFargateServiceSecurityGroupD077A366', 'GroupId'] },
-      SourceSecurityGroupId: { 'Fn::GetAtt': ['EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29', 'GroupId'] },
+      GroupId: { 'Fn::GetAtt': ['ServiceSecurityGroupC96ED6A7', 'GroupId'] },
+      SourceSecurityGroupId: { 'Fn::GetAtt': ['EnvironmentGatewaySecurityGroup473A5143', 'GroupId'] },
     }));
   });
 });
@@ -163,8 +163,8 @@ describe('http2GatewayRoute', () => {
     }));
     // Allow traffic from the gateway:
     expectCDK(stack).to(haveResourceLike('AWS::EC2::SecurityGroupIngress', {
-      GroupId: { 'Fn::GetAtt': ['ServiceFargateServiceSecurityGroupD077A366', 'GroupId'] },
-      SourceSecurityGroupId: { 'Fn::GetAtt': ['EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29', 'GroupId'] },
+      GroupId: { 'Fn::GetAtt': ['ServiceSecurityGroupC96ED6A7', 'GroupId'] },
+      SourceSecurityGroupId: { 'Fn::GetAtt': ['EnvironmentGatewaySecurityGroup473A5143', 'GroupId'] },
     }));
   });
 });
@@ -304,8 +304,8 @@ describe('httpRoute', () => {
     }));
     // Allow traffic from the gateway:
     expectCDK(stack).to(haveResourceLike('AWS::EC2::SecurityGroupIngress', {
-      GroupId: { 'Fn::GetAtt': ['ServiceFargateServiceSecurityGroupD077A366', 'GroupId'] },
-      SourceSecurityGroupId: { 'Fn::GetAtt': ['EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29', 'GroupId'] },
+      GroupId: { 'Fn::GetAtt': ['ServiceSecurityGroupC96ED6A7', 'GroupId'] },
+      SourceSecurityGroupId: { 'Fn::GetAtt': ['EnvironmentGatewaySecurityGroup473A5143', 'GroupId'] },
     }));
   });
 });
@@ -354,8 +354,8 @@ describe('linkedService', () => {
     expectCDK(stack).to(haveResourceLike('AWS::EC2::SecurityGroupIngress', {
       FromPort: 80,
       ToPort: 80,
-      GroupId: { 'Fn::GetAtt': ['BackendFargateServiceSecurityGroup739708B1', 'GroupId'] },
-      SourceSecurityGroupId: { 'Fn::GetAtt': ['FrontendFargateServiceSecurityGroupA7EB1383', 'GroupId'] },
+      GroupId: { 'Fn::GetAtt': ['BackendSecurityGroup19C7428D', 'GroupId'] },
+      SourceSecurityGroupId: { 'Fn::GetAtt': ['FrontendSecurityGroup76500A52', 'GroupId'] },
     }));
   });
 });

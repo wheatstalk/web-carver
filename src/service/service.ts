@@ -120,6 +120,10 @@ export class Service extends cdk.Construct implements IService {
     // Get the default networking configuration for this node.
     const serviceNetworkConfig = defaultServiceNetworkConfig(this.node);
 
+    const securityGroup = new ec2.SecurityGroup(this, 'SecurityGroup', {
+      vpc: props.environment.cluster.vpc,
+    });
+
     // Allow extensions to modify the service props
     // Run the service props through the extension filter chain so that
     // extensions can hook in.
@@ -145,6 +149,7 @@ export class Service extends cdk.Construct implements IService {
       // Networking configuration
       assignPublicIp: serviceNetworkConfig.assignPublicIp,
       vpcSubnets: serviceNetworkConfig.vpcSubnets,
+      securityGroups: [securityGroup, props.environment.securityGroup],
     });
     this.fargateService = new ecs.FargateService(this, 'FargateService', fargateServiceProps);
 
@@ -177,7 +182,7 @@ export class Service extends cdk.Construct implements IService {
 
     this.connections = new ec2.Connections({
       defaultPort: findDefaultSecurityGroupPort(this.taskDefinition),
-      securityGroups: this.fargateService.connections.securityGroups,
+      securityGroups: [securityGroup],
     });
 
     this.serviceExtensionApi.connectionsReadyEvent.publish(this.connections);

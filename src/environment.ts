@@ -11,7 +11,7 @@ import { IRouter, Router } from './router';
 /**
  * A WebCarver environment.
  */
-export interface IEnvironment {
+export interface IEnvironment extends ec2.IConnectable {
   /**
    * The environment's service mesh.
    */
@@ -41,6 +41,11 @@ export interface IEnvironment {
    * The default router connected to the default gateway.
    */
   readonly defaultRouter: IRouter;
+
+  /**
+   * The security group that all members of the environment are part of.
+   */
+  readonly securityGroup: ec2.ISecurityGroup;
 }
 
 /**
@@ -82,6 +87,8 @@ export class Environment extends cdk.Construct implements IEnvironment {
   public readonly namespace: servicediscovery.INamespace;
   public readonly defaultGateway: IGateway;
   public readonly defaultRouter: IRouter;
+  public readonly connections: ec2.Connections;
+  public readonly securityGroup: ec2.ISecurityGroup;
 
   constructor(scope: cdk.Construct, id: string, props: EnvironmentProps = {}) {
     super(scope, id);
@@ -91,6 +98,17 @@ export class Environment extends cdk.Construct implements IEnvironment {
 
     // Use the user's vpc or provide our own.
     this.vpc = props.vpc ?? defaultVpc(this);
+
+    // An environment-wide security group that all services are part of.
+    // This is for cases where you want to say, "allow ingress from the
+    // entire environment"
+    this.securityGroup = new ec2.SecurityGroup(this, 'SecurityGroup', {
+      vpc: this.vpc,
+      allowAllOutbound: false,
+    });
+    this.connections = new ec2.Connections({
+      securityGroups: [this.securityGroup],
+    });
 
     // Provide our own cluster
     this.cluster = new ecs.Cluster(this, 'Cluster', {
@@ -115,6 +133,7 @@ export class Environment extends cdk.Construct implements IEnvironment {
       mesh: this.mesh,
       namespace: this.namespace,
       certificates: props.certificates ?? [],
+      securityGroups: [this.securityGroup],
     });
 
     this.defaultRouter = new Router(this, 'Router', {
