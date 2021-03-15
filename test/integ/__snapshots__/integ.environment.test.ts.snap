@@ -2305,6 +2305,7 @@ Object {
             "Match": Object {
               "Headers": Array [
                 Object {
+                  "Invert": false,
                   "Match": Object {
                     "Exact": "routed-echo.myexample.com",
                   },
@@ -2351,6 +2352,7 @@ Object {
             "Match": Object {
               "Headers": Array [
                 Object {
+                  "Invert": false,
                   "Match": Object {
                     "Exact": "routed-echo.myexample.com",
                   },

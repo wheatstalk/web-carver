@@ -51,7 +51,7 @@ export class IntegEnvironment extends cdk.Stack {
         // Handle requests to routed-echo.myexample.com
         webcarver.ServiceExtension.httpRoute({
           headers: [
-            webcarver.HttpRouteHeaderMatch.exact('x-forwarded-host', 'routed-echo.myexample.com'),
+            webcarver.HttpRouteHeaderMatch.valueIs('x-forwarded-host', 'routed-echo.myexample.com'),
           ],
         }),
       ],

@@ -183,14 +183,16 @@ describe('httpRoute', () => {
           prefixPath: '/path',
           method: 'GET',
           headers: [
-            webcarver.HttpRouteHeaderMatch.regex('Content-Type', 'text/.*'),
-            webcarver.HttpRouteHeaderMatch.suffix('Content-Type', '/plain'),
-            webcarver.HttpRouteHeaderMatch.prefix('Content-Type', 'text/'),
-            webcarver.HttpRouteHeaderMatch.exact('Content-Type', 'text/plain'),
-            webcarver.HttpRouteHeaderMatch.range('Something', {
-              start: 5,
-              end: 10,
-            }),
+            webcarver.HttpRouteHeaderMatch.valueIs('Content-Type', 'text/plain'),
+            webcarver.HttpRouteHeaderMatch.valueIsNot('Content-Type', 'text/html'),
+            webcarver.HttpRouteHeaderMatch.valueMatchesRegex('Content-Type', 'text/.*'),
+            webcarver.HttpRouteHeaderMatch.valueDoesNotMatchRegex('Content-Type', '.*/html'),
+            webcarver.HttpRouteHeaderMatch.valueEndsWith('Content-Type', '/plain'),
+            webcarver.HttpRouteHeaderMatch.valueDoesNotEndWith('Content-Type', '/html'),
+            webcarver.HttpRouteHeaderMatch.valueStartsWith('Content-Type', 'text/'),
+            webcarver.HttpRouteHeaderMatch.valueDoesNotStartWith('Content-Type', 'application/'),
+            webcarver.HttpRouteHeaderMatch.valueIsInRange('Something', { start: 1, end: 5 }),
+            webcarver.HttpRouteHeaderMatch.valueIsNotInRange('Something', { start: 5, end: 10 }),
           ],
         }),
       ],
@@ -209,22 +211,73 @@ describe('httpRoute', () => {
       Match: {
         Headers: [
           {
-            Match: { Regex: 'text/.*' },
+            Invert: false,
+            Match: {
+              Exact: 'text/plain',
+            },
             Name: 'Content-Type',
           },
           {
-            Match: { Suffix: '/plain' },
+            Invert: true,
+            Match: {
+              Exact: 'text/html',
+            },
             Name: 'Content-Type',
           },
           {
-            Match: { Prefix: 'text/' },
+            Invert: false,
+            Match: {
+              Regex: 'text/.*',
+            },
             Name: 'Content-Type',
           },
           {
-            Match: { Exact: 'text/plain' },
+            Invert: true,
+            Match: {
+              Regex: '.*/html',
+            },
             Name: 'Content-Type',
           },
           {
+            Invert: false,
+            Match: {
+              Suffix: '/plain',
+            },
+            Name: 'Content-Type',
+          },
+          {
+            Invert: true,
+            Match: {
+              Suffix: '/html',
+            },
+            Name: 'Content-Type',
+          },
+          {
+            Invert: false,
+            Match: {
+              Prefix: 'text/',
+            },
+            Name: 'Content-Type',
+          },
+          {
+            Invert: false,
+            Match: {
+              Prefix: 'application/',
+            },
+            Name: 'Content-Type',
+          },
+          {
+            Invert: false,
+            Match: {
+              Range: {
+                End: 5,
+                Start: 1,
+              },
+            },
+            Name: 'Something',
+          },
+          {
+            Invert: true,
             Match: {
               Range: {
                 End: 10,

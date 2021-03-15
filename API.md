@@ -175,6 +175,7 @@ __Returns__:
 
 Used to generate header matching methods.
 
+__Implements__: [IHttpRouteHeaderMatch](#wheatstalk-web-carver-ihttprouteheadermatch)
 
 ### Initializer
 
@@ -190,43 +191,85 @@ new HttpRouteHeaderMatch()
 ### Methods
 
 
-#### *static* exact(name, exactValue) <a id="wheatstalk-web-carver-httprouteheadermatch-exact"></a>
+#### *static* valueDoesNotEndWith(headerName, suffix) <a id="wheatstalk-web-carver-httprouteheadermatch-valuedoesnotendwith"></a>
 
-The value sent by the client must match the specified value exactly.
+The value sent by the client must not end with the specified characters.
 
 ```ts
-static exact(name: string, exactValue: string): IHttpRouteHeaderMatch
+static valueDoesNotEndWith(headerName: string, suffix: string): IHttpRouteHeaderMatch
 ```
 
-* **name** (<code>string</code>)  *No description*
-* **exactValue** (<code>string</code>)  *No description*
+* **headerName** (<code>string</code>)  *No description*
+* **suffix** (<code>string</code>)  *No description*
 
 __Returns__:
 * <code>[IHttpRouteHeaderMatch](#wheatstalk-web-carver-ihttprouteheadermatch)</code>
 
-#### *static* prefix(name, prefix) <a id="wheatstalk-web-carver-httprouteheadermatch-prefix"></a>
+#### *static* valueDoesNotMatchRegex(headerName, regex) <a id="wheatstalk-web-carver-httprouteheadermatch-valuedoesnotmatchregex"></a>
 
-The value sent by the client must begin with the specified characters.
+The value sent by the client must include the specified characters.
 
 ```ts
-static prefix(name: string, prefix: string): IHttpRouteHeaderMatch
+static valueDoesNotMatchRegex(headerName: string, regex: string): IHttpRouteHeaderMatch
 ```
 
-* **name** (<code>string</code>)  *No description*
+* **headerName** (<code>string</code>)  *No description*
+* **regex** (<code>string</code>)  *No description*
+
+__Returns__:
+* <code>[IHttpRouteHeaderMatch](#wheatstalk-web-carver-ihttprouteheadermatch)</code>
+
+#### *static* valueDoesNotStartWith(headerName, prefix) <a id="wheatstalk-web-carver-httprouteheadermatch-valuedoesnotstartwith"></a>
+
+The value sent by the client must not begin with the specified characters.
+
+```ts
+static valueDoesNotStartWith(headerName: string, prefix: string): IHttpRouteHeaderMatch
+```
+
+* **headerName** (<code>string</code>)  *No description*
 * **prefix** (<code>string</code>)  *No description*
 
 __Returns__:
 * <code>[IHttpRouteHeaderMatch](#wheatstalk-web-carver-ihttprouteheadermatch)</code>
 
-#### *static* range(name, range) <a id="wheatstalk-web-carver-httprouteheadermatch-range"></a>
+#### *static* valueEndsWith(headerName, suffix) <a id="wheatstalk-web-carver-httprouteheadermatch-valueendswith"></a>
 
-Match on a numeric range of values.
+The value sent by the client must end with the specified characters.
 
 ```ts
-static range(name: string, range: HttpRouteHeaderMatchRangeOptions): IHttpRouteHeaderMatch
+static valueEndsWith(headerName: string, suffix: string): IHttpRouteHeaderMatch
 ```
 
-* **name** (<code>string</code>)  *No description*
+* **headerName** (<code>string</code>)  *No description*
+* **suffix** (<code>string</code>)  *No description*
+
+__Returns__:
+* <code>[IHttpRouteHeaderMatch](#wheatstalk-web-carver-ihttprouteheadermatch)</code>
+
+#### *static* valueIs(headerName, exactValue) <a id="wheatstalk-web-carver-httprouteheadermatch-valueis"></a>
+
+The value sent by the client must match the specified value exactly.
+
+```ts
+static valueIs(headerName: string, exactValue: string): IHttpRouteHeaderMatch
+```
+
+* **headerName** (<code>string</code>)  *No description*
+* **exactValue** (<code>string</code>)  *No description*
+
+__Returns__:
+* <code>[IHttpRouteHeaderMatch](#wheatstalk-web-carver-ihttprouteheadermatch)</code>
+
+#### *static* valueIsInRange(headerName, range) <a id="wheatstalk-web-carver-httprouteheadermatch-valueisinrange"></a>
+
+The value sent by the client must be in the given range.
+
+```ts
+static valueIsInRange(headerName: string, range: HttpRouteHeaderMatchRangeOptions): IHttpRouteHeaderMatch
+```
+
+* **headerName** (<code>string</code>)  *No description*
 * **range** (<code>[HttpRouteHeaderMatchRangeOptions](#wheatstalk-web-carver-httprouteheadermatchrangeoptions)</code>)  *No description*
   * **end** (<code>number</code>)  Match on values up to but not including this value. 
   * **start** (<code>number</code>)  Match on values starting at and including this value. 
@@ -234,30 +277,60 @@ static range(name: string, range: HttpRouteHeaderMatchRangeOptions): IHttpRouteH
 __Returns__:
 * <code>[IHttpRouteHeaderMatch](#wheatstalk-web-carver-ihttprouteheadermatch)</code>
 
-#### *static* regex(name, regex) <a id="wheatstalk-web-carver-httprouteheadermatch-regex"></a>
+#### *static* valueIsNot(headerName, exactValue) <a id="wheatstalk-web-carver-httprouteheadermatch-valueisnot"></a>
+
+The value sent by the client must not match the specified value exactly.
+
+```ts
+static valueIsNot(headerName: string, exactValue: string): IHttpRouteHeaderMatch
+```
+
+* **headerName** (<code>string</code>)  *No description*
+* **exactValue** (<code>string</code>)  *No description*
+
+__Returns__:
+* <code>[IHttpRouteHeaderMatch](#wheatstalk-web-carver-ihttprouteheadermatch)</code>
+
+#### *static* valueIsNotInRange(headerName, range) <a id="wheatstalk-web-carver-httprouteheadermatch-valueisnotinrange"></a>
+
+The value sent by the client must nto be in the given range.
+
+```ts
+static valueIsNotInRange(headerName: string, range: HttpRouteHeaderMatchRangeOptions): IHttpRouteHeaderMatch
+```
+
+* **headerName** (<code>string</code>)  *No description*
+* **range** (<code>[HttpRouteHeaderMatchRangeOptions](#wheatstalk-web-carver-httprouteheadermatchrangeoptions)</code>)  *No description*
+  * **end** (<code>number</code>)  Match on values up to but not including this value. 
+  * **start** (<code>number</code>)  Match on values starting at and including this value. 
+
+__Returns__:
+* <code>[IHttpRouteHeaderMatch](#wheatstalk-web-carver-ihttprouteheadermatch)</code>
+
+#### *static* valueMatchesRegex(headerName, regex) <a id="wheatstalk-web-carver-httprouteheadermatch-valuematchesregex"></a>
 
 The value sent by the client must include the specified characters.
 
 ```ts
-static regex(name: string, regex: string): IHttpRouteHeaderMatch
+static valueMatchesRegex(headerName: string, regex: string): IHttpRouteHeaderMatch
 ```
 
-* **name** (<code>string</code>)  *No description*
+* **headerName** (<code>string</code>)  *No description*
 * **regex** (<code>string</code>)  *No description*
 
 __Returns__:
 * <code>[IHttpRouteHeaderMatch](#wheatstalk-web-carver-ihttprouteheadermatch)</code>
 
-#### *static* suffix(name, suffix) <a id="wheatstalk-web-carver-httprouteheadermatch-suffix"></a>
+#### *static* valueStartsWith(headerName, prefix) <a id="wheatstalk-web-carver-httprouteheadermatch-valuestartswith"></a>
 
-The value sent by the client must end with the specified characters.
+The value sent by the client must begin with the specified characters.
 
 ```ts
-static suffix(name: string, suffix: string): IHttpRouteHeaderMatch
+static valueStartsWith(headerName: string, prefix: string): IHttpRouteHeaderMatch
 ```
 
-* **name** (<code>string</code>)  *No description*
-* **suffix** (<code>string</code>)  *No description*
+* **headerName** (<code>string</code>)  *No description*
+* **prefix** (<code>string</code>)  *No description*
 
 __Returns__:
 * <code>[IHttpRouteHeaderMatch](#wheatstalk-web-carver-ihttprouteheadermatch)</code>
@@ -904,7 +977,7 @@ __Returns__:
 
 ## interface IHttpRouteHeaderMatch  <a id="wheatstalk-web-carver-ihttprouteheadermatch"></a>
 
-__Obtainable from__: [HttpRouteHeaderMatch](#wheatstalk-web-carver-httprouteheadermatch).[exact](#wheatstalk-web-carver-httprouteheadermatch#wheatstalk-web-carver-httprouteheadermatch-exact)(), [HttpRouteHeaderMatch](#wheatstalk-web-carver-httprouteheadermatch).[prefix](#wheatstalk-web-carver-httprouteheadermatch#wheatstalk-web-carver-httprouteheadermatch-prefix)(), [HttpRouteHeaderMatch](#wheatstalk-web-carver-httprouteheadermatch).[range](#wheatstalk-web-carver-httprouteheadermatch#wheatstalk-web-carver-httprouteheadermatch-range)(), [HttpRouteHeaderMatch](#wheatstalk-web-carver-httprouteheadermatch).[regex](#wheatstalk-web-carver-httprouteheadermatch#wheatstalk-web-carver-httprouteheadermatch-regex)(), [HttpRouteHeaderMatch](#wheatstalk-web-carver-httprouteheadermatch).[suffix](#wheatstalk-web-carver-httprouteheadermatch#wheatstalk-web-carver-httprouteheadermatch-suffix)()
+__Obtainable from__: [HttpRouteHeaderMatch](#wheatstalk-web-carver-httprouteheadermatch).[valueDoesNotEndWith](#wheatstalk-web-carver-httprouteheadermatch#wheatstalk-web-carver-httprouteheadermatch-valuedoesnotendwith)(), [HttpRouteHeaderMatch](#wheatstalk-web-carver-httprouteheadermatch).[valueDoesNotMatchRegex](#wheatstalk-web-carver-httprouteheadermatch#wheatstalk-web-carver-httprouteheadermatch-valuedoesnotmatchregex)(), [HttpRouteHeaderMatch](#wheatstalk-web-carver-httprouteheadermatch).[valueDoesNotStartWith](#wheatstalk-web-carver-httprouteheadermatch#wheatstalk-web-carver-httprouteheadermatch-valuedoesnotstartwith)(), [HttpRouteHeaderMatch](#wheatstalk-web-carver-httprouteheadermatch).[valueEndsWith](#wheatstalk-web-carver-httprouteheadermatch#wheatstalk-web-carver-httprouteheadermatch-valueendswith)(), [HttpRouteHeaderMatch](#wheatstalk-web-carver-httprouteheadermatch).[valueIs](#wheatstalk-web-carver-httprouteheadermatch#wheatstalk-web-carver-httprouteheadermatch-valueis)(), [HttpRouteHeaderMatch](#wheatstalk-web-carver-httprouteheadermatch).[valueIsInRange](#wheatstalk-web-carver-httprouteheadermatch#wheatstalk-web-carver-httprouteheadermatch-valueisinrange)(), [HttpRouteHeaderMatch](#wheatstalk-web-carver-httprouteheadermatch).[valueIsNot](#wheatstalk-web-carver-httprouteheadermatch#wheatstalk-web-carver-httprouteheadermatch-valueisnot)(), [HttpRouteHeaderMatch](#wheatstalk-web-carver-httprouteheadermatch).[valueIsNotInRange](#wheatstalk-web-carver-httprouteheadermatch#wheatstalk-web-carver-httprouteheadermatch-valueisnotinrange)(), [HttpRouteHeaderMatch](#wheatstalk-web-carver-httprouteheadermatch).[valueMatchesRegex](#wheatstalk-web-carver-httprouteheadermatch#wheatstalk-web-carver-httprouteheadermatch-valuematchesregex)(), [HttpRouteHeaderMatch](#wheatstalk-web-carver-httprouteheadermatch).[valueStartsWith](#wheatstalk-web-carver-httprouteheadermatch#wheatstalk-web-carver-httprouteheadermatch-valuestartswith)()
 
 A request header matcher.
 

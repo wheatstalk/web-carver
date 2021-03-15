@@ -43,7 +43,7 @@ new webcarver.Service(this, 'GatewayEcho', {
     // environment's virtual gateway.
     webcarver.ServiceExtension.httpRoute({
       headers: [
-        webcarver.HttpRouteHeaderMatch.exact('x-forwarded-host', 'routed-echo.example.com'),
+        webcarver.HttpRouteHeaderMatch.valueIs('x-forwarded-host', 'routed-echo.example.com'),
       ],
     }),
   ],
