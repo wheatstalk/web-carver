@@ -1,4 +1,5 @@
 import { expect as expectCDK, haveResourceLike } from '@aws-cdk/assert';
+import * as ecs from '@aws-cdk/aws-ecs';
 import * as cdk from '@aws-cdk/core';
 import * as webcarver from '../../src';
 
@@ -237,6 +238,56 @@ describe('httpRoute', () => {
       Spec: {
         Http2Route: route,
       },
+    }));
+  });
+});
+
+describe('linkedService', () => {
+  it('adds a backend and ingress', () => {
+    // GIVEN
+    const stack = new cdk.Stack();
+    const environment = new webcarver.Environment(stack, 'Environment');
+
+    const backend = new webcarver.Service(stack, 'Backend', {
+      environment,
+      extensions: [
+        webcarver.ServiceExtension.container({
+          image: ecs.ContainerImage.fromRegistry('nginx'),
+          listeners: [
+            webcarver.ServiceListener.http2(),
+          ],
+        }),
+      ],
+    });
+
+    // WHEN
+    new webcarver.Service(stack, 'Frontend', {
+      environment,
+      extensions: [
+        webcarver.ServiceExtension.linkedService({
+          service: backend,
+        }),
+      ],
+    });
+
+    expectCDK(stack).to(haveResourceLike('AWS::AppMesh::VirtualNode', {
+      Spec: {
+        Backends: [{
+          VirtualService: {
+            VirtualServiceName: {
+              'Fn::GetAtt': ['BackendVirtualService610FBB07', 'VirtualServiceName'],
+            },
+          },
+        }],
+      },
+    }));
+
+    // The backend lets the frontend access its traffic port:
+    expectCDK(stack).to(haveResourceLike('AWS::EC2::SecurityGroupIngress', {
+      FromPort: 80,
+      ToPort: 80,
+      GroupId: { 'Fn::GetAtt': ['BackendFargateServiceSecurityGroup739708B1', 'GroupId'] },
+      SourceSecurityGroupId: { 'Fn::GetAtt': ['FrontendFargateServiceSecurityGroupA7EB1383', 'GroupId'] },
     }));
   });
 });
