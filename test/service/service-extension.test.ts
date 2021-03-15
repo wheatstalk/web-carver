@@ -240,3 +240,38 @@ describe('httpRoute', () => {
     }));
   });
 });
+
+describe('envVars', () => {
+  // GIVEN
+  const stack = new cdk.Stack();
+  const environment = new webcarver.Environment(stack, 'Environment');
+
+  const envVars: Record<string, string> = {};
+
+  // WHEN
+  new webcarver.Service(stack, 'Service', {
+    environment,
+    extensions: [
+      webcarver.ServiceExtension.envVars({
+        FOO: 'BAR',
+        BAZ: 'XYZ',
+      }),
+      webcarver.ServiceExtension.envVars({
+        ABC: '123',
+      }),
+      {
+        _extensionTypeName: 'text',
+        _register: (service) => {
+          service._onEnvVars(env => Object.assign(envVars, env));
+        },
+      },
+    ],
+  });
+
+  // THEN
+  expect(envVars).toEqual({
+    FOO: 'BAR',
+    BAZ: 'XYZ',
+    ABC: '123',
+  });
+});
