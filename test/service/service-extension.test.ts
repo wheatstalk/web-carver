@@ -117,6 +117,11 @@ describe('httpGatewayRoute', () => {
         },
       },
     }));
+    // Allow traffic from the gateway:
+    expectCDK(stack).to(haveResourceLike('AWS::EC2::SecurityGroupIngress', {
+      GroupId: { 'Fn::GetAtt': ['ServiceFargateServiceSecurityGroupD077A366', 'GroupId'] },
+      SourceSecurityGroupId: { 'Fn::GetAtt': ['EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29', 'GroupId'] },
+    }));
   });
 });
 
@@ -155,6 +160,11 @@ describe('http2GatewayRoute', () => {
           },
         },
       },
+    }));
+    // Allow traffic from the gateway:
+    expectCDK(stack).to(haveResourceLike('AWS::EC2::SecurityGroupIngress', {
+      GroupId: { 'Fn::GetAtt': ['ServiceFargateServiceSecurityGroupD077A366', 'GroupId'] },
+      SourceSecurityGroupId: { 'Fn::GetAtt': ['EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29', 'GroupId'] },
     }));
   });
 });
@@ -238,6 +248,11 @@ describe('httpRoute', () => {
       Spec: {
         Http2Route: route,
       },
+    }));
+    // Allow traffic from the gateway:
+    expectCDK(stack).to(haveResourceLike('AWS::EC2::SecurityGroupIngress', {
+      GroupId: { 'Fn::GetAtt': ['ServiceFargateServiceSecurityGroupD077A366', 'GroupId'] },
+      SourceSecurityGroupId: { 'Fn::GetAtt': ['EnvironmentGatewayFargateGatewayServiceSecurityGroupDFC77C29', 'GroupId'] },
     }));
   });
 });
